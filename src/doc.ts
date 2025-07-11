@@ -1,8 +1,19 @@
-export type Doc = Text | Line | SoftLine | HardLine | Indent | Group | Concat | LineSuffix | BreakParent | IfBreak | Empty
+export type Doc =
+    | Text
+    | Line
+    | SoftLine
+    | HardLine
+    | Indent
+    | Group
+    | Concat
+    | LineSuffix
+    | BreakParent
+    | IfBreak
+    | Empty
 
 export type Text = {
-    $: "Text"
-    value: string
+    readonly $: "Text"
+    readonly value: string
 }
 
 export const text = (value: string): Doc => ({
@@ -11,7 +22,7 @@ export const text = (value: string): Doc => ({
 })
 
 export type Line = {
-    $: "Line"
+    readonly $: "Line"
 }
 
 export const line = (): Doc => ({
@@ -19,7 +30,7 @@ export const line = (): Doc => ({
 })
 
 export type SoftLine = {
-    $: "SoftLine"
+    readonly $: "SoftLine"
 }
 
 export const softLine = (): Doc => ({
@@ -27,7 +38,7 @@ export const softLine = (): Doc => ({
 })
 
 export type HardLine = {
-    $: "HardLine"
+    readonly $: "HardLine"
 }
 
 export const hardLine = (): Doc => ({
@@ -35,8 +46,8 @@ export const hardLine = (): Doc => ({
 })
 
 export type LineSuffix = {
-    $: "LineSuffix"
-    suffix: Doc
+    readonly $: "LineSuffix"
+    readonly suffix: Doc
 }
 
 export const lineSuffix = (suffix: Doc): Doc => ({
@@ -45,7 +56,7 @@ export const lineSuffix = (suffix: Doc): Doc => ({
 })
 
 export type BreakParent = {
-    $: "BreakParent"
+    readonly $: "BreakParent"
 }
 
 export const breakParent = (): Doc => ({
@@ -53,9 +64,9 @@ export const breakParent = (): Doc => ({
 })
 
 export type IfBreak = {
-    $: "IfBreak"
-    breakContent: Doc | undefined
-    flatContent: Doc | undefined
+    readonly $: "IfBreak"
+    readonly breakContent: Doc | undefined
+    readonly flatContent: Doc | undefined
 }
 
 export const ifBreak = (breakContent: Doc | undefined, flatContent: Doc | undefined): Doc => ({
@@ -64,11 +75,10 @@ export const ifBreak = (breakContent: Doc | undefined, flatContent: Doc | undefi
     flatContent,
 })
 
-
 export type Indent = {
-    $: "Indent"
-    indent: number
-    content: Doc
+    readonly $: "Indent"
+    readonly indent: number
+    readonly content: Doc
 }
 
 export const indent = (content: Doc): Doc => ({
@@ -78,8 +88,8 @@ export const indent = (content: Doc): Doc => ({
 })
 
 export type Group = {
-    $: "Group"
-    content: Doc
+    readonly $: "Group"
+    readonly content: Doc
 }
 
 export const group = (content: Doc[]): Doc => ({
@@ -88,8 +98,8 @@ export const group = (content: Doc[]): Doc => ({
 })
 
 export type Concat = {
-    $: "Concat"
-    parts: Doc[]
+    readonly $: "Concat"
+    readonly parts: Doc[]
 }
 
 export const concat = (parts: Doc[]): Doc => ({
@@ -98,7 +108,7 @@ export const concat = (parts: Doc[]): Doc => ({
 })
 
 export type Empty = {
-    $: "Empty"
+    readonly $: "Empty"
 }
 
 export const empty = (): Doc => ({
