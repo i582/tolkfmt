@@ -1,4 +1,4 @@
-export type Doc = Text | Line | SoftLine | HardLine | Indent | Group | Concat | LineSuffix | BreakParent | Empty
+export type Doc = Text | Line | SoftLine | HardLine | Indent | Group | Concat | LineSuffix | BreakParent | IfBreak | Empty
 
 export type Text = {
     $: "Text"
@@ -51,6 +51,19 @@ export type BreakParent = {
 export const breakParent = (): Doc => ({
     $: "BreakParent",
 })
+
+export type IfBreak = {
+    $: "IfBreak"
+    breakContent: Doc | undefined
+    flatContent: Doc | undefined
+}
+
+export const ifBreak = (breakContent: Doc | undefined, flatContent: Doc | undefined): Doc => ({
+    $: "IfBreak",
+    breakContent,
+    flatContent,
+})
+
 
 export type Indent = {
     $: "Indent"

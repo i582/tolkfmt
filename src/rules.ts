@@ -1,15 +1,82 @@
 import {Node} from "web-tree-sitter";
-import {concat, Doc, empty, group, hardLine, indent, line, softLine, text} from "./doc";
+import {concat, Doc, empty, group, hardLine, ifBreak, indent, line, softLine, text} from "./doc";
 
 export type Ctx = {}
 
 export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
+    if (node.type === "source_file") {
+        const decls = node.children.filter(it => it !== null)
+
+        return concat(decls.map(it => concat([printNode(it, ctx) ?? empty(), hardLine(), hardLine()])))
+    }
+
     if (node.type === "number_literal") {
         return printNumberLiteral(node, ctx)
     }
 
     if (node.type === "identifier" || node.type === "type_identifier") {
         return text(node.text)
+    }
+
+    if (node.type === "type_alias_declaration") {
+        const nameN = node.childForFieldName("name")
+        const typeN = node.childForFieldName("underlying_type")
+
+        if (!nameN || !typeN) return undefined
+
+        const name = text(nameN.text)
+        const type = printNode(typeN, ctx) ?? empty()
+
+        return group([
+            text("type"),
+            text(" "),
+            name,
+            text(" = "),
+            type,
+        ])
+    }
+
+    if (node.type === "function_declaration") {
+        const nameN = node.childForFieldName("name")
+        const bodyN = node.childForFieldName("body")
+
+        if (!nameN || !bodyN) return undefined
+
+        const name = text(nameN.text)
+        const body = printNode(bodyN, ctx) ?? empty()
+
+        return group([
+            text("fun "),
+            name,
+            text("()"),
+            text(" "),
+            body,
+        ])
+    }
+
+    if (node.type === "union_type") {
+        const parts = unionTypeParts(node).map(it => printNode(it, ctx) ?? empty())
+
+        const [first, ...rest] = parts;
+
+        const firstDoc = concat([
+            ifBreak(text("| "), undefined),
+            first
+        ]);
+
+        const tailDocs = rest.map(v =>
+            concat([line(), text("| "), v])
+        );
+
+        return group([
+            indent(
+                concat([
+                    softLine(),
+                    firstDoc,
+                    ...tailDocs,
+                ])
+            )
+        ])
     }
 
     if (node.type === "dot_access") {
@@ -79,6 +146,21 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     }
 
     return undefined
+}
+
+export const unionTypeParts = (node: Node): Node[] => {
+    const lhs = node.childForFieldName("lhs")
+    const rhs = node.childForFieldName("rhs")
+
+    if (!lhs || !rhs) return []
+
+    if (rhs.type === "union_type") {
+        const rhsTypes = unionTypeParts(rhs)
+        if (!rhsTypes) return []
+        return [lhs, ...rhsTypes]
+    }
+
+    return [lhs, rhs]
 }
 
 export const printIf = (node: Node, ctx: Ctx) => {

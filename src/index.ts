@@ -8,18 +8,21 @@ const main = async () => {
 
     const parser = createTolkParser()
 
-    const cst = parser.parse(`fun main() {
+    const cst = parser.parse(`
+type Foo = int | string
+
+type Bar = SomeVeryLongType | OtherLongType | AndThirdLongType
+    
+fun main() {
     if (foo.somethingReallyLong.andHereAsWell() && foo.other) {
         10;
     }
 }`)
     console.log(cst?.rootNode?.toString())
-    const ifStmt = cst?.rootNode.children[0]?.children[3]?.children[1];
-    console.log(ifStmt?.toString())
 
-    if (!ifStmt) throw Error(`Unable to parse file`);
+    if (!cst?.rootNode) throw Error(`Unable to parse file`);
 
-    const doc = printNode(ifStmt, {})
+    const doc = printNode(cst?.rootNode, {})
     console.log(util.inspect(doc, {depth: Infinity}))
 
     if (doc) {

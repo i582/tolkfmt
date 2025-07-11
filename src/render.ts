@@ -1,4 +1,4 @@
-import {Doc} from "./doc";
+import {Doc, empty} from "./doc";
 
 export function render(doc: Doc, printWidth: number = 80): string {
     type Mode = "flat" | "break";
@@ -47,6 +47,11 @@ export function render(doc: Doc, printWidth: number = 80): string {
                     break;
                 case "BreakParent":
                     return true;           // вынудит разрыв, значит не влезает
+                case "IfBreak":
+                    if (cur.flatContent) {
+                        fitStack.push(cur.flatContent)
+                    }
+                    break
             }
         }
         return width >= 0;
@@ -108,6 +113,16 @@ export function render(doc: Doc, printWidth: number = 80): string {
                 // (Алгоритм: просто вставляем hardline прямо здесь.)
                 flushLineSuffix();
                 out.push("\n", " ".repeat(indent));
+                break;
+
+            case "IfBreak":
+                stack.push({
+                    doc: mode === "break"
+                        ? cur.breakContent ?? empty()
+                        : cur.flatContent ?? empty(),
+                    mode,
+                    indent
+                });
                 break;
         }
     }
