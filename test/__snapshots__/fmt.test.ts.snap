@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Formatter should format 1`] = `
+"type Foo = int | slice
+
+"
+`;
+
+exports[`Formatter should format 2`] = `
+"type Foo = 
+    | SomeVeryLongType
+    | OtherLongType
+    | AndThirdLongType
+
+"
+`;
+
+exports[`Formatter should format 3`] = `
+"fun foo() {
+    someVeryLongQualifier
+        .someLongField();
+}
+
+"
+`;
+
+exports[`Formatter should format 4`] = `
+"fun foo() {
+    foo &&
+    someVeryLongQualifier
+        .someLongField();
+}
+
+"
+`;
