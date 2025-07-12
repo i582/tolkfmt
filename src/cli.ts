@@ -4,7 +4,7 @@ import * as path from 'path';
 import {glob} from 'glob';
 import {format} from './index';
 
-const version = '0.1.0';
+const version = '0.0.2';
 
 type FormatMode = 'format' | 'format-and-write' | 'check';
 
@@ -111,7 +111,6 @@ export async function main() {
     }
 
     if (filePaths.length === 0) {
-        cli.outputHelp();
         return;
     }
 
