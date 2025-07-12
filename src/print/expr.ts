@@ -24,11 +24,18 @@ export function printDotAccess(node: Node, ctx: Ctx): Doc | undefined {
     if (!qualifierN || !fieldN) return undefined
 
     const qualifier = printNode(qualifierN, ctx) ?? empty()
-    const field = printNode(fieldN, ctx) ?? empty()
+    const field = text(fieldN.text)
 
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
+    const trailing = takeTrailing(node, ctx.comments).map(c =>
+        concat([text(" "), text(c.text), breakParent()]),
+    )
+    const leadingField = takeLeading(fieldN, ctx.comments)
+    const leadingFieldDoc = formatLeading(leadingField)
 
-    return group([qualifier, indent(concat([softLine(), text("."), field, ...trailing]))])
+    return group([
+        qualifier,
+        indent(concat([softLine(), ...leadingFieldDoc, text("."), field, ...trailing])),
+    ])
 }
 
 export function printFunctionCall(node: Node, ctx: Ctx): Doc | undefined {
@@ -40,7 +47,11 @@ export function printFunctionCall(node: Node, ctx: Ctx): Doc | undefined {
     const callee = printNode(calleeN, ctx) ?? empty()
     const args = printNode(argumentsN, ctx) ?? empty()
 
-    return concat([callee, args])
+    const trailing = takeTrailing(node, ctx.comments).map(c =>
+        concat([text(" "), text(c.text), breakParent()]),
+    )
+
+    return concat([callee, args, ...trailing])
 }
 
 export function printBinaryExpression(node: Node, ctx: Ctx): Doc | undefined {

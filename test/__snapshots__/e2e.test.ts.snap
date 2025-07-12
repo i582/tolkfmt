@@ -64,7 +64,7 @@ exports[`tolkfmt foo.tolk Default run 1`] = `
   "kind": "exited",
   "stderr": "",
   "stdout": "fun test(x: int, y: string): string {
-    return x + y
+    return x + y;
 }
 ",
 }
@@ -72,7 +72,7 @@ exports[`tolkfmt foo.tolk Default run 1`] = `
 
 exports[`tolkfmt foo.tolk Default run with write to file 1`] = `
 "fun test(x: int, y: string): string {
-    return x + y
+    return x + y;
 }
 "
 `;

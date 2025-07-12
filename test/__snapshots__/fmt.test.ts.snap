@@ -107,85 +107,65 @@ exports[`Formatter should format advanced expressions 11`] = `
 "
 `;
 
-exports[`Formatter should format advanced functions 1`] = `
-"
-"
-`;
-
-exports[`Formatter should format advanced functions 2`] = `
-"
-"
-`;
-
-exports[`Formatter should format advanced functions 3`] = `
-"
-"
-`;
-
-exports[`Formatter should format advanced functions 4`] = `
-"
-"
-`;
-
 exports[`Formatter should format advanced types 1`] = `
 "fun test(callback: int -> string) {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format advanced types 2`] = `
 "fun test(callback: (int, string) -> bool) {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format advanced types 3`] = `
 "fun test(callback: VeryLongType -> AnotherLongType) {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 1`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 2`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 3`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 4`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 5`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 6`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
@@ -203,6 +183,54 @@ exports[`Formatter should format annotations 8`] = `
 struct MyStruct {
     x: int
 }
+"
+`;
+
+exports[`Formatter should format assembly and builtin functions 1`] = `
+"fun test()
+    asm "PUSH 42"
+"
+`;
+
+exports[`Formatter should format assembly and builtin functions 2`] = `
+"fun test()
+    asm "PUSH 42" "ADD"
+"
+`;
+
+exports[`Formatter should format assembly and builtin functions 3`] = `
+"fun test()
+    asm "PUSH 42"
+"
+`;
+
+exports[`Formatter should format assembly and builtin functions 4`] = `
+"fun test()
+    builtin
+"
+`;
+
+exports[`Formatter should format assembly and builtin methods 1`] = `
+"fun int.test()
+    asm "PUSH 42"
+"
+`;
+
+exports[`Formatter should format assembly and builtin methods 2`] = `
+"fun Foo.test(self)
+    asm "PUSH 42" "ADD"
+"
+`;
+
+exports[`Formatter should format assembly and builtin methods 3`] = `
+"fun Bar<Foo>.test(a: int)
+    asm "PUSH 42"
+"
+`;
+
+exports[`Formatter should format assembly and builtin methods 4`] = `
+"fun [Baz<int>].test()
+    builtin
 "
 `;
 
@@ -332,16 +360,16 @@ exports[`Formatter should format binary expressions with comments 7`] = `
 exports[`Formatter should format binary expressions with comments 8`] = `
 "fun foo() {
     20 + // comment
-    30 // comment here
-    ;
+    30; // comment here
+    
 }
 "
 `;
 
 exports[`Formatter should format binary expressions with comments 9`] = `
 "fun foo() {
-    20 + 30 // comment here
-    ;
+    20 + 30; // comment here
+    
 }
 "
 `;
@@ -408,6 +436,40 @@ exports[`Formatter should format block statements 5`] = `
 "
 `;
 
+exports[`Formatter should format chain with comments 1`] = `
+"fun foo() {
+    foo() // comment
+        .bar;
+}
+"
+`;
+
+exports[`Formatter should format chain with comments 2`] = `
+"fun foo() {
+    foo()
+        // comment
+        .bar;
+}
+"
+`;
+
+exports[`Formatter should format chain with comments 3`] = `
+"fun foo() {
+    foo
+        .baz // comment
+        .bar;
+}
+"
+`;
+
+exports[`Formatter should format chain with comments 4`] = `
+"fun foo() {
+    foo() // comment
+        .bar();
+}
+"
+`;
+
 exports[`Formatter should format conditions 1`] = `
 "fun test() {
     if (true) {
@@ -431,21 +493,21 @@ exports[`Formatter should format conditions 2`] = `
 
 exports[`Formatter should format control flow statements 1`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format control flow statements 2`] = `
 "fun test() {
-    return 42
+    return 42;
 }
 "
 `;
 
 exports[`Formatter should format control flow statements 3`] = `
 "fun test() {
-    return someVeryLongExpression
+    return someVeryLongExpression;
 }
 "
 `;
@@ -634,149 +696,161 @@ exports[`Formatter should format function calls 10`] = `
 
 exports[`Formatter should format functions 1`] = `
 "fun test() {
-    return 42
+    return 42;
 }
 "
 `;
 
 exports[`Formatter should format functions 2`] = `
 "fun test(x: int) {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 3`] = `
 "fun test(x: int, y: string) {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 4`] = `
 "fun test(x: int, y: string, z: bool) {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 5`] = `
 "fun test(x: int = 42) {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 6`] = `
 "fun test(x: int, y: string = "hello") {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 7`] = `
 "fun test(mutate x: int) {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 8`] = `
 "fun test(x: int, mutate y: string) {
-    return x
+    return x;
 }
 "
 `;
 
 exports[`Formatter should format functions 9`] = `
 "fun test(): int {
-    return 42
+    return 42;
 }
 "
 `;
 
 exports[`Formatter should format functions 10`] = `
 "fun test(x: int): string {
-    return "hello"
+    return "hello";
 }
 "
 `;
 
 exports[`Formatter should format functions 11`] = `
 "fun test(
-    veryLongParameterName: VeryLongTypeName, anotherLongParameter: AnotherLongType
+    veryLongParameterName: VeryLongTypeName,
+    anotherLongParameter: AnotherLongType,
 ): ReturnType {
-    return value
+    return value;
 }
 "
 `;
 
 exports[`Formatter should format functions 12`] = `
 "fun MyType.test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format functions 13`] = `
 "fun MyType.test(x: int): string {
-    return "hello"
+    return "hello";
 }
 "
 `;
 
 exports[`Formatter should format functions 14`] = `
 "fun MyType.test(self, x: int): string {
-    return "hello"
+    return "hello";
 }
 "
 `;
 
 exports[`Formatter should format functions 15`] = `
 "get fun test() {
-    return 42
+    return 42;
 }
 "
 `;
 
 exports[`Formatter should format functions 16`] = `
 "get fun test(): int {
-    return 42
+    return 42;
 }
+"
+`;
+
+exports[`Formatter should format functions with many parameters 1`] = `
+"fun deployNftItem(
+    itemIndex: int,
+    nftItemCode: cell,
+    attachTonAmount: coins,
+    initParams: Cell<NftItemInitAtDeployment>,
+) {}
+
 "
 `;
 
 exports[`Formatter should format generics 1`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format generics 2`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format generics 3`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format generics 4`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
 
 exports[`Formatter should format generics 5`] = `
 "fun test() {
-    return
+    return;
 }
 "
 `;
@@ -1239,10 +1313,10 @@ exports[`Formatter should format pattern matching 5`] = `
 "fun test() {
     match (value) {
         int => {
-            return 1
+            return 1;
         }
         string => {
-            return 2
+            return 2;
         }
     }
 }
@@ -1252,7 +1326,7 @@ exports[`Formatter should format pattern matching 5`] = `
 exports[`Formatter should format pattern matching 6`] = `
 "fun test() {
     match (value) {
-        int => return 1,
+        int => return 1;,
         string => throw 2,
     }
 }
@@ -1572,8 +1646,8 @@ exports[`Formatter should format top-level declarations 13`] = `
 
 exports[`Formatter should format unary expressions with comments 1`] = `
 "fun foo() {
-    !true // comment here
-    ;
+    !true; // comment here
+    
 }
 "
 `;

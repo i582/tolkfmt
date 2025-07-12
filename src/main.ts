@@ -10,10 +10,12 @@ const main = async (): Promise<void> => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
+fun deployNftItem(itemIndex: int, nftItemCode: cell, attachTonAmount: coins, initParams: Cell<NftItemInitAtDeployment>) {}
+
 fun foo() {
-    {
-        bounce: 10,      // comment
-    }
+    return OffchainMetadataReply {
+        foo: bar,
+    }.toCell()
 }`)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)

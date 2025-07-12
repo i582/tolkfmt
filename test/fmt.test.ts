@@ -640,7 +640,16 @@ fun foo() {
         ).toMatchSnapshot()
     })
 
-    it("should format advanced functions", async () => {
+    it("should format functions with many parameters", async () => {
+        await initParser(
+            `${__dirname}/../wasm/tree-sitter.wasm`,
+            `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
+        )
+
+        expect(await format(`fun deployNftItem(itemIndex: int, nftItemCode: cell, attachTonAmount: coins, initParams: Cell<NftItemInitAtDeployment>) {}"`)).toMatchSnapshot()
+    })
+
+    it("should format assembly and builtin functions", async () => {
         await initParser(
             `${__dirname}/../wasm/tree-sitter.wasm`,
             `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
@@ -653,6 +662,21 @@ fun foo() {
 
         // Builtin functions
         expect(await format(`fun test() builtin`)).toMatchSnapshot()
+    })
+
+    it("should format assembly and builtin methods", async () => {
+        await initParser(
+            `${__dirname}/../wasm/tree-sitter.wasm`,
+            `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
+        )
+
+        // ASM functions
+        expect(await format(`fun int.test() asm "PUSH 42"`)).toMatchSnapshot()
+        expect(await format(`fun Foo.test(self) asm "PUSH 42" "ADD"`)).toMatchSnapshot()
+        expect(await format(`fun Bar<Foo>.test(a: int) asm (x -> 1) "PUSH 42"`)).toMatchSnapshot()
+
+        // Builtin functions
+        expect(await format(`fun [Baz<int, int>].test() builtin`)).toMatchSnapshot()
     })
 
     it("should format misc constructs", async () => {
@@ -1029,6 +1053,44 @@ fun foo() {
             }
             `),
         ).toMatchSnapshot()
+    })
 
+    it("should format chain with comments", async () => {
+        expect(
+            await format(`
+            fun foo() {
+                foo() // comment
+                    .bar;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                foo()
+                    // comment
+                    .bar;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                foo.baz // comment
+                    .bar;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                foo() // comment
+                    .bar();
+            }
+            `),
+        ).toMatchSnapshot()
     })
 })

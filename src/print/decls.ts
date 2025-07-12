@@ -1,5 +1,6 @@
 import type {Node} from "web-tree-sitter"
-import type {Doc} from "../doc"
+import type {Doc} from "../doc";
+import { ifBreak, line} from "../doc"
 import {
     blank,
     blankLinesBetween,
@@ -64,7 +65,9 @@ export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
     const returnTypeN = node.childForFieldName("return_type")
-    const bodyN = node.childForFieldName("body")
+    const specialBodyN =
+        node.childForFieldName("asm_body") ?? node.childForFieldName("builtin_specifier")
+    const bodyN = node.childForFieldName("body") ?? specialBodyN
 
     if (!nameN || !parametersN || !bodyN) return undefined
 
@@ -80,7 +83,16 @@ export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
         returnTypePart = concat([text(": "), returnType])
     }
 
-    return group([...leading, text("fun "), name, parameters, returnTypePart, text(" "), body])
+    const isSpecialBody = specialBodyN !== null
+
+    return group([
+        ...leading,
+        text("fun "),
+        name,
+        parameters,
+        returnTypePart,
+        ...(isSpecialBody ? [indent(concat([hardLine(), body]))] : [text(" "), body]),
+    ])
 }
 
 export function printParameterList(node: Node, ctx: Ctx): Doc | undefined {
@@ -100,11 +112,12 @@ export function printParameterList(node: Node, ctx: Ctx): Doc | undefined {
     }
 
     const [first, ...rest] = parts
-    const tailDocs = rest.map(part => concat([text(", "), part]))
+    const tailDocs = rest.map(part => concat([text(","), line(), part]))
 
     return group([
         text("("),
         indent(concat([softLine(), first, ...tailDocs])),
+        ifBreak(text(","), undefined), // trailing comma
         softLine(),
         text(")"),
         ...trailing,
@@ -179,7 +192,9 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
     const returnTypeN = node.childForFieldName("return_type")
-    const bodyN = node.childForFieldName("body")
+    const specialBodyN =
+        node.childForFieldName("asm_body") ?? node.childForFieldName("builtin_specifier")
+    const bodyN = node.childForFieldName("body") ?? specialBodyN
 
     if (!receiverN || !nameN || !parametersN || !bodyN) return undefined
 
@@ -196,6 +211,8 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
         returnTypePart = concat([text(": "), returnType])
     }
 
+    const isSpecialBody = specialBodyN !== null
+
     return group([
         ...leading,
         text("fun "),
@@ -203,8 +220,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
         name,
         parameters,
         returnTypePart,
-        text(" "),
-        body,
+        ...(isSpecialBody ? [indent(concat([hardLine(), body]))] : [text(" "), body]),
     ])
 }
 
@@ -417,9 +433,10 @@ export function printAsmBody(node: Node, ctx: Ctx): Doc | undefined {
     const strings = node.namedChildren
         .filter(child => child?.type === "string_literal")
         .filter(child => child !== null)
-    const stringParts = strings.map(str => printNode(str, ctx) ?? empty())
 
-    return group([...leading, text("asm "), ...stringParts, ...trailing])
+    const stringParts = strings.flatMap(str => [text(" "), printNode(str, ctx) ?? empty()])
+
+    return group([...leading, text("asm"), ...stringParts, ...trailing])
 }
 
 export function printMethodReceiver(node: Node, ctx: Ctx): Doc | undefined {

@@ -93,7 +93,7 @@ export function printExpressionStatement(node: Node, ctx: Ctx): Doc | undefined 
         concat([text(" "), lineSuffix(text(c.text)), breakParent(), softLine()]),
     )
 
-    return concat([printNode(expr, ctx) ?? empty(), ...trailing, text(";")])
+    return concat([printNode(expr, ctx) ?? empty(), text(";"), ...trailing])
 }
 
 export function printReturnStatement(node: Node, ctx: Ctx): Doc | undefined {
@@ -105,9 +105,9 @@ export function printReturnStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     if (bodyN) {
         const body = printNode(bodyN, ctx) ?? empty()
-        return concat([...leading, text("return "), body, ...trailing])
+        return concat([...leading, text("return "), body, text(";"), ...trailing])
     } else {
-        return concat([...leading, text("return"), ...trailing])
+        return concat([...leading, text("return;"), ...trailing])
     }
 }
 
