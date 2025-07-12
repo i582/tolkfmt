@@ -1,4 +1,4 @@
-import {Node} from "web-tree-sitter";
+import {Node} from "web-tree-sitter"
 
 export type Doc =
     | Text
@@ -118,11 +118,8 @@ export const empty = (): Doc => ({
 })
 
 export function blankLinesBetween(a: Node, b: Node): number {
-    const raw = b.startPosition.row - a.endPosition.row - 1;
-    return Math.max(0, raw);
+    const raw = b.startPosition.row - a.endPosition.row - 1
+    return Math.max(0, raw)
 }
 
-export const blank = (n: number): Doc =>
-    n === 0
-        ? hardLine()
-        : concat([hardLine(), hardLine()]);
+export const blank = (n: number): Doc => (n === 0 ? hardLine() : concat([hardLine(), hardLine()]))

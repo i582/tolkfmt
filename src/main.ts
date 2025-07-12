@@ -1,8 +1,8 @@
-import {createTolkParser, initParser} from "./parser";
-import {bindComments} from "./comments";
-import {render} from "./render";
-import {Ctx} from "./print/ctx";
-import {printNode} from "./print/node";
+import {createTolkParser, initParser} from "./parser"
+import {bindComments} from "./comments"
+import {render} from "./render"
+import {Ctx} from "./print/ctx"
+import {printNode} from "./print/node"
 
 const main = async () => {
     await initParser("../wasm/tree-sitter.wasm", "../wasm/tree-sitter-tolk.wasm")
@@ -20,9 +20,9 @@ fun main() {
     }
 }`)
 
-    if (!cst?.rootNode) throw Error(`Unable to parse file`);
+    if (!cst?.rootNode) throw Error(`Unable to parse file`)
 
-    const ctx: Ctx = {comments: bindComments(cst?.rootNode)};
+    const ctx: Ctx = {comments: bindComments(cst?.rootNode)}
     const doc = printNode(cst?.rootNode, ctx)
 
     if (doc) {

@@ -1,14 +1,14 @@
-import {Node} from "web-tree-sitter";
-import {Ctx} from "./ctx";
-import {Doc} from "../doc";
-import * as stmts from "./stmts";
-import * as decls from "./decls";
-import * as expr from "./expr";
-import * as types from "./types";
+import {Node} from "web-tree-sitter"
+import {Ctx} from "./ctx"
+import {Doc} from "../doc"
+import * as stmts from "./stmts"
+import * as decls from "./decls"
+import * as expr from "./expr"
+import * as types from "./types"
 
 export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     if (node.type === "source_file") {
-        return decls.printSourceFile(node, ctx);
+        return decls.printSourceFile(node, ctx)
     }
 
     if (node.type === "number_literal") {
@@ -32,111 +32,111 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     }
 
     if (node.type === "identifier" || node.type === "type_identifier") {
-        return expr.printIdentifier(node, ctx);
+        return expr.printIdentifier(node, ctx)
     }
 
     if (node.type === "type_alias_declaration") {
-        return decls.printTypeAlias(node, ctx);
+        return decls.printTypeAlias(node, ctx)
     }
 
     if (node.type === "constant_declaration") {
-        return decls.printConstantDeclaration(node, ctx);
+        return decls.printConstantDeclaration(node, ctx)
     }
 
     if (node.type === "function_declaration") {
-        return decls.printFunction(node, ctx);
+        return decls.printFunction(node, ctx)
     }
 
     if (node.type === "union_type") {
-        return types.printUnionType(node, ctx);
+        return types.printUnionType(node, ctx)
     }
 
     if (node.type === "nullable_type") {
-        return types.printNullableType(node, ctx);
+        return types.printNullableType(node, ctx)
     }
 
     if (node.type === "parenthesized_type") {
-        return types.printParenthesizedType(node, ctx);
+        return types.printParenthesizedType(node, ctx)
     }
 
     if (node.type === "tensor_type") {
-        return types.printTensorType(node, ctx);
+        return types.printTensorType(node, ctx)
     }
 
     if (node.type === "tuple_type") {
-        return types.printTupleType(node, ctx);
+        return types.printTupleType(node, ctx)
     }
 
     if (node.type === "dot_access") {
-        return expr.printDotAccess(node, ctx);
+        return expr.printDotAccess(node, ctx)
     }
 
     if (node.type === "function_call") {
-        return expr.printFunctionCall(node, ctx);
+        return expr.printFunctionCall(node, ctx)
     }
 
     if (node.type === "argument_list") {
-        return expr.printArgumentList(node, ctx);
+        return expr.printArgumentList(node, ctx)
     }
 
     if (node.type === "call_argument") {
-        return expr.printCallArgument(node, ctx);
+        return expr.printCallArgument(node, ctx)
     }
 
     if (node.type === "binary_operator") {
-        return expr.printBinaryExpression(node, ctx);
+        return expr.printBinaryExpression(node, ctx)
     }
 
     if (node.type === "assignment") {
-        return stmts.printAssignment(node, ctx);
+        return stmts.printAssignment(node, ctx)
     }
 
     if (node.type === "unary_operator") {
-        return expr.printUnaryOperator(node, ctx);
+        return expr.printUnaryOperator(node, ctx)
     }
 
     if (node.type === "parenthesized_expression") {
-        return expr.printParenthesizedExpression(node, ctx);
+        return expr.printParenthesizedExpression(node, ctx)
     }
 
     if (node.type === "tensor_expression") {
-        return expr.printTensorExpression(node, ctx);
+        return expr.printTensorExpression(node, ctx)
     }
 
     if (node.type === "typed_tuple") {
-        return expr.printTypedTuple(node, ctx);
+        return expr.printTypedTuple(node, ctx)
     }
 
     if (node.type === "cast_as_operator") {
-        return expr.printCastAsOperator(node, ctx);
+        return expr.printCastAsOperator(node, ctx)
     }
 
     if (node.type === "is_type_operator") {
-        return expr.printIsTypeOperator(node, ctx);
+        return expr.printIsTypeOperator(node, ctx)
     }
 
     if (node.type === "not_null_operator") {
-        return expr.printNotNullOperator(node, ctx);
+        return expr.printNotNullOperator(node, ctx)
     }
 
     if (node.type === "lazy_expression") {
-        return expr.printLazyExpression(node, ctx);
+        return expr.printLazyExpression(node, ctx)
     }
 
     if (node.type === "ternary_operator") {
-        return expr.printTernaryOperator(node, ctx);
+        return expr.printTernaryOperator(node, ctx)
     }
 
     if (node.type === "object_literal") {
-        return expr.printObjectLiteral(node, ctx);
+        return expr.printObjectLiteral(node, ctx)
     }
 
     if (node.type === "object_literal_body") {
-        return expr.printObjectLiteralBody(node, ctx);
+        return expr.printObjectLiteralBody(node, ctx)
     }
 
     if (node.type === "instance_argument") {
-        return expr.printInstanceArgument(node, ctx);
+        return expr.printInstanceArgument(node, ctx)
     }
 
     if (node.type === "if_statement") {
@@ -144,195 +144,195 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     }
 
     if (node.type === "block_statement") {
-        return stmts.printBlockStatement(node, ctx);
+        return stmts.printBlockStatement(node, ctx)
     }
 
     if (node.type === "expression_statement") {
-        return stmts.printExpressionStatement(node, ctx);
+        return stmts.printExpressionStatement(node, ctx)
     }
 
     if (node.type === "return_statement") {
-        return stmts.printReturnStatement(node, ctx);
+        return stmts.printReturnStatement(node, ctx)
     }
 
     if (node.type === "break_statement") {
-        return stmts.printBreakStatement(node, ctx);
+        return stmts.printBreakStatement(node, ctx)
     }
 
     if (node.type === "continue_statement") {
-        return stmts.printContinueStatement(node, ctx);
+        return stmts.printContinueStatement(node, ctx)
     }
 
     if (node.type === "throw_statement") {
-        return stmts.printThrowStatement(node, ctx);
+        return stmts.printThrowStatement(node, ctx)
     }
 
     if (node.type === "while_statement") {
-        return stmts.printWhileStatement(node, ctx);
+        return stmts.printWhileStatement(node, ctx)
     }
 
     if (node.type === "do_while_statement") {
-        return stmts.printDoWhileStatement(node, ctx);
+        return stmts.printDoWhileStatement(node, ctx)
     }
 
     if (node.type === "repeat_statement") {
-        return stmts.printRepeatStatement(node, ctx);
+        return stmts.printRepeatStatement(node, ctx)
     }
 
     if (node.type === "local_vars_declaration") {
-        return stmts.printLocalVarsDeclaration(node, ctx);
+        return stmts.printLocalVarsDeclaration(node, ctx)
     }
 
     if (node.type === "var_declaration") {
-        return stmts.printVarDeclaration(node, ctx);
+        return stmts.printVarDeclaration(node, ctx)
     }
 
     if (node.type === "tuple_vars_declaration") {
-        return stmts.printTupleVarsDeclaration(node, ctx);
+        return stmts.printTupleVarsDeclaration(node, ctx)
     }
 
     if (node.type === "tensor_vars_declaration") {
-        return stmts.printTensorVarsDeclaration(node, ctx);
+        return stmts.printTensorVarsDeclaration(node, ctx)
     }
 
     if (node.type === "parameter_list") {
-        return decls.printParameterList(node, ctx);
+        return decls.printParameterList(node, ctx)
     }
 
     if (node.type === "parameter_declaration") {
-        return decls.printParameterDeclaration(node, ctx);
+        return decls.printParameterDeclaration(node, ctx)
     }
 
     if (node.type === "method_declaration") {
-        return decls.printMethodDeclaration(node, ctx);
+        return decls.printMethodDeclaration(node, ctx)
     }
 
     if (node.type === "get_method_declaration") {
-        return decls.printGetMethodDeclaration(node, ctx);
+        return decls.printGetMethodDeclaration(node, ctx)
     }
 
     // Top-level declarations
     if (node.type === "tolk_required_version") {
-        return decls.printTolkRequiredVersion(node, ctx);
+        return decls.printTolkRequiredVersion(node, ctx)
     }
 
     if (node.type === "version_value") {
-        return decls.printVersionValue(node, ctx);
+        return decls.printVersionValue(node, ctx)
     }
 
     if (node.type === "import_directive") {
-        return decls.printImportDirective(node, ctx);
+        return decls.printImportDirective(node, ctx)
     }
 
     if (node.type === "global_var_declaration") {
-        return decls.printGlobalVarDeclaration(node, ctx);
+        return decls.printGlobalVarDeclaration(node, ctx)
     }
 
     if (node.type === "struct_declaration") {
-        return decls.printStructDeclaration(node, ctx);
+        return decls.printStructDeclaration(node, ctx)
     }
 
     if (node.type === "struct_body") {
-        return decls.printStructBody(node, ctx);
+        return decls.printStructBody(node, ctx)
     }
 
     if (node.type === "struct_field_declaration") {
-        return decls.printStructFieldDeclaration(node, ctx);
+        return decls.printStructFieldDeclaration(node, ctx)
     }
 
     if (node.type === "empty_statement") {
-        return stmts.printEmptyStatement(node, ctx);
+        return stmts.printEmptyStatement(node, ctx)
     }
 
     // Advanced expressions
     if (node.type === "set_assignment") {
-        return stmts.printSetAssignment(node, ctx);
+        return stmts.printSetAssignment(node, ctx)
     }
 
     // Generics
     if (node.type === "type_parameters") {
-        return decls.printTypeParameters(node, ctx);
+        return decls.printTypeParameters(node, ctx)
     }
 
     if (node.type === "type_parameter") {
-        return decls.printTypeParameter(node, ctx);
+        return decls.printTypeParameter(node, ctx)
     }
 
     if (node.type === "type_instantiatedTs") {
-        return expr.printTypeInstantiatedTs(node, ctx);
+        return expr.printTypeInstantiatedTs(node, ctx)
     }
 
     if (node.type === "generic_instantiation") {
-        return expr.printGenericInstantiation(node, ctx);
+        return expr.printGenericInstantiation(node, ctx)
     }
 
     if (node.type === "instantiationT_list") {
-        return expr.printInstantiationTList(node, ctx);
+        return expr.printInstantiationTList(node, ctx)
     }
 
     // Advanced functions
     if (node.type === "asm_body") {
-        return decls.printAsmBody(node, ctx);
+        return decls.printAsmBody(node, ctx)
     }
 
     if (node.type === "builtin_specifier") {
-        return decls.printBuiltinSpecifier(node, ctx);
+        return decls.printBuiltinSpecifier(node, ctx)
     }
 
     if (node.type === "method_receiver") {
-        return decls.printMethodReceiver(node, ctx);
+        return decls.printMethodReceiver(node, ctx)
     }
 
     // Annotations
     if (node.type === "annotation_list") {
-        return decls.printAnnotationList(node, ctx);
+        return decls.printAnnotationList(node, ctx)
     }
 
     if (node.type === "annotation") {
-        return decls.printAnnotation(node, ctx);
+        return decls.printAnnotation(node, ctx)
     }
 
     if (node.type === "annotation_arguments") {
-        return decls.printAnnotationArguments(node, ctx);
+        return decls.printAnnotationArguments(node, ctx)
     }
 
     // Advanced types
     if (node.type === "fun_callable_type") {
-        return types.printFunCallableType(node, ctx);
+        return types.printFunCallableType(node, ctx)
     }
 
     // Error handling
     if (node.type === "assert_statement") {
-        return stmts.printAssertStatement(node, ctx);
+        return stmts.printAssertStatement(node, ctx)
     }
 
     if (node.type === "try_catch_statement") {
-        return stmts.printTryCatchStatement(node, ctx);
+        return stmts.printTryCatchStatement(node, ctx)
     }
 
     if (node.type === "catch_clause") {
-        return stmts.printCatchClause(node, ctx);
+        return stmts.printCatchClause(node, ctx)
     }
 
     // Pattern matching
     if (node.type === "match_statement") {
-        return stmts.printMatchStatement(node, ctx);
+        return stmts.printMatchStatement(node, ctx)
     }
 
     if (node.type === "match_expression") {
-        return expr.printMatchExpression(node, ctx);
+        return expr.printMatchExpression(node, ctx)
     }
 
     if (node.type === "match_body") {
-        return expr.printMatchBody(node, ctx);
+        return expr.printMatchBody(node, ctx)
     }
 
     if (node.type === "match_arm") {
-        return expr.printMatchArm(node, ctx);
+        return expr.printMatchArm(node, ctx)
     }
 
     if (node.type === "numeric_index") {
-        return expr.printNumericIndex(node, ctx);
+        return expr.printNumericIndex(node, ctx)
     }
 
     return undefined

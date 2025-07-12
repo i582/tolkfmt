@@ -1,8 +1,20 @@
-import {Node} from "web-tree-sitter";
-import {Ctx} from "./ctx";
-import {printNode} from "./node";
-import {blank, blankLinesBetween, concat, Doc, empty, group, hardLine, indent, line, softLine, text} from "../doc";
-import {takeLeading, takeTrailing} from "../comments";
+import {Node} from "web-tree-sitter"
+import {Ctx} from "./ctx"
+import {printNode} from "./node"
+import {
+    blank,
+    blankLinesBetween,
+    concat,
+    Doc,
+    empty,
+    group,
+    hardLine,
+    indent,
+    line,
+    softLine,
+    text,
+} from "../doc"
+import {takeLeading, takeTrailing} from "../comments"
 
 export function printDotAccess(node: Node, ctx: Ctx) {
     const qualifierN = node.childForFieldName("obj")
@@ -13,19 +25,9 @@ export function printDotAccess(node: Node, ctx: Ctx) {
     const qualifier = printNode(qualifierN, ctx) ?? empty()
     const field = printNode(fieldN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([
-        qualifier,
-        indent(concat([
-            softLine(),
-            text("."),
-            field,
-            ...trailing
-        ])),
-    ])
+    return group([qualifier, indent(concat([softLine(), text("."), field, ...trailing]))])
 }
 
 export function printFunctionCall(node: Node, ctx: Ctx) {
@@ -49,25 +51,17 @@ export function printBinaryExpression(node: Node, ctx: Ctx) {
 
     const left = printNode(leftN, ctx) ?? empty()
     const right = printNode(rightN, ctx) ?? empty()
-    const operator = operatorN.text;
+    const operator = operatorN.text
 
     const afterOperator = takeTrailing(leftN, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+        concat([text(" "), text(c.text)]),
+    )
 
-    return group([
-        left,
-        text(" " + operator),
-        ...afterOperator,
-        line(),
-        group([right]),
-    ])
+    return group([left, text(" " + operator), ...afterOperator, line(), group([right])])
 }
 
 export function printIdentifier(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
@@ -77,33 +71,25 @@ export const printNumberLiteral = (node: Node, _ctx: Ctx) => {
 }
 
 export function printStringLiteral(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
 export function printBooleanLiteral(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
 export function printNullLiteral(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
 export function printUnderscore(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
@@ -117,9 +103,7 @@ export function printUnaryOperator(node: Node, ctx: Ctx) {
     const operator = operatorN.text
     const argument = printNode(argumentN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(operator), argument, ...trailing])
 }
@@ -129,39 +113,33 @@ export function printParenthesizedExpression(node: Node, ctx: Ctx) {
     if (!innerN) return undefined
 
     const inner = printNode(innerN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text("("), inner, text(")"), ...trailing])
 }
 
 export function printTensorExpression(node: Node, ctx: Ctx) {
-    const expressions = node.namedChildren.filter(child => child !== null && child.type !== "," && child.type !== "(" && child.type !== ")") as Node[]
+    const expressions = node.namedChildren.filter(
+        child => child !== null && child.type !== "," && child.type !== "(" && child.type !== ")",
+    ) as Node[]
 
     if (expressions.length === 0) {
         return text("()")
     }
 
     const parts = expressions.map(expr => printNode(expr, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     if (parts.length === 1) {
         return concat([text("("), parts[0], text(")"), ...trailing])
     }
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([text(", "), part]))
 
     return group([
         text("("),
-        indent(concat([
-            softLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([softLine(), first, ...tailDocs])),
         softLine(),
         text(")"),
         ...trailing,
@@ -169,31 +147,27 @@ export function printTensorExpression(node: Node, ctx: Ctx) {
 }
 
 export function printTypedTuple(node: Node, ctx: Ctx) {
-    const expressions = node.namedChildren.filter(child => child !== null && child.type !== "," && child.type !== "[" && child.type !== "]") as Node[]
+    const expressions = node.namedChildren.filter(
+        child => child !== null && child.type !== "," && child.type !== "[" && child.type !== "]",
+    ) as Node[]
 
     if (expressions.length === 0) {
         return text("[]")
     }
 
     const parts = expressions.map(expr => printNode(expr, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     if (parts.length === 1) {
         return concat([text("["), parts[0], text("]"), ...trailing])
     }
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([text(", "), part]))
 
     return group([
         text("["),
-        indent(concat([
-            softLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([softLine(), first, ...tailDocs])),
         softLine(),
         text("]"),
         ...trailing,
@@ -209,9 +183,7 @@ export function printCastAsOperator(node: Node, ctx: Ctx) {
     const expr = printNode(exprN, ctx) ?? empty()
     const castedTo = printNode(castedToN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return group([expr, text(" as "), castedTo, ...trailing])
 }
@@ -227,9 +199,7 @@ export function printIsTypeOperator(node: Node, ctx: Ctx) {
     const operator = operatorN.text
     const rhsType = printNode(rhsTypeN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return group([expr, text(" "), text(operator), text(" "), rhsType, ...trailing])
 }
@@ -239,9 +209,7 @@ export function printNotNullOperator(node: Node, ctx: Ctx) {
     if (!innerN) return undefined
 
     const inner = printNode(innerN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([inner, text("!"), ...trailing])
 }
@@ -251,9 +219,7 @@ export function printLazyExpression(node: Node, ctx: Ctx) {
     if (!argumentN) return undefined
 
     const argument = printNode(argumentN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return group([text("lazy "), argument, ...trailing])
 }
@@ -269,50 +235,46 @@ export function printTernaryOperator(node: Node, ctx: Ctx) {
     const consequence = printNode(consequenceN, ctx) ?? empty()
     const alternative = printNode(alternativeN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return group([
         condition,
-        indent(concat([
-            softLine(),
-            text(" ? "),
-            consequence,
-            softLine(),
-            text(" : "),
-            alternative,
-            ...trailing,
-        ])),
+        indent(
+            concat([
+                softLine(),
+                text(" ? "),
+                consequence,
+                softLine(),
+                text(" : "),
+                alternative,
+                ...trailing,
+            ]),
+        ),
     ])
 }
 
 export function printArgumentList(node: Node, ctx: Ctx) {
-    const args = node.namedChildren.filter(child => child !== null && child.type === "call_argument") as Node[]
+    const args = node.namedChildren.filter(
+        child => child !== null && child.type === "call_argument",
+    ) as Node[]
 
     if (args.length === 0) {
         return text("()")
     }
 
     const parts = args.map(arg => printNode(arg, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     if (parts.length === 1) {
         return concat([text("("), parts[0], text(")"), ...trailing])
     }
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([text(", "), part]))
 
     return group([
         text("("),
-        indent(concat([
-            softLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([softLine(), first, ...tailDocs])),
         softLine(),
         text(")"),
         ...trailing,
@@ -324,9 +286,7 @@ export function printCallArgument(node: Node, ctx: Ctx) {
     if (!exprN) return undefined
 
     const expr = printNode(exprN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     // Check if there's a "mutate" keyword
     const mutateNode = node.children.find(child => child?.text === "mutate")
@@ -346,15 +306,15 @@ export function printObjectLiteral(node: Node, ctx: Ctx) {
     const type = typeN ? concat([printNode(typeN, ctx) ?? empty(), text(" ")]) : empty()
     const args = printNode(argumentsN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([type, args, ...trailing])
 }
 
 export function printObjectLiteralBody(node: Node, ctx: Ctx) {
-    const args = node.namedChildren.filter(child => child !== null && child.type === "instance_argument") as Node[]
+    const args = node.namedChildren.filter(
+        child => child !== null && child.type === "instance_argument",
+    ) as Node[]
 
     if (args.length === 1) {
         // Check if this is actually an empty object
@@ -371,21 +331,14 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx) {
     }
 
     const parts = args.map(arg => printNode(arg, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([hardLine(), part, text(",")]))
 
     return group([
         text("{"),
-        indent(concat([
-            hardLine(),
-            first,
-            text(","),
-            ...tailDocs,
-        ])),
+        indent(concat([hardLine(), first, text(","), ...tailDocs])),
         hardLine(),
         text("}"),
         ...trailing,
@@ -399,9 +352,7 @@ export function printInstanceArgument(node: Node, ctx: Ctx) {
     if (!nameN) return undefined
 
     const name = printNode(nameN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     // Check if there's a colon in the node
     const hasColon = node.children.some(child => child?.text === ":")
@@ -429,9 +380,7 @@ export function printTypeInstantiatedTs(node: Node, ctx: Ctx) {
     const name = printNode(nameN, ctx) ?? empty()
     const args = printNode(argumentsN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([name, args, ...trailing])
 }
@@ -445,9 +394,7 @@ export function printGenericInstantiation(node: Node, ctx: Ctx) {
     const expr = printNode(exprN, ctx) ?? empty()
     const instantiationTs = printNode(instantiationTsN, ctx) ?? empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([expr, instantiationTs, ...trailing])
 }
@@ -457,7 +404,10 @@ export function printInstantiationTList(node: Node, ctx: Ctx) {
 
     if (!typesN) {
         // Handle case where types are direct children
-        const types = node.namedChildren.filter(child => child !== null && child.type !== "," && child.type !== "<" && child.type !== ">") as Node[]
+        const types = node.namedChildren.filter(
+            child =>
+                child !== null && child.type !== "," && child.type !== "<" && child.type !== ">",
+        ) as Node[]
 
         if (types.length === 0) {
             return text("<>")
@@ -465,23 +415,19 @@ export function printInstantiationTList(node: Node, ctx: Ctx) {
 
         const parts = types.map(type => printNode(type, ctx) ?? empty())
         const trailing = takeTrailing(node, ctx.comments).map(c =>
-            concat([text(" "), text(c.text)])
-        );
+            concat([text(" "), text(c.text)]),
+        )
 
         if (parts.length === 1) {
             return concat([text("<"), parts[0], text(">"), ...trailing])
         }
 
-        const [first, ...rest] = parts;
+        const [first, ...rest] = parts
         const tailDocs = rest.map(part => concat([text(", "), part]))
 
         return group([
             text("<"),
-            indent(concat([
-                softLine(),
-                first,
-                ...tailDocs,
-            ])),
+            indent(concat([softLine(), first, ...tailDocs])),
             softLine(),
             text(">"),
             ...trailing,
@@ -489,9 +435,7 @@ export function printInstantiationTList(node: Node, ctx: Ctx) {
     }
 
     const types = printNode(typesN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text("<"), types, text(">"), ...trailing])
 }
@@ -503,54 +447,41 @@ export function printMatchExpression(node: Node, ctx: Ctx) {
     if (!exprN) return undefined
 
     const expr = printNode(exprN, ctx) ?? empty()
-    const body = bodyN ? printNode(bodyN, ctx) ?? empty() : text("{}")
+    const body = bodyN ? (printNode(bodyN, ctx) ?? empty()) : text("{}")
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([
-        text("match ("),
-        expr,
-        text(") "),
-        body,
-        ...trailing,
-    ])
+    return group([text("match ("), expr, text(") "), body, ...trailing])
 }
 
 export function printMatchBody(node: Node, ctx: Ctx) {
-    const arms = node.namedChildren.filter(child => child !== null && child.type === "match_arm") as Node[]
+    const arms = node.namedChildren.filter(
+        child => child !== null && child.type === "match_arm",
+    ) as Node[]
 
     if (arms.length === 0) {
         return text("{}")
     }
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    const tailDocs: Doc[] = [];
+    const tailDocs: Doc[] = []
     for (let i = 0; i < arms.length; i++) {
-        const arm = arms[i];
+        const arm = arms[i]
 
-        const leading = takeLeading(arm, ctx.comments).map(c =>
-            concat([text(c.text), hardLine()])
-        );
+        const leading = takeLeading(arm, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-        const doc = concat([...leading, printNode(arm, ctx) ?? empty()]);
-        tailDocs.push(doc);
+        const doc = concat([...leading, printNode(arm, ctx) ?? empty()])
+        tailDocs.push(doc)
 
         if (i < arms.length - 1) {
-            tailDocs.push(blank(blankLinesBetween(arm, arms[i + 1])));
+            tailDocs.push(blank(blankLinesBetween(arm, arms[i + 1])))
         }
     }
 
     return group([
         text("{"),
-        indent(concat([
-            hardLine(),
-            ...tailDocs,
-        ])),
+        indent(concat([hardLine(), ...tailDocs])),
         hardLine(),
         text("}"),
         ...trailing,
@@ -561,18 +492,17 @@ export function printMatchArm(node: Node, ctx: Ctx) {
     const patternTypeN = node.childForFieldName("pattern_type")
     const patternExprN = node.childForFieldName("pattern_expr")
     const patternElseN = node.childForFieldName("pattern_else")
-    const bodyBlockN = node.childForFieldName("block");
-    const bodyN = bodyBlockN
-        ?? node.childForFieldName("return")
-        ?? node.childForFieldName("throw")
-        ?? node.childForFieldName("expr")
+    const bodyBlockN = node.childForFieldName("block")
+    const bodyN =
+        bodyBlockN ??
+        node.childForFieldName("return") ??
+        node.childForFieldName("throw") ??
+        node.childForFieldName("expr")
 
     if (!bodyN) return undefined
 
     const body = printNode(bodyN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     let pattern = empty()
     if (patternTypeN) {
@@ -593,9 +523,7 @@ export function printMatchArm(node: Node, ctx: Ctx) {
 }
 
 export function printNumericIndex(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }

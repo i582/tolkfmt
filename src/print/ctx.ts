@@ -1,5 +1,5 @@
-import {CommentMap} from "../comments";
+import {CommentMap} from "../comments"
 
 export type Ctx = {
-    readonly comments: CommentMap;
+    readonly comments: CommentMap
 }

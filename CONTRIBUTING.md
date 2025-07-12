@@ -115,4 +115,4 @@ yarn test --testNamePattern="test name"
 
 # Debug CLI
 node --inspect bin/tolkfmt file.tolk
-``` 
+```

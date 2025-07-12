@@ -1,24 +1,33 @@
-import {Node} from "web-tree-sitter";
-import {blank, blankLinesBetween, concat, Doc, empty, group, hardLine, indent, softLine, text} from "../doc";
-import {takeLeading, takeTrailing} from "../comments";
+import {Node} from "web-tree-sitter"
+import {
+    blank,
+    blankLinesBetween,
+    concat,
+    Doc,
+    empty,
+    group,
+    hardLine,
+    indent,
+    softLine,
+    text,
+} from "../doc"
+import {takeLeading, takeTrailing} from "../comments"
 
-import {Ctx} from "./ctx";
-import {printNode} from "./node";
+import {Ctx} from "./ctx"
+import {printNode} from "./node"
 
 export function printSourceFile(node: Node, ctx: Ctx) {
-    const decls = node.children
-        .filter(it => it !== null)
-        .filter(it => it?.type !== "comment");
+    const decls = node.children.filter(it => it !== null).filter(it => it?.type !== "comment")
 
-    const docs: Doc[] = [];
+    const docs: Doc[] = []
     for (let i = 0; i < decls.length; i++) {
-        const decl = decls[i];
+        const decl = decls[i]
 
-        const doc = concat([printNode(decl, ctx) ?? empty()]);
-        docs.push(doc);
+        const doc = concat([printNode(decl, ctx) ?? empty()])
+        docs.push(doc)
 
         if (i < decls.length - 1) {
-            docs.push(blank(blankLinesBetween(decl, decls[i + 1])));
+            docs.push(blank(blankLinesBetween(decl, decls[i + 1])))
         }
 
         if (i === decls.length - 1) {
@@ -30,9 +39,7 @@ export function printSourceFile(node: Node, ctx: Ctx) {
 }
 
 export function printVersionValue(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
@@ -43,26 +50,14 @@ export function printTypeAlias(node: Node, ctx: Ctx) {
 
     if (!nameN || !typeN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     const name = text(nameN.text)
     const type = printNode(typeN, ctx) ?? empty()
 
-    return group([
-        ...leading,
-        text("type"),
-        text(" "),
-        name,
-        text(" = "),
-        type,
-        ...trailing,
-    ])
+    return group([...leading, text("type"), text(" "), name, text(" = "), type, ...trailing])
 }
 
 export function printFunction(node: Node, ctx: Ctx) {
@@ -73,9 +68,7 @@ export function printFunction(node: Node, ctx: Ctx) {
 
     if (!nameN || !parametersN || !bodyN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const name = text(nameN.text)
     const parameters = printNode(parametersN, ctx) ?? empty()
@@ -87,43 +80,31 @@ export function printFunction(node: Node, ctx: Ctx) {
         returnTypePart = concat([text(": "), returnType])
     }
 
-    return group([
-        ...leading,
-        text("fun "),
-        name,
-        parameters,
-        returnTypePart,
-        text(" "),
-        body,
-    ])
+    return group([...leading, text("fun "), name, parameters, returnTypePart, text(" "), body])
 }
 
 export function printParameterList(node: Node, ctx: Ctx) {
-    const params = node.namedChildren.filter(child => child !== null && child.type === "parameter_declaration") as Node[]
+    const params = node.namedChildren
+        .filter(child => child?.type === "parameter_declaration")
+        .filter(child => child !== null)
 
     if (params.length === 0) {
         return text("()")
     }
 
     const parts = params.map(param => printNode(param, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     if (parts.length === 1) {
         return concat([text("("), parts[0], text(")"), ...trailing])
     }
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([text(", "), part]))
 
     return group([
         text("("),
-        indent(concat([
-            softLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([softLine(), first, ...tailDocs])),
         softLine(),
         text(")"),
         ...trailing,
@@ -139,9 +120,7 @@ export function printParameterDeclaration(node: Node, ctx: Ctx) {
     if (!nameN) return undefined
 
     const name = printNode(nameN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     let result = [name]
 
@@ -163,9 +142,7 @@ export function printParameterDeclaration(node: Node, ctx: Ctx) {
 }
 
 export function printBuiltinSpecifier(node: Node, ctx: Ctx) {
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text("builtin"), ...trailing])
 }
@@ -177,13 +154,9 @@ export function printConstantDeclaration(node: Node, ctx: Ctx) {
 
     if (!nameN || !valueN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     const name = text(nameN.text)
     const value = printNode(valueN, ctx) ?? empty()
@@ -210,9 +183,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx) {
 
     if (!receiverN || !nameN || !parametersN || !bodyN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const receiver = printNode(receiverN, ctx) ?? empty()
     const name = text(nameN.text)
@@ -245,9 +216,7 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx) {
 
     if (!nameN || !parametersN || !bodyN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const name = text(nameN.text)
     const parameters = printNode(parametersN, ctx) ?? empty()
@@ -259,15 +228,7 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx) {
         returnTypePart = concat([text(": "), returnType])
     }
 
-    return group([
-        ...leading,
-        text("get fun "),
-        name,
-        parameters,
-        returnTypePart,
-        text(" "),
-        body,
-    ])
+    return group([...leading, text("get fun "), name, parameters, returnTypePart, text(" "), body])
 }
 
 export function printTolkRequiredVersion(node: Node, ctx: Ctx) {
@@ -275,9 +236,7 @@ export function printTolkRequiredVersion(node: Node, ctx: Ctx) {
     if (!valueN) return undefined
 
     const value = printNode(valueN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text("tolk "), value, ...trailing])
 }
@@ -286,21 +245,12 @@ export function printImportDirective(node: Node, ctx: Ctx) {
     const pathN = node.childForFieldName("path")
     if (!pathN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const path = printNode(pathN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([
-        ...leading,
-        text("import "),
-        path,
-        ...trailing,
-    ])
+    return group([...leading, text("import "), path, ...trailing])
 }
 
 export function printGlobalVarDeclaration(node: Node, ctx: Ctx) {
@@ -310,17 +260,13 @@ export function printGlobalVarDeclaration(node: Node, ctx: Ctx) {
 
     if (!nameN || !typeN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const name = printNode(nameN, ctx) ?? empty()
     const type = printNode(typeN, ctx) ?? empty()
-    const annotations = annotationsN ? printNode(annotationsN, ctx) ?? empty() : empty()
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return group([
         ...leading,
@@ -343,19 +289,17 @@ export function printStructDeclaration(node: Node, ctx: Ctx) {
 
     if (!nameN) return undefined
 
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const name = printNode(nameN, ctx) ?? empty()
-    const body = bodyN ? printNode(bodyN, ctx) ?? empty() : empty()
-    const annotations = annotationsN ? printNode(annotationsN, ctx) ?? empty() : empty()
-    const typeParameters = typeParametersN ? printNode(typeParametersN, ctx) ?? empty() : empty()
-    const packPrefix = packPrefixN ? concat([text("("), printNode(packPrefixN, ctx) ?? empty(), text(")")]) : empty()
+    const body = bodyN ? (printNode(bodyN, ctx) ?? empty()) : empty()
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
+    const typeParameters = typeParametersN ? (printNode(typeParametersN, ctx) ?? empty()) : empty()
+    const packPrefix = packPrefixN
+        ? concat([text("("), printNode(packPrefixN, ctx) ?? empty(), text(")")])
+        : empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return group([
         ...leading,
@@ -372,27 +316,23 @@ export function printStructDeclaration(node: Node, ctx: Ctx) {
 }
 
 export function printStructBody(node: Node, ctx: Ctx) {
-    const fields = node.namedChildren.filter(child => child !== null && child.type === "struct_field_declaration") as Node[]
+    const fields = node.namedChildren
+        .filter(child => child?.type === "struct_field_declaration")
+        .filter(child => child !== null)
 
     if (fields.length === 0) {
         return text("{}")
     }
 
     const parts = fields.map(field => printNode(field, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([hardLine(), part]))
 
     return group([
         text("{"),
-        indent(concat([
-            hardLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([hardLine(), first, ...tailDocs])),
         hardLine(),
         text("}"),
         ...trailing,
@@ -408,11 +348,9 @@ export function printStructFieldDeclaration(node: Node, ctx: Ctx) {
 
     const name = printNode(nameN, ctx) ?? empty()
     const type = printNode(typeN, ctx) ?? empty()
-    const defaultVal = defaultN ? printNode(defaultN, ctx) ?? empty() : empty()
+    const defaultVal = defaultN ? (printNode(defaultN, ctx) ?? empty()) : empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     let result = [name, text(": "), type]
 
@@ -424,31 +362,27 @@ export function printStructFieldDeclaration(node: Node, ctx: Ctx) {
 }
 
 export function printTypeParameters(node: Node, ctx: Ctx) {
-    const params = node.namedChildren.filter(child => child !== null && child.type === "type_parameter") as Node[]
+    const params = node.namedChildren
+        .filter(child => child?.type === "type_parameter")
+        .filter(child => child !== null)
 
     if (params.length === 0) {
         return text("<>")
     }
 
     const parts = params.map(param => printNode(param, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     if (parts.length === 1) {
         return concat([text("<"), parts[0], text(">"), ...trailing])
     }
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([text(", "), part]))
 
     return group([
         text("<"),
-        indent(concat([
-            softLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([softLine(), first, ...tailDocs])),
         softLine(),
         text(">"),
         ...trailing,
@@ -462,11 +396,9 @@ export function printTypeParameter(node: Node, ctx: Ctx) {
     if (!nameN) return undefined
 
     const name = printNode(nameN, ctx) ?? empty()
-    const defaultVal = defaultN ? printNode(defaultN, ctx) ?? empty() : empty()
+    const defaultVal = defaultN ? (printNode(defaultN, ctx) ?? empty()) : empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     let result = [name]
 
@@ -478,23 +410,16 @@ export function printTypeParameter(node: Node, ctx: Ctx) {
 }
 
 export function printAsmBody(node: Node, ctx: Ctx) {
-    const leading = takeLeading(node, ctx.comments).map(c =>
-        concat([text(c.text), hardLine()])
-    );
+    const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    const strings = node.namedChildren.filter(child => child !== null && child.type === "string_literal") as Node[]
+    const strings = node.namedChildren
+        .filter(child => child?.type === "string_literal")
+        .filter(child => child !== null)
     const stringParts = strings.map(str => printNode(str, ctx) ?? empty())
 
-    return group([
-        ...leading,
-        text("asm "),
-        ...stringParts,
-        ...trailing,
-    ])
+    return group([...leading, text("asm "), ...stringParts, ...trailing])
 }
 
 export function printMethodReceiver(node: Node, ctx: Ctx) {
@@ -502,71 +427,60 @@ export function printMethodReceiver(node: Node, ctx: Ctx) {
     if (!receiverTypeN) return undefined
 
     const receiverType = printNode(receiverTypeN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([receiverType, text("."), ...trailing])
 }
 
 export function printAnnotationList(node: Node, ctx: Ctx) {
-    const annotations = node.namedChildren.filter(child => child !== null && child.type === "annotation") as Node[]
+    const annotations = node.namedChildren
+        .filter(child => child?.type === "annotation")
+        .filter(child => child !== null)
 
     if (annotations.length === 0) {
         return empty()
     }
 
     const parts = annotations.map(annotation => printNode(annotation, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return concat([
-        ...parts.map(part => concat([part, hardLine()])),
-        ...trailing,
-    ])
+    return concat([...parts.map(part => concat([part, hardLine()])), ...trailing])
 }
 
 export function printAnnotation(node: Node, ctx: Ctx) {
     const nameN = node.childForFieldName("name")
     const argumentsN = node.childForFieldName("arguments")
 
-    const name = nameN ? printNode(nameN, ctx) ?? empty() : empty()
-    const args = argumentsN ? printNode(argumentsN, ctx) ?? empty() : empty()
+    const name = nameN ? (printNode(nameN, ctx) ?? empty()) : empty()
+    const args = argumentsN ? (printNode(argumentsN, ctx) ?? empty()) : empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text("@"), name, args, ...trailing])
 }
 
 export function printAnnotationArguments(node: Node, ctx: Ctx) {
-    const exprs = node.namedChildren.filter(child => child !== null && child.type !== "," && child.type !== "(" && child.type !== ")") as Node[]
+    const exprs = node.namedChildren
+        .filter(child => child?.type !== "," && child?.type !== "(" && child?.type !== ")")
+        .filter(child => child !== null)
 
     if (exprs.length === 0) {
         return text("()")
     }
 
     const parts = exprs.map(expr => printNode(expr, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)])
-    );
+    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     if (parts.length === 1) {
         return concat([text("("), parts[0], text(")"), ...trailing])
     }
 
-    const [first, ...rest] = parts;
+    const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([text(", "), part]))
 
     return group([
         text("("),
-        indent(concat([
-            softLine(),
-            first,
-            ...tailDocs,
-        ])),
+        indent(concat([softLine(), first, ...tailDocs])),
         softLine(),
         text(")"),
         ...trailing,

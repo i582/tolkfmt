@@ -1,52 +1,51 @@
-import {Doc, empty} from "./doc";
+import {Doc, empty} from "./doc"
 
 export function render(doc: Doc, printWidth: number): string {
-    type Mode = "flat" | "break";
+    type Mode = "flat" | "break"
 
     interface Frame {
-        doc: Doc;
-        mode: Mode;
-        indent: number;
+        doc: Doc
+        mode: Mode
+        indent: number
     }
 
-    const out: string[] = [];
-    const lineSuffix: Doc[] = [];          // очередь suffix'ов к концу физ. строки
-    const stack: Frame[] = [{doc, mode: "break", indent: 0}];
+    const out: string[] = []
+    const lineSuffix: Doc[] = []
+    const stack: Frame[] = [{doc, mode: "break", indent: 0}]
 
     function fits(d: Doc, w: number): boolean {
-        const fitStack: Doc[] = [d];
-        let width = w;
+        const fitStack: Doc[] = [d]
+        let width = w
 
         while (width >= 0 && fitStack.length) {
-            const cur = fitStack.pop()!;
+            const cur = fitStack.pop()!
             switch (cur.$) {
                 case "Text":
-                    width -= cur.value.length;
-                    break;
+                    width -= cur.value.length
+                    break
                 case "Line":
-                    width -= 1;            // станет пробелом в «flat»
-                    break;
+                    width -= 1
+                    break
                 case "SoftLine":
-                    // превращается в «ничего» в flat-режиме
-                    break;
+                    break
                 case "HardLine":
-                    return true;           // в плоском режиме hardline невозможен
+                    return true
                 case "Concat":
                     for (let i = cur.parts.length - 1; i >= 0; i--) {
-                        fitStack.push(cur.parts[i]);
+                        fitStack.push(cur.parts[i])
                     }
-                    break;
+                    break
                 case "Indent":
-                    fitStack.push(cur.content);
-                    break;
+                    fitStack.push(cur.content)
+                    break
                 case "Group":
-                    fitStack.push(cur.content); // группа внутри flat => тоже flat
-                    break;
+                    fitStack.push(cur.content)
+                    break
                 case "LineSuffix":
-                    fitStack.push(cur.suffix);
-                    break;
+                    fitStack.push(cur.suffix)
+                    break
                 case "BreakParent":
-                    return true;           // вынудит разрыв, значит не влезает
+                    return true
                 case "IfBreak":
                     if (cur.flatContent) {
                         fitStack.push(cur.flatContent)
@@ -54,116 +53,110 @@ export function render(doc: Doc, printWidth: number): string {
                     break
             }
         }
-        return width >= 0;
+        return width >= 0
     }
 
-    // ---------------------------------------------------------------------------
-    // Главный цикл
+    // main loop
     while (stack.length) {
-        const {doc: cur, mode, indent} = stack.pop()!;
+        const {doc: cur, mode, indent} = stack.pop()!
 
         switch (cur.$) {
             case "Text":
-                out.push(cur.value);
-                break;
+                out.push(cur.value)
+                break
 
             case "Line":
                 if (mode === "flat") {
-                    out.push(" ");
+                    out.push(" ")
                 } else {
-                    flushLineSuffix();
-                    out.push("\n");
+                    flushLineSuffix()
+                    out.push("\n")
                     if (indent !== 0) {
-                        out.push(" ".repeat(indent));
+                        out.push(" ".repeat(indent))
                     }
                 }
-                break;
+                break
 
             case "SoftLine":
                 if (mode !== "flat") {
-                    flushLineSuffix();
-                    out.push("\n");
+                    flushLineSuffix()
+                    out.push("\n")
                     if (indent !== 0) {
-                        out.push(" ".repeat(indent));
+                        out.push(" ".repeat(indent))
                     }
                 }
-                break;
+                break
 
             case "HardLine":
-                flushLineSuffix();
-                out.push("\n");
+                flushLineSuffix()
+                out.push("\n")
                 if (indent !== 0) {
-                    out.push(" ".repeat(indent));
+                    out.push(" ".repeat(indent))
                 }
-                break;
+                break
 
             case "Concat":
                 for (let i = cur.parts.length - 1; i >= 0; i--) {
-                    stack.push({doc: cur.parts[i], mode, indent});
+                    stack.push({doc: cur.parts[i], mode, indent})
                 }
-                break;
+                break
 
             case "Indent":
-                stack.push({doc: cur.content, mode, indent: indent + cur.indent});
-                break;
+                stack.push({doc: cur.content, mode, indent: indent + cur.indent})
+                break
 
             case "Group": {
-                const shouldFlat = fits(cur.content, printWidth - currentColumn(out));
-                stack.push({doc: cur.content, mode: shouldFlat ? "flat" : "break", indent});
-                break;
+                const shouldFlat = fits(cur.content, printWidth - currentColumn(out))
+                stack.push({doc: cur.content, mode: shouldFlat ? "flat" : "break", indent})
+                break
             }
 
             case "LineSuffix":
-                lineSuffix.push(cur.suffix);
-                break;
+                lineSuffix.push(cur.suffix)
+                break
 
             case "BreakParent":
-                // Сигнал вверх: превращаем текущий режим в break
-                // (Алгоритм: просто вставляем hardline прямо здесь.)
-                flushLineSuffix();
-                out.push("\n");
+                flushLineSuffix()
+                out.push("\n")
                 if (indent !== 0) {
-                    out.push(" ".repeat(indent));
+                    out.push(" ".repeat(indent))
                 }
-                break;
+                break
 
             case "IfBreak":
                 stack.push({
-                    doc: mode === "break"
-                        ? cur.breakContent ?? empty()
-                        : cur.flatContent ?? empty(),
+                    doc:
+                        mode === "break"
+                            ? (cur.breakContent ?? empty())
+                            : (cur.flatContent ?? empty()),
                     mode,
-                    indent
-                });
-                break;
+                    indent,
+                })
+                break
         }
     }
 
-    return out.join("");
+    return out.join("")
 
-    // ---------------------------------------------------------------------------
-    // helpers
     function currentColumn(buf: string[]): number {
-        let col = 0;
+        let col = 0
 
-        // идём от конца массива; так трогаем только куски последней строки
         for (let i = buf.length - 1; i >= 0; i--) {
-            const piece = buf[i];
-            const nl = piece.lastIndexOf("\n");
+            const piece = buf[i]
+            const nl = piece.lastIndexOf("\n")
 
             if (nl !== -1) {
-                // в кусочке есть перевод строки: всё, столбец найден
-                return col + piece.length - nl - 1;
+                return col + piece.length - nl - 1
             }
-            col += piece.length;       // на строке нет \n, прибавляем всю длину
+            col += piece.length
         }
-        return col;                    // \n не нашли — значит, одна-единственная строка
+        return col
     }
 
     function flushLineSuffix() {
         while (lineSuffix.length) {
-            const suffix = lineSuffix.shift()!;
-            stack.push({doc: suffix, mode: "flat", indent: 0}); // suffix → выводим немедленно
+            const suffix = lineSuffix.shift()!
+            stack.push({doc: suffix, mode: "flat", indent: 0})
         }
     }
 }
