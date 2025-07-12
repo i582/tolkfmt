@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -d",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "precommit": "yarn build && yarn test"
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.0.4",

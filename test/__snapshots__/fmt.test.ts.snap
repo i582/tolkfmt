@@ -33,3 +33,1398 @@ exports[`Formatter should format 4`] = `
 
 "
 `;
+
+exports[`Formatter should format advanced expressions 1`] = `
+"fun test() {
+    x += 1;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 2`] = `
+"fun test() {
+    x -= 1;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 3`] = `
+"fun test() {
+    x *= 2;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 4`] = `
+"fun test() {
+    x /= 2;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 5`] = `
+"fun test() {
+    x %= 3;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 6`] = `
+"fun test() {
+    x <<= 2;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 7`] = `
+"fun test() {
+    x >>= 2;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 8`] = `
+"fun test() {
+    x &= mask;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 9`] = `
+"fun test() {
+    x |= flag;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 10`] = `
+"fun test() {
+    x ^= value;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced expressions 11`] = `
+"fun test() {
+    veryLongVariableName += veryLongExpressionValue;
+}
+
+"
+`;
+
+exports[`Formatter should format advanced functions 1`] = `
+"
+
+"
+`;
+
+exports[`Formatter should format advanced functions 2`] = `
+"
+
+"
+`;
+
+exports[`Formatter should format advanced functions 3`] = `
+"
+
+"
+`;
+
+exports[`Formatter should format advanced functions 4`] = `
+"
+
+"
+`;
+
+exports[`Formatter should format advanced types 1`] = `
+"fun test(callback: int -> string) {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format advanced types 2`] = `
+"fun test(callback: (int, string) -> bool) {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format advanced types 3`] = `
+"fun test(callback: VeryLongType -> AnotherLongType) {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 1`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 2`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 3`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 4`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 5`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 6`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format annotations 7`] = `
+"@annotation
+
+global myVar: int
+
+"
+`;
+
+exports[`Formatter should format annotations 8`] = `
+"@annotation
+
+struct MyStruct { x: int =  }
+
+"
+`;
+
+exports[`Formatter should format basic types 1`] = `
+"type OptionalInt = int?
+
+"
+`;
+
+exports[`Formatter should format basic types 2`] = `
+"type OptionalString = string?
+
+"
+`;
+
+exports[`Formatter should format basic types 3`] = `
+"type ParenType = (int)
+
+"
+`;
+
+exports[`Formatter should format basic types 4`] = `
+"type EmptyTensor = ()
+
+"
+`;
+
+exports[`Formatter should format basic types 5`] = `
+"type SingleTensor = (int)
+
+"
+`;
+
+exports[`Formatter should format basic types 6`] = `
+"type DoubleTensor = (int, string)
+
+"
+`;
+
+exports[`Formatter should format basic types 7`] = `
+"type LongTensor = (
+    VeryLongTypeName, AnotherVeryLongTypeName, ThirdLongTypeName
+)
+
+"
+`;
+
+exports[`Formatter should format basic types 8`] = `
+"type EmptyTuple = []
+
+"
+`;
+
+exports[`Formatter should format basic types 9`] = `
+"type SingleTuple = [int]
+
+"
+`;
+
+exports[`Formatter should format basic types 10`] = `
+"type DoubleTuple = [int, string]
+
+"
+`;
+
+exports[`Formatter should format basic types 11`] = `
+"type LongTuple = [
+    VeryLongTypeName, AnotherVeryLongTypeName, ThirdLongTypeName
+]
+
+"
+`;
+
+exports[`Formatter should format control flow statements 1`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 2`] = `
+"fun test() {
+    return 42
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 3`] = `
+"fun test() {
+    return someVeryLongExpression
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 4`] = `
+"fun test() {
+    while (true) {
+        break
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 5`] = `
+"fun test() {
+    while (true) {
+        continue
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 6`] = `
+"fun test() {
+    throw 42
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 7`] = `
+"fun test() {
+    throw (1, 2)
+}
+
+"
+`;
+
+exports[`Formatter should format control flow statements 8`] = `
+"fun test() {
+    throw someVeryLongExpression
+}
+
+"
+`;
+
+exports[`Formatter should format error handling 1`] = `
+"fun test() {
+    assert(true) throw 1
+}
+
+"
+`;
+
+exports[`Formatter should format error handling 2`] = `
+"fun test() {
+    assert(condition, 42)
+}
+
+"
+`;
+
+exports[`Formatter should format error handling 3`] = `
+"fun test() {
+    assert(veryLongCondition) throw veryLongException
+}
+
+"
+`;
+
+exports[`Formatter should format error handling 4`] = `
+"fun test() {
+    try {
+        doSomething();
+    } catch (, ){
+        handleError();
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format error handling 5`] = `
+"fun test() {
+    try {
+        doSomething();
+    } catch (e, ){
+        handleError(e);
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format error handling 6`] = `
+"fun test() {
+    try {
+        doSomething();
+    } catch (e, code){
+        handleError(e, code);
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 1`] = `
+"fun test() {
+    foo();
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 2`] = `
+"fun test() {
+    veryLongFunctionName();
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 3`] = `
+"fun test() {
+    foo(42);
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 4`] = `
+"fun test() {
+    foo(1, 2);
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 5`] = `
+"fun test() {
+    foo(1, 2, 3);
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 6`] = `
+"fun test() {
+    foo(
+        veryLongArgument, anotherVeryLongArgument, thirdLongArgument
+    );
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 7`] = `
+"fun test() {
+    foo(mutate x);
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 8`] = `
+"fun test() {
+    foo(x, mutate y);
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 9`] = `
+"fun test() {
+    foo().bar();
+}
+
+"
+`;
+
+exports[`Formatter should format function calls 10`] = `
+"fun test() {
+    foo(x).bar(y);
+}
+
+"
+`;
+
+exports[`Formatter should format functions 1`] = `
+"fun test() {
+    return 42
+}
+
+"
+`;
+
+exports[`Formatter should format functions 2`] = `
+"fun test(x: int) {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 3`] = `
+"fun test(x: int, y: string) {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 4`] = `
+"fun test(x: int, y: string, z: bool) {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 5`] = `
+"fun test(x: int = 42) {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 6`] = `
+"fun test(x: int, y: string = "hello") {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 7`] = `
+"fun test(mutate x: int) {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 8`] = `
+"fun test(x: int, mutate y: string) {
+    return x
+}
+
+"
+`;
+
+exports[`Formatter should format functions 9`] = `
+"fun test(): int {
+    return 42
+}
+
+"
+`;
+
+exports[`Formatter should format functions 10`] = `
+"fun test(x: int): string {
+    return "hello"
+}
+
+"
+`;
+
+exports[`Formatter should format functions 11`] = `
+"fun test(
+    veryLongParameterName: VeryLongTypeName, anotherLongParameter: AnotherLongType
+): ReturnType {
+    return value
+}
+
+"
+`;
+
+exports[`Formatter should format functions 12`] = `
+"fun MyType.test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format functions 13`] = `
+"fun MyType.test(x: int): string {
+    return "hello"
+}
+
+"
+`;
+
+exports[`Formatter should format functions 14`] = `
+"get test() {
+    return 42
+}
+
+"
+`;
+
+exports[`Formatter should format functions 15`] = `
+"get test(): int {
+    return 42
+}
+
+"
+`;
+
+exports[`Formatter should format generics 1`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format generics 2`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format generics 3`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format generics 4`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format generics 5`] = `
+"fun test() {
+    return
+}
+
+"
+`;
+
+exports[`Formatter should format generics 6`] = `
+"fun test() {
+    val x: List<int>
+}
+
+"
+`;
+
+exports[`Formatter should format generics 7`] = `
+"fun test() {
+    val x: Map<string>
+}
+
+"
+`;
+
+exports[`Formatter should format generics 8`] = `
+"fun test() {
+    val x: VeryLongType<VeryLongGenericParameter>
+}
+
+"
+`;
+
+exports[`Formatter should format generics 9`] = `
+"
+struct MyStruct<T = > { value: T =  }
+
+"
+`;
+
+exports[`Formatter should format generics 10`] = `
+"
+struct MyStruct<T = , U = > {first: T = , second: U = }
+
+"
+`;
+
+exports[`Formatter should format loops 1`] = `
+"fun test() {
+    while (true) {
+        break
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format loops 2`] = `
+"fun test() {
+    while (condition) {
+        doSomething();
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format loops 3`] = `
+"fun test() {
+    while (
+        veryLongCondition
+    ) {
+        doSomething();
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format loops 4`] = `
+"fun test() {
+    do {
+        doSomething();
+    } while (true)
+}
+
+"
+`;
+
+exports[`Formatter should format loops 5`] = `
+"fun test() {
+    do {
+        doSomething();
+    } while (condition)
+}
+
+"
+`;
+
+exports[`Formatter should format loops 6`] = `
+"fun test() {
+    do {
+        doSomething();
+    } while (veryLongCondition)
+}
+
+"
+`;
+
+exports[`Formatter should format loops 7`] = `
+"fun test() {
+    repeat (10) {
+        doSomething();
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format loops 8`] = `
+"fun test() {
+    repeat (count) {
+        doSomething();
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format loops 9`] = `
+"fun test() {
+    repeat (
+        veryLongCount
+    ) {
+        doSomething();
+    }
+}
+
+"
+`;
+
+exports[`Formatter should format misc constructs 1`] = `
+"fun test() {
+    x.0;
+}
+
+"
+`;
+
+exports[`Formatter should format misc constructs 2`] = `
+"fun test() {
+    x.42;
+}
+
+"
+`;
+
+exports[`Formatter should format misc constructs 3`] = `
+"fun test() {
+    getValue().0;
+}
+
+"
+`;
+
+exports[`Formatter should format objects 1`] = `
+"fun test() {
+    {};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 2`] = `
+"fun test() {
+    {foo: 1};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 3`] = `
+"fun test() {
+    {foo: 1, bar: 2};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 4`] = `
+"fun test() {
+    {foo: 1, bar: 2, baz: 3};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 5`] = `
+"fun test() {
+    MyType{foo: 1};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 6`] = `
+"fun test() {
+    MyType{foo: 1, bar: 2};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 7`] = `
+"fun test() {
+    {veryLongFieldName: veryLongValue, anotherLongField: anotherLongValue};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 8`] = `
+"fun test() {
+    {
+        foo;
+    };
+}
+
+"
+`;
+
+exports[`Formatter should format objects 9`] = `
+"fun test() {
+    {foo:};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 10`] = `
+"fun test() {
+    {foo: 1, bar:, baz};
+}
+
+"
+`;
+
+exports[`Formatter should format objects 11`] = `
+"fun test() {
+    {foo: {bar: 1}};
+}
+
+"
+`;
+
+exports[`Formatter should format operators 1`] = `
+"fun test() {
+    42 as int;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 2`] = `
+"fun test() {
+    someValue as SomeType;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 3`] = `
+"fun test() {
+    x is int;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 4`] = `
+"fun test() {
+    x !is int;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 5`] = `
+"fun test() {
+    x!;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 6`] = `
+"fun test() {
+    getValue()!;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 7`] = `
+"fun test() {
+    lazy expr;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 8`] = `
+"fun test() {
+    lazy veryLongExpression;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 9`] = `
+"fun test() {
+    true ? 1 : 2;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 10`] = `
+"fun test() {
+    condition ? veryLongConsequence : veryLongAlternative;
+}
+
+"
+`;
+
+exports[`Formatter should format pattern matching 1`] = `
+"fun test() {
+    
+}
+
+"
+`;
+
+exports[`Formatter should format pattern matching 2`] = `
+"fun test() {
+    
+}
+
+"
+`;
+
+exports[`Formatter should format pattern matching 3`] = `
+"fun test() {
+    
+}
+
+"
+`;
+
+exports[`Formatter should format pattern matching 4`] = `
+"fun test() {
+    
+}
+
+"
+`;
+
+exports[`Formatter should format pattern matching 5`] = `
+"fun test() {
+    
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 1`] = `
+"fun test() {
+    x = 42;
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 2`] = `
+"fun test() {
+    veryLongVariableName = veryLongExpressionValue;
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 3`] = `
+"fun test() {
+    !true;
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 4`] = `
+"fun test() {
+    ~42;
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 5`] = `
+"fun test() {
+    -42;
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 6`] = `
+"fun test() {
+    +42;
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 7`] = `
+"fun test() {
+    (42);
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 8`] = `
+"fun test() {
+    (veryLongExpression);
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 9`] = `
+"fun test() {
+    ();
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 10`] = `
+"fun test() {
+    (42);
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 11`] = `
+"fun test() {
+    (1, 2);
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 12`] = `
+"fun test() {
+    (
+        veryLongExpression, anotherVeryLongExpression, thirdLongExpression
+    );
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 13`] = `
+"fun test() {
+    [];
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 14`] = `
+"fun test() {
+    [42];
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 15`] = `
+"fun test() {
+    [1, 2];
+}
+
+"
+`;
+
+exports[`Formatter should format simple expressions 16`] = `
+"fun test() {
+    [
+        veryLongExpression, anotherVeryLongExpression, thirdLongExpression
+    ];
+}
+
+"
+`;
+
+exports[`Formatter should format simple literals 1`] = `
+"const msg = "hello world"
+
+"
+`;
+
+exports[`Formatter should format simple literals 2`] = `
+"const msg = "hello world"w
+
+"
+`;
+
+exports[`Formatter should format simple literals 3`] = `
+"fun test() {
+    "hello world";
+}
+
+"
+`;
+
+exports[`Formatter should format simple literals 4`] = `
+"const flag = true
+
+"
+`;
+
+exports[`Formatter should format simple literals 5`] = `
+"const flag = false
+
+"
+`;
+
+exports[`Formatter should format simple literals 6`] = `
+"fun test() {
+    true;
+}
+
+"
+`;
+
+exports[`Formatter should format simple literals 7`] = `
+"const value = null
+
+"
+`;
+
+exports[`Formatter should format simple literals 8`] = `
+"fun test() {
+    null;
+}
+
+"
+`;
+
+exports[`Formatter should format simple literals 9`] = `
+"fun test() {
+    _;
+}
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 1`] = `
+"tolk 0.6
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 2`] = `
+"tolk 0.6.0
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 3`] = `
+"import "file.tolk"
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 4`] = `
+"import "very/long/path/to/file.tolk"
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 5`] = `
+"
+global myVar: int
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 6`] = `
+"
+global myVar: VeryLongTypeName
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 7`] = `
+"fun test() {
+    ;
+}
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 8`] = `
+"fun test() {
+    doSomething();;
+}
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 9`] = `
+"
+struct MyStruct {}
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 10`] = `
+"
+struct MyStruct { x: int =  }
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 11`] = `
+"
+struct MyStruct {x: int = , y: string = }
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 12`] = `
+"
+struct MyStruct {x: int = 42, y: string = "hello"}
+
+"
+`;
+
+exports[`Formatter should format top-level declarations 13`] = `
+"
+struct (8)MyStruct { x: int =  }
+
+"
+`;
+
+exports[`Formatter should format variables 1`] = `
+"fun test() {
+    var x
+}
+
+"
+`;
+
+exports[`Formatter should format variables 2`] = `
+"fun test() {
+    val x
+}
+
+"
+`;
+
+exports[`Formatter should format variables 3`] = `
+"fun test() {
+    var x = 42
+}
+
+"
+`;
+
+exports[`Formatter should format variables 4`] = `
+"fun test() {
+    val x = 42
+}
+
+"
+`;
+
+exports[`Formatter should format variables 5`] = `
+"fun test() {
+    var x: int
+}
+
+"
+`;
+
+exports[`Formatter should format variables 6`] = `
+"fun test() {
+    val x: int = 42
+}
+
+"
+`;
+
+exports[`Formatter should format variables 7`] = `
+"fun test() {
+    var x redef
+}
+
+"
+`;
+
+exports[`Formatter should format variables 8`] = `
+"fun test() {
+    var [x] = getTuple()
+}
+
+"
+`;
+
+exports[`Formatter should format variables 9`] = `
+"fun test() {
+    val [x, int] = getTuple()
+}
+
+"
+`;
+
+exports[`Formatter should format variables 10`] = `
+"fun test() {
+    var [veryLongVariableName] = getTuple()
+}
+
+"
+`;
+
+exports[`Formatter should format variables 11`] = `
+"fun test() {
+    var (x) = getTensor()
+}
+
+"
+`;
+
+exports[`Formatter should format variables 12`] = `
+"fun test() {
+    val (x, int) = getTensor()
+}
+
+"
+`;
+
+exports[`Formatter should format variables 13`] = `
+"fun test() {
+    var (veryLongVariableName) = getTensor()
+}
+
+"
+`;
