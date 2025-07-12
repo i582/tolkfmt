@@ -381,21 +381,17 @@ export function printStructBody(node: Node, ctx: Ctx) {
         concat([text(" "), text(c.text)])
     );
 
-    if (parts.length === 1) {
-        return concat([text("{ "), parts[0], text(" }"), ...trailing])
-    }
-
     const [first, ...rest] = parts;
-    const tailDocs = rest.map(part => concat([text(", "), part]))
+    const tailDocs = rest.map(part => concat([hardLine(), part]))
 
     return group([
         text("{"),
         indent(concat([
-            softLine(),
+            hardLine(),
             first,
             ...tailDocs,
         ])),
-        softLine(),
+        hardLine(),
         text("}"),
         ...trailing,
     ])

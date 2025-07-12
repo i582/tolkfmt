@@ -200,7 +200,9 @@ global myVar: int
 exports[`Formatter should format annotations 8`] = `
 "@annotation
 
-struct MyStruct { x: int }
+struct MyStruct {
+    x: int
+}
 "
 `;
 
@@ -667,12 +669,17 @@ exports[`Formatter should format generics 8`] = `
 `;
 
 exports[`Formatter should format generics 9`] = `
-"struct MyStruct<T> { value: T }
+"struct MyStruct<T> {
+    value: T
+}
 "
 `;
 
 exports[`Formatter should format generics 10`] = `
-"struct MyStruct<T, U> {first: T, second: U}
+"struct MyStruct<T, U> {
+    first: T
+    second: U
+}
 "
 `;
 
@@ -1289,22 +1296,32 @@ exports[`Formatter should format top-level declarations 9`] = `
 `;
 
 exports[`Formatter should format top-level declarations 10`] = `
-"struct MyStruct { x: int }
+"struct MyStruct {
+    x: int
+}
 "
 `;
 
 exports[`Formatter should format top-level declarations 11`] = `
-"struct MyStruct {x: int, y: string}
+"struct MyStruct {
+    x: int
+    y: string
+}
 "
 `;
 
 exports[`Formatter should format top-level declarations 12`] = `
-"struct MyStruct {x: int = 42, y: string = "hello"}
+"struct MyStruct {
+    x: int = 42
+    y: string = "hello"
+}
 "
 `;
 
 exports[`Formatter should format top-level declarations 13`] = `
-"struct (8)MyStruct { x: int }
+"struct (8)MyStruct {
+    x: int
+}
 "
 `;
 

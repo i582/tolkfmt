@@ -10,9 +10,7 @@ const main = async () => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-fun bar() {
-    val a = 100;
-}
+struct Foo { a: int }
 
 fun main() {
     // comment here
