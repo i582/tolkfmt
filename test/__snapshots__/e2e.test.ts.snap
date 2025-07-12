@@ -95,7 +95,7 @@ exports[`tolkfmt foo.tolk Help flag 1`] = `
   "code": 0,
   "kind": "exited",
   "stderr": "",
-  "stdout": "tolkfmt/0.0.2
+  "stdout": "tolkfmt/0.0.3
 
 Usage:
   $ tolkfmt [options] <files or directories>
@@ -138,7 +138,7 @@ exports[`tolkfmt foo.tolk Version flag 1`] = `
   "code": 0,
   "kind": "exited",
   "stderr": "",
-  "stdout": "tolkfmt/0.0.2 darwin-arm64 node-v24.1.0
+  "stdout": "tolkfmt/0.0.3 darwin-arm64 node-v24.1.0
 ",
 }
 `;
