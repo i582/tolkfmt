@@ -304,6 +304,58 @@ exports[`Formatter should format basic types 11`] = `
 "
 `;
 
+exports[`Formatter should format block statements 1`] = `
+"fun test() {
+    val a = 100;
+    a = 200;
+}
+
+"
+`;
+
+exports[`Formatter should format block statements 2`] = `
+"fun test() {
+    val a = 100;
+    
+    a = 200;
+}
+
+"
+`;
+
+exports[`Formatter should format block statements 3`] = `
+"fun test() {
+    val a = 100;
+    
+    a = 200;
+}
+
+"
+`;
+
+exports[`Formatter should format block statements 4`] = `
+"fun test() {
+    // comment here
+    val a = 100;
+    
+    // and there
+    a = 200;
+}
+
+"
+`;
+
+exports[`Formatter should format block statements 5`] = `
+"fun test() {
+    val a = 100;
+    
+    // comment here
+    a = 200;
+}
+
+"
+`;
+
 exports[`Formatter should format control flow statements 1`] = `
 "fun test() {
     return
@@ -686,7 +738,7 @@ exports[`Formatter should format generics 5`] = `
 
 exports[`Formatter should format generics 6`] = `
 "fun test() {
-    val x: List<int>
+    val x: List<int>;
 }
 
 "
@@ -694,7 +746,7 @@ exports[`Formatter should format generics 6`] = `
 
 exports[`Formatter should format generics 7`] = `
 "fun test() {
-    val x: Map<string>
+    val x: Map<string>;
 }
 
 "
@@ -702,7 +754,7 @@ exports[`Formatter should format generics 7`] = `
 
 exports[`Formatter should format generics 8`] = `
 "fun test() {
-    val x: VeryLongType<VeryLongGenericParameter>
+    val x: VeryLongType<VeryLongGenericParameter>;
 }
 
 "
@@ -840,7 +892,8 @@ exports[`Formatter should format misc constructs 3`] = `
 
 exports[`Formatter should format objects 1`] = `
 "fun test() {
-    {};
+    {}
+    ;
 }
 
 "
@@ -898,7 +951,8 @@ exports[`Formatter should format objects 8`] = `
 "fun test() {
     {
         foo;
-    };
+    }
+    ;
 }
 
 "
@@ -1258,6 +1312,29 @@ exports[`Formatter should format simple literals 9`] = `
 "
 `;
 
+exports[`Formatter should format top level declarations 1`] = `
+"fun foo() {}
+
+fun test() {}
+
+"
+`;
+
+exports[`Formatter should format top level declarations 2`] = `
+"fun foo() {}
+fun test() {}
+
+"
+`;
+
+exports[`Formatter should format top level declarations 3`] = `
+"fun foo() {}
+
+fun test() {}
+
+"
+`;
+
 exports[`Formatter should format top-level declarations 1`] = `
 "tolk 0.6
 
@@ -1304,7 +1381,8 @@ exports[`Formatter should format top-level declarations 7`] = `
 
 exports[`Formatter should format top-level declarations 8`] = `
 "fun test() {
-    doSomething();;
+    doSomething();
+    ;
 }
 
 "
@@ -1342,7 +1420,7 @@ exports[`Formatter should format top-level declarations 13`] = `
 
 exports[`Formatter should format variables 1`] = `
 "fun test() {
-    var x
+    var x;
 }
 
 "
@@ -1350,7 +1428,7 @@ exports[`Formatter should format variables 1`] = `
 
 exports[`Formatter should format variables 2`] = `
 "fun test() {
-    val x
+    val x;
 }
 
 "
@@ -1358,7 +1436,7 @@ exports[`Formatter should format variables 2`] = `
 
 exports[`Formatter should format variables 3`] = `
 "fun test() {
-    var x = 42
+    var x = 42;
 }
 
 "
@@ -1366,7 +1444,7 @@ exports[`Formatter should format variables 3`] = `
 
 exports[`Formatter should format variables 4`] = `
 "fun test() {
-    val x = 42
+    val x = 42;
 }
 
 "
@@ -1374,7 +1452,7 @@ exports[`Formatter should format variables 4`] = `
 
 exports[`Formatter should format variables 5`] = `
 "fun test() {
-    var x: int
+    var x: int;
 }
 
 "
@@ -1382,7 +1460,7 @@ exports[`Formatter should format variables 5`] = `
 
 exports[`Formatter should format variables 6`] = `
 "fun test() {
-    val x: int = 42
+    val x: int = 42;
 }
 
 "
@@ -1390,7 +1468,7 @@ exports[`Formatter should format variables 6`] = `
 
 exports[`Formatter should format variables 7`] = `
 "fun test() {
-    var x redef
+    var x redef;
 }
 
 "
@@ -1398,7 +1476,7 @@ exports[`Formatter should format variables 7`] = `
 
 exports[`Formatter should format variables 8`] = `
 "fun test() {
-    var [x] = getTuple()
+    var [x] = getTuple();
 }
 
 "
@@ -1406,7 +1484,7 @@ exports[`Formatter should format variables 8`] = `
 
 exports[`Formatter should format variables 9`] = `
 "fun test() {
-    val [x, int] = getTuple()
+    val [x, int] = getTuple();
 }
 
 "
@@ -1414,7 +1492,7 @@ exports[`Formatter should format variables 9`] = `
 
 exports[`Formatter should format variables 10`] = `
 "fun test() {
-    var [veryLongVariableName] = getTuple()
+    var [veryLongVariableName] = getTuple();
 }
 
 "
@@ -1422,7 +1500,7 @@ exports[`Formatter should format variables 10`] = `
 
 exports[`Formatter should format variables 11`] = `
 "fun test() {
-    var (x) = getTensor()
+    var (x) = getTensor();
 }
 
 "
@@ -1430,7 +1508,7 @@ exports[`Formatter should format variables 11`] = `
 
 exports[`Formatter should format variables 12`] = `
 "fun test() {
-    val (x, int) = getTensor()
+    val (x, int) = getTensor();
 }
 
 "
@@ -1438,7 +1516,7 @@ exports[`Formatter should format variables 12`] = `
 
 exports[`Formatter should format variables 13`] = `
 "fun test() {
-    var (veryLongVariableName) = getTensor()
+    var (veryLongVariableName) = getTensor();
 }
 
 "

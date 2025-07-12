@@ -10,34 +10,21 @@ const main = async () => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-// type foo
-type Foo = int | string
+fun bar() {
+    val a = 100;
+}
 
-// type bar
-type Bar = SomeVeryLongType | OtherLongType | AndThirdLongType // foo
-
-type Bar = SomeVeryLongType // comment
-| OtherLongType | AndThirdLongType
-
-// hello world
-// foo
 fun main() {
-    foo/* aa */.bar;
-
-    // if statement
-    if (foo.somethingReallyLong/*aaa*/.andHereAsWell() && /* wtf */ foo.other) {
-        // integer literal
-        10;
-    }
+    // comment here
+    val foo = 10;
+    // and there
+    print(foo);
 }`)
-    // console.log(cst?.rootNode?.toString())
 
     if (!cst?.rootNode) throw Error(`Unable to parse file`);
 
     const ctx: Ctx = {comments: bindComments(cst?.rootNode)};
     const doc = printNode(cst?.rootNode, ctx)
-    // console.log(util.inspect(doc, {depth: Infinity}))
-    // console.log(util.inspect(ctx.comments, {depth: Infinity}))
 
     if (doc) {
         console.log(render(doc, 30))

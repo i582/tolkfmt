@@ -415,4 +415,59 @@ fun foo() {
         expect(await format(`fun test() { x.42; }`)).toMatchSnapshot()
         expect(await format(`fun test() { getValue().0; }`)).toMatchSnapshot()
     });
+
+    it('should format block statements', async () => {
+        expect(await format(`fun test() {
+            val a = 100;
+            a = 200;
+        }`)).toMatchSnapshot()
+
+        expect(await format(`fun test() {
+            val a = 100;
+        
+            a = 200;
+        }`)).toMatchSnapshot()
+
+        expect(await format(`fun test() {
+            val a = 100;
+        
+        
+            a = 200;
+        }`)).toMatchSnapshot()
+
+        // with comments
+
+        expect(await format(`fun test() {
+            // comment here
+            val a = 100;
+            // and there
+            a = 200;
+        }`)).toMatchSnapshot()
+
+        expect(await format(`fun test() {
+            val a = 100;
+            // comment here
+            a = 200;
+        }`)).toMatchSnapshot()
+    })
+
+    it('should format top level declarations', async () => {
+        expect(await format(`
+        fun foo() {}
+        
+        fun test() {}
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        fun foo() {}
+        fun test() {}
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        fun foo() {}
+        
+        
+        fun test() {}
+        `)).toMatchSnapshot()
+    })
 });

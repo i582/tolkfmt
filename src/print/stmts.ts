@@ -1,7 +1,7 @@
 import {Node} from "web-tree-sitter";
 import {Ctx} from "./ctx";
 import {printNode} from "./node";
-import {concat, empty, group, hardLine, indent, softLine, text} from "../doc";
+import {blank, blankLinesBetween, concat, Doc, empty, group, hardLine, indent, softLine, text} from "../doc";
 import {takeDangling, takeLeading, takeTrailing} from "../comments";
 import {printMatchExpression} from "./expr";
 
@@ -52,7 +52,9 @@ export function printSetAssignment(node: Node, ctx: Ctx) {
 }
 
 export function printBlockStatement(node: Node, ctx: Ctx) {
-    const statements = node.namedChildren.filter(it => it !== null)
+    const statements = node.namedChildren
+        .filter(it => it !== null)
+        .filter(it => it?.type !== "comment")
 
     const leading = takeLeading(node, ctx.comments).map(c =>
         concat([text(c.text), hardLine()])
@@ -66,18 +68,28 @@ export function printBlockStatement(node: Node, ctx: Ctx) {
         return text("{}")
     }
 
+    const docs: Doc[] = [];
+    for (let i = 0; i < statements.length; i++) {
+        const statement = statements[i];
+
+        const leading = takeLeading(statement, ctx.comments).map(c =>
+            concat([text(c.text), hardLine()])
+        );
+
+        const doc = concat([...leading, printNode(statement, ctx) ?? empty()]);
+        docs.push(doc);
+
+        if (i < statements.length - 1) {
+            docs.push(blank(blankLinesBetween(statement, statements[i + 1])));
+        }
+    }
+
     return concat([
         text("{"),
         indent(concat([
             hardLine(),
             ...leading,
-            ...statements.map(statement => {
-                const leading = takeLeading(statement, ctx.comments).map(c =>
-                    concat([hardLine(), text(c.text), hardLine()])
-                );
-
-                return concat([...leading, printNode(statement, ctx) ?? empty()]) ?? empty()
-            }),
+            ...docs,
             ...dangling,
         ])),
         hardLine(),
@@ -263,6 +275,7 @@ export function printLocalVarsDeclaration(node: Node, ctx: Ctx) {
             lhs,
             text(" = "),
             assignedVal,
+            text(";"),
             ...trailing,
         ])
     } else {
@@ -271,6 +284,7 @@ export function printLocalVarsDeclaration(node: Node, ctx: Ctx) {
             text(kind),
             text(" "),
             lhs,
+            text(";"),
             ...trailing,
         ])
     }

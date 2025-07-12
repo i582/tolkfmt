@@ -1,5 +1,5 @@
 import {Node} from "web-tree-sitter";
-import {concat, empty, group, hardLine, indent, softLine, text} from "../doc";
+import {blank, blankLinesBetween, concat, Doc, empty, group, hardLine, indent, softLine, text} from "../doc";
 import {takeLeading, takeTrailing} from "../comments";
 
 import {Ctx} from "./ctx";
@@ -10,7 +10,22 @@ export function printSourceFile(node: Node, ctx: Ctx) {
         .filter(it => it !== null)
         .filter(it => it?.type !== "comment");
 
-    return concat(decls.map(it => concat([printNode(it, ctx) ?? empty(), hardLine(), hardLine()])))
+    const docs: Doc[] = [];
+    for (let i = 0; i < decls.length; i++) {
+        const decl = decls[i];
+
+        const doc = concat([printNode(decl, ctx) ?? empty()]);
+        docs.push(doc);
+
+        if (i < decls.length - 1) {
+            docs.push(blank(blankLinesBetween(decl, decls[i + 1])));
+        } else {
+            docs.push(hardLine())
+            docs.push(hardLine())
+        }
+    }
+
+    return concat(docs)
 }
 
 export function printVersionValue(node: Node, ctx: Ctx) {
