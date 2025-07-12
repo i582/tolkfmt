@@ -11,9 +11,10 @@ const main = async (): Promise<void> => {
 
     const cst = parser.parse(`
 fun foo() {
-    assert (in.valueCoins > msg.forwardTonAmount +
-    // but last one is optional (it is ok if it fails)
-    forwardedMessagesCount * in.originalForwardFee + (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)) throw ERR_NOT_ENOUGH_TON;
+    10 +
+    // other number here
+    // and comment
+    true;
 }`)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)

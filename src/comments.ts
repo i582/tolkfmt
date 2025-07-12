@@ -25,7 +25,7 @@ export function bindComments(root: Node): CommentMap {
 
     const nodes = collectNamedNodes(root)
 
-    console.error("nodes:", nodes.map(it => "`" + it.text + `\` (${it.type})`).join("\n"))
+    // console.error("nodes:", nodes.map(it => "`" + it.text + `\` (${it.type})`).join("\n"))
 
     let index = 0
 
@@ -143,17 +143,17 @@ function ensureEntry(n: Node, map: CommentMap): Bound {
 }
 
 function attachLeading(c: CommentInfo, node: Node, map: CommentMap): void {
-    console.error(`attach leading ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
+    // console.error(`attach leading ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
     ensureEntry(node, map).leading.push(c)
 }
 
 function attachTrailing(c: CommentInfo, node: Node, map: CommentMap): void {
-    console.error(`attach trailing ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
+    // console.error(`attach trailing ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
     ensureEntry(node, map).trailing.push(c)
 }
 
 function attachDangling(c: CommentInfo, node: Node, map: CommentMap): void {
-    console.error(`attach dangling ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
+    // console.error(`attach dangling ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
     ensureEntry(node, map).dangling.push(c)
 }
 

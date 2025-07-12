@@ -288,7 +288,7 @@ fun foo() {
             await format(`fun test() { while (condition) { doSomething(); } }`),
         ).toMatchSnapshot()
         expect(
-            await format(`fun test() { while (veryLongCondition) { doSomething(); } }`, {
+            await format(`fun test() { while (veryVeryLongCondition) { doSomething(); } }`, {
                 maxWidth: 30,
             }),
         ).toMatchSnapshot()
@@ -309,6 +309,21 @@ fun foo() {
         expect(await format(`fun test() { repeat (count) { doSomething(); } }`)).toMatchSnapshot()
         expect(
             await format(`fun test() { repeat (veryLongCount) { doSomething(); } }`, {
+                maxWidth: 30,
+            }),
+        ).toMatchSnapshot()
+    })
+
+    it("should format conditions", async () => {
+        await initParser(
+            `${__dirname}/../wasm/tree-sitter.wasm`,
+            `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
+        )
+
+        // If
+        expect(await format(`fun test() { if (true) { a = 100; } }`)).toMatchSnapshot()
+        expect(
+            await format(`fun test() { if (foo.someLongField + someLongVariable) { a = 100; } }`, {
                 maxWidth: 30,
             }),
         ).toMatchSnapshot()

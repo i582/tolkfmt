@@ -1,7 +1,8 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import {printNode} from "./node"
-import {breakParent, Doc, lineSuffix} from "../doc"
+import type {Doc} from "../doc"
+import {breakParent, lineSuffix} from "../doc"
 import {
     blank,
     blankLinesBetween,
@@ -26,10 +27,7 @@ export const printIfStatement = (node: Node, ctx: Ctx): Doc | undefined => {
     const body = printNode(bodyN, ctx) ?? empty()
 
     return group([
-        text("if ("),
-        indent(concat([softLine(), condition])),
-        softLine(),
-        text(") "),
+        group([text("if ("), indent(concat([softLine(), condition])), softLine(), text(") ")]),
         body,
     ])
 }
@@ -79,7 +77,7 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
         }
     }
 
-    return concat([
+    return group([
         text("{"),
         indent(concat([hardLine(), ...leading, ...docs, ...dangling])),
         hardLine(),
@@ -92,7 +90,7 @@ export function printExpressionStatement(node: Node, ctx: Ctx): Doc | undefined 
     if (!expr) return undefined
 
     const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), lineSuffix(text(c.text)), breakParent()]),
+        concat([text(" "), lineSuffix(text(c.text)), breakParent(), softLine()]),
     )
 
     return concat([printNode(expr, ctx) ?? empty(), ...trailing, text(";")])
@@ -157,10 +155,7 @@ export function printWhileStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     return group([
         ...leading,
-        text("while ("),
-        indent(concat([softLine(), condition])),
-        softLine(),
-        text(") "),
+        group([text("while ("), indent(concat([softLine(), condition])), softLine(), text(") ")]),
         body,
     ])
 }
@@ -180,10 +175,7 @@ export function printDoWhileStatement(node: Node, ctx: Ctx): Doc | undefined {
         ...leading,
         text("do "),
         body,
-        text(" while ("),
-        indent(concat([softLine(), condition])),
-        softLine(),
-        text(")"),
+        group([text(" while ("), indent(concat([softLine(), condition])), softLine(), text(");")]),
     ])
 }
 
@@ -200,10 +192,7 @@ export function printRepeatStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     return group([
         ...leading,
-        text("repeat ("),
-        indent(concat([softLine(), count])),
-        softLine(),
-        text(") "),
+        group([text("repeat ("), indent(concat([softLine(), count])), softLine(), text(") ")]),
         body,
     ])
 }

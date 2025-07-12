@@ -268,7 +268,7 @@ exports[`Formatter should format basic types 11`] = `
 exports[`Formatter should format binary expressions with comments 1`] = `
 "fun foo() {
     10 + // comment
-     20;
+    20;
 }
 "
 `;
@@ -276,7 +276,7 @@ exports[`Formatter should format binary expressions with comments 1`] = `
 exports[`Formatter should format binary expressions with comments 2`] = `
 "fun foo() {
     10 + // comment
-     20;
+    20;
 }
 "
 `;
@@ -284,14 +284,14 @@ exports[`Formatter should format binary expressions with comments 2`] = `
 exports[`Formatter should format binary expressions with comments 3`] = `
 "fun foo() {
     foo + // comment 2
-     true;
+    true;
 }
 "
 `;
 
 exports[`Formatter should format binary expressions with comments 4`] = `
 "fun foo() {
-    10 + 
+    10 +
     // other number here
     // and comment
     20;
@@ -301,7 +301,7 @@ exports[`Formatter should format binary expressions with comments 4`] = `
 
 exports[`Formatter should format binary expressions with comments 5`] = `
 "fun foo() {
-    10 + 
+    10 +
     // other number here
     // and comment
     foo;
@@ -311,7 +311,7 @@ exports[`Formatter should format binary expressions with comments 5`] = `
 
 exports[`Formatter should format binary expressions with comments 6`] = `
 "fun foo() {
-    10 + 
+    10 +
     // other number here
     // and comment
     true;
@@ -321,7 +321,7 @@ exports[`Formatter should format binary expressions with comments 6`] = `
 
 exports[`Formatter should format binary expressions with comments 7`] = `
 "fun foo() {
-    10 + 
+    10 +
     // other number here
     // and comment
     null;
@@ -332,7 +332,7 @@ exports[`Formatter should format binary expressions with comments 7`] = `
 exports[`Formatter should format binary expressions with comments 8`] = `
 "fun foo() {
     20 + // comment
-     30 // comment here
+    30 // comment here
     ;
 }
 "
@@ -348,11 +348,15 @@ exports[`Formatter should format binary expressions with comments 9`] = `
 
 exports[`Formatter should format binary expressions with comments 10`] = `
 "fun foo() {
-    assert (in.valueCoins > msg.forwardTonAmount + 
+    assert (
+        in.valueCoins >
+        msg.forwardTonAmount +
         // 3 messages: wal1->wal2,  wal2->owner, wal2->response
         // but last one is optional (it is ok if it fails)
-        forwardedMessagesCount * in.originalForwardFee + (2 * JETTON_WALLET_GAS_CONSUMPTION +
-        MIN_TONS_FOR_STORAGE)) throw ERR_NOT_ENOUGH_TON;
+        forwardedMessagesCount *
+        in.originalForwardFee +
+        (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
+    ) throw ERR_NOT_ENOUGH_TON;
 }
 "
 `;
@@ -400,6 +404,27 @@ exports[`Formatter should format block statements 5`] = `
     
     // comment here
     a = 200;
+}
+"
+`;
+
+exports[`Formatter should format conditions 1`] = `
+"fun test() {
+    if (true) {
+        a = 100;
+    }
+}
+"
+`;
+
+exports[`Formatter should format conditions 2`] = `
+"fun test() {
+    if (
+        foo.someLongField +
+        someLongVariable
+    ) {
+        a = 100;
+    }
 }
 "
 `;
@@ -489,11 +514,15 @@ exports[`Formatter should format error handling 3`] = `
 
 exports[`Formatter should format error handling 4`] = `
 "fun test() {
-    assert (in.valueCoins > msg.forwardTonAmount + 
+    assert (
+        in.valueCoins >
+        msg.forwardTonAmount +
         // 3 messages: wal1->wal2,  wal2->owner, wal2->response
         // but last one is optional (it is ok if it fails)
-        forwardedMessagesCount * in.originalForwardFee + (2 * JETTON_WALLET_GAS_CONSUMPTION +
-        MIN_TONS_FOR_STORAGE)) throw ERR_NOT_ENOUGH_TON;
+        forwardedMessagesCount *
+        in.originalForwardFee +
+        (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
+    ) throw ERR_NOT_ENOUGH_TON;
 }
 "
 `;
@@ -833,7 +862,7 @@ exports[`Formatter should format loops 2`] = `
 exports[`Formatter should format loops 3`] = `
 "fun test() {
     while (
-        veryLongCondition
+        veryVeryLongCondition
     ) {
         doSomething();
     }
@@ -845,7 +874,7 @@ exports[`Formatter should format loops 4`] = `
 "fun test() {
     do {
         doSomething();
-    } while (true)
+    } while (true);
 }
 "
 `;
@@ -854,7 +883,7 @@ exports[`Formatter should format loops 5`] = `
 "fun test() {
     do {
         doSomething();
-    } while (condition)
+    } while (condition);
 }
 "
 `;
@@ -863,7 +892,9 @@ exports[`Formatter should format loops 6`] = `
 "fun test() {
     do {
         doSomething();
-    } while (veryLongCondition)
+    } while (
+        veryLongCondition
+    );
 }
 "
 `;
@@ -1495,8 +1526,7 @@ exports[`Formatter should format unary expressions with comments 1`] = `
 
 exports[`Formatter should format unary expressions with comments 2`] = `
 "fun foo() {
-    !
-    // comment here
+    !// comment here
     true;
 }
 "

@@ -34,7 +34,7 @@ export function render(doc: Doc, printWidth: number): string {
                     break
                 }
                 case "HardLine": {
-                    return true
+                    return false
                 }
                 case "Concat": {
                     for (let i = cur.parts.length - 1; i >= 0; i--) {
@@ -55,7 +55,7 @@ export function render(doc: Doc, printWidth: number): string {
                     break
                 }
                 case "BreakParent": {
-                    return true
+                    return false
                 }
                 case "IfBreak": {
                     if (cur.flatContent) {
@@ -138,11 +138,6 @@ export function render(doc: Doc, printWidth: number): string {
             }
 
             case "BreakParent": {
-                if (indent !== 0) {
-                    stack.push({doc: text(" ".repeat(indent)), mode: "flat", indent: 0})
-                }
-                stack.push({doc: text("\n"), mode: "flat", indent: 0})
-
                 flushLineSuffix()
                 break
             }
