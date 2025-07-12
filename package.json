@@ -2,6 +2,9 @@
   "name": "tolkfmt",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": {
+    "tolkfmt": "./bin/tolkfmt"
+  },
   "license": "MIT",
   "scripts": {
     "build": "tsc -d",
@@ -17,6 +20,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "cac": "^6.7.14",
+    "glob": "^10.3.10",
     "web-tree-sitter": "^0.25.6"
   }
 }
