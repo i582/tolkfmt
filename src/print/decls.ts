@@ -1,6 +1,6 @@
 import type {Node} from "web-tree-sitter"
-import type {Doc} from "../doc";
-import { ifBreak, line} from "../doc"
+import type {Doc} from "../doc"
+import {ifBreak, line} from "../doc"
 import {
     blank,
     blankLinesBetween,

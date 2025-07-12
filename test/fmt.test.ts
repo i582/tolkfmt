@@ -646,7 +646,11 @@ fun foo() {
             `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
         )
 
-        expect(await format(`fun deployNftItem(itemIndex: int, nftItemCode: cell, attachTonAmount: coins, initParams: Cell<NftItemInitAtDeployment>) {}"`)).toMatchSnapshot()
+        expect(
+            await format(
+                `fun deployNftItem(itemIndex: int, nftItemCode: cell, attachTonAmount: coins, initParams: Cell<NftItemInitAtDeployment>) {}"`,
+            ),
+        ).toMatchSnapshot()
     })
 
     it("should format assembly and builtin functions", async () => {

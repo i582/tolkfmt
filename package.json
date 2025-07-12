@@ -1,6 +1,6 @@
 {
     "name": "tolkfmt-test-dev",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "A code formatter for the Tolk programming language",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -45,7 +45,7 @@
         "fmt": "prettier --write -l --cache .",
         "fmt:check": "prettier --check --cache .",
         "lint": "eslint --cache .",
-        "precommit": "yarn run rebuild && yarn lint && yarn test",
+        "precommit": "yarn run rebuild && yarn lint && yarn fmt:check && yarn test",
         "prepublishOnly": "yarn precommit",
         "publish-patch": "yarn version --patch && yarn publish",
         "publish-minor": "yarn version minor && yarn publish",
