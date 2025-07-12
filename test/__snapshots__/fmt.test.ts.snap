@@ -436,6 +436,36 @@ exports[`Formatter should format block statements 5`] = `
 "
 `;
 
+exports[`Formatter should format block with only comment 1`] = `
+"fun foo() {
+    match (a) {
+        TopUpTons => {
+            // just accept tons
+        }
+    }
+}
+"
+`;
+
+exports[`Formatter should format block with only comment 2`] = `
+"fun foo() {
+    match (a) {
+        TopUpTons => {}
+        
+        // just accept tons
+        else => throw 0xFFFF,
+    }
+}
+"
+`;
+
+exports[`Formatter should format block with only comment 3`] = `
+"fun foo() {
+    // to do: implement this function
+}
+"
+`;
+
 exports[`Formatter should format chain with comments 1`] = `
 "fun foo() {
     foo() // comment
@@ -486,6 +516,41 @@ exports[`Formatter should format conditions 2`] = `
         someLongVariable
     ) {
         a = 100;
+    }
+}
+"
+`;
+
+exports[`Formatter should format conditions 3`] = `
+"fun test() {
+    if (true) {
+        a = 100;
+    } else {
+        a = 200;
+    }
+}
+"
+`;
+
+exports[`Formatter should format conditions 4`] = `
+"fun test() {
+    if (true) {
+        a = 100;
+    } else if (false) {
+        a = 200;
+    }
+}
+"
+`;
+
+exports[`Formatter should format conditions 5`] = `
+"fun test() {
+    if (true) {
+        a = 100;
+    } else if (false) {
+        a = 200;
+    } else {
+        a = 300;
     }
 }
 "
@@ -1075,7 +1140,7 @@ exports[`Formatter should format object literal field with comments 6`] = `
 "
 `;
 
-exports[`Formatter should format objects 1`] = `
+exports[`Formatter should format object literals 1`] = `
 "fun test() {
     {}
     ;
@@ -1083,16 +1148,14 @@ exports[`Formatter should format objects 1`] = `
 "
 `;
 
-exports[`Formatter should format objects 2`] = `
+exports[`Formatter should format object literals 2`] = `
 "fun test() {
-    {
-        foo: 1,
-    };
+    { foo: 1 };
 }
 "
 `;
 
-exports[`Formatter should format objects 3`] = `
+exports[`Formatter should format object literals 3`] = `
 "fun test() {
     {
         foo: 1,
@@ -1102,7 +1165,7 @@ exports[`Formatter should format objects 3`] = `
 "
 `;
 
-exports[`Formatter should format objects 4`] = `
+exports[`Formatter should format object literals 4`] = `
 "fun test() {
     {
         foo: 1,
@@ -1113,16 +1176,14 @@ exports[`Formatter should format objects 4`] = `
 "
 `;
 
-exports[`Formatter should format objects 5`] = `
+exports[`Formatter should format object literals 5`] = `
 "fun test() {
-    MyType {
-        foo: 1,
-    };
+    MyType { foo: 1 };
 }
 "
 `;
 
-exports[`Formatter should format objects 6`] = `
+exports[`Formatter should format object literals 6`] = `
 "fun test() {
     MyType {
         foo: 1,
@@ -1132,7 +1193,7 @@ exports[`Formatter should format objects 6`] = `
 "
 `;
 
-exports[`Formatter should format objects 7`] = `
+exports[`Formatter should format object literals 7`] = `
 "fun test() {
     {
         veryLongFieldName: veryLongValue,
@@ -1142,7 +1203,7 @@ exports[`Formatter should format objects 7`] = `
 "
 `;
 
-exports[`Formatter should format objects 8`] = `
+exports[`Formatter should format object literals 8`] = `
 "fun test() {
     {
         foo;
@@ -1152,16 +1213,14 @@ exports[`Formatter should format objects 8`] = `
 "
 `;
 
-exports[`Formatter should format objects 9`] = `
+exports[`Formatter should format object literals 9`] = `
 "fun test() {
-    {
-        foo:,
-    };
+    { foo: };
 }
 "
 `;
 
-exports[`Formatter should format objects 10`] = `
+exports[`Formatter should format object literals 10`] = `
 "fun test() {
     {
         foo: 1,
@@ -1172,13 +1231,9 @@ exports[`Formatter should format objects 10`] = `
 "
 `;
 
-exports[`Formatter should format objects 11`] = `
+exports[`Formatter should format object literals 11`] = `
 "fun test() {
-    {
-        foo: {
-            bar: 1,
-        },
-    };
+    { foo: { bar: 1 } };
 }
 "
 `;
@@ -1638,7 +1693,7 @@ exports[`Formatter should format top-level declarations 12`] = `
 `;
 
 exports[`Formatter should format top-level declarations 13`] = `
-"struct (8)MyStruct {
+"struct (8) MyStruct {
     x: int
 }
 "
@@ -1670,7 +1725,7 @@ exports[`Formatter should format unary expressions with comments 3`] = `
 
 exports[`Formatter should format unary expressions with comments 4`] = `
 "fun foo() {
-    !true;
+    !true;// comment here
 }
 "
 `;

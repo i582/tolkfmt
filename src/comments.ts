@@ -1,4 +1,4 @@
-import type {Node} from "web-tree-sitter"
+import type {Node as SyntaxNode, Node} from "web-tree-sitter"
 
 export interface CommentInfo {
     readonly node: Node
@@ -55,6 +55,13 @@ export function bindComments(root: Node): CommentMap {
                 attachDangling(comments[index++], node, byNode)
                 continue outer
             }
+        }
+
+        const comment = comments[index]
+        const parent = parentOfType(comment.node, "block_statement", "source_file")
+
+        if (parent) {
+            attachDangling(comment, parent, byNode)
         }
 
         // TODO: warn, we cannot attach comment!
@@ -165,4 +172,17 @@ function isInsideChild(comment: Node, parent: Node): boolean {
         }
     }
     return false
+}
+
+function parentOfType(node: SyntaxNode, ...types: readonly string[]): SyntaxNode | undefined {
+    let {parent} = node
+
+    for (let i = 0; i < 100; i++) {
+        if (parent === null) return undefined
+        if (types.includes(parent.type)) return parent
+        const {parent: newParent} = parent
+        parent = newParent
+    }
+
+    return undefined
 }

@@ -71,7 +71,10 @@ export interface IfBreak {
     readonly flatContent: Doc | undefined
 }
 
-export const ifBreak = (breakContent: Doc | undefined, flatContent: Doc | undefined): Doc => ({
+export const ifBreak = (
+    breakContent: Doc | undefined,
+    flatContent: Doc | undefined = undefined,
+): Doc => ({
     $: "IfBreak",
     breakContent,
     flatContent,

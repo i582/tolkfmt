@@ -2,6 +2,7 @@ import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import {formatLeading, printNode} from "./node"
 import type {Doc} from "../doc"
+import {ifBreak} from "../doc"
 import {breakParent, lineSuffix} from "../doc"
 import {
     blank,
@@ -354,10 +355,22 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
     }
 
     const parts = args.map(arg => printNode(arg, ctx) ?? empty())
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
+    const trailing = takeTrailing(node, ctx.comments).map(c =>
+        concat([text(" "), text(c.text), breakParent()]),
+    )
 
     const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([hardLine(), part]))
+
+    if (parts.length < 3) {
+        return group([
+            text("{"),
+            indent(concat([line(), first, ...tailDocs])),
+            line(),
+            text("}"),
+            ...trailing,
+        ])
+    }
 
     return group([
         text("{"),
@@ -375,7 +388,9 @@ export function printInstanceArgument(node: Node, ctx: Ctx): Doc | undefined {
     if (!nameN) return undefined
 
     const name = printNode(nameN, ctx) ?? empty()
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
+    const trailing = takeTrailing(node, ctx.comments).map(c =>
+        concat([text(" "), text(c.text), breakParent()]),
+    )
 
     // Check if there's a colon in the node
     const hasColon = node.children.some(child => child?.text === ":")
@@ -383,14 +398,14 @@ export function printInstanceArgument(node: Node, ctx: Ctx): Doc | undefined {
     if (hasColon) {
         if (valueN) {
             const value = printNode(valueN, ctx) ?? empty()
-            return concat([name, text(": "), value, text(","), ...trailing])
+            return concat([name, text(": "), value, ifBreak(text(",")), ...trailing])
         } else {
             // Case like {foo:}
-            return concat([name, text(":"), text(","), ...trailing])
+            return concat([name, text(":"), ifBreak(text(",")), ...trailing])
         }
     } else {
         // Case like {foo} without colon
-        return concat([name, text(","), ...trailing])
+        return concat([name, ifBreak(text(",")), ...trailing])
     }
 }
 

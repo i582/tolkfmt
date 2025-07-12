@@ -1,6 +1,7 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import type {Doc} from "../doc"
+import {empty} from "../doc"
 import {hardLine, text} from "../doc"
 import * as stmts from "./stmts"
 import * as decls from "./decls"
@@ -342,4 +343,17 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
 
 export function formatLeading(leading: CommentInfo[]): Doc[] {
     return leading.flatMap(c => [text(c.text), hardLine()])
+}
+
+export function formatDangling(dangling: CommentInfo[], ctx: Ctx): Doc[] {
+    if (dangling.length === 0) {
+        return []
+    }
+
+    if (dangling.length === 1) {
+        return [text(dangling[0].text)]
+    }
+
+    const [first, ...rest] = dangling
+    return [printNode(first.node, ctx) ?? empty(), ...rest.flatMap(c => [hardLine(), text(c.text)])]
 }

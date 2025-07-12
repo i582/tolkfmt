@@ -1,6 +1,6 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
-import {printNode} from "./node"
+import {formatDangling, printNode} from "./node"
 import type {Doc} from "../doc"
 import {breakParent, lineSuffix} from "../doc"
 import {
@@ -26,9 +26,15 @@ export const printIfStatement = (node: Node, ctx: Ctx): Doc | undefined => {
     const condition = printNode(conditionN, ctx) ?? empty()
     const body = printNode(bodyN, ctx) ?? empty()
 
+    const alternativeN = node.childForFieldName("alternative")
+    const alternative = alternativeN
+        ? [text(" else "), printNode(alternativeN, ctx) ?? empty()]
+        : []
+
     return group([
         group([text("if ("), indent(concat([softLine(), condition])), softLine(), text(") ")]),
         body,
+        ...alternative,
     ])
 }
 
@@ -54,7 +60,8 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
         .filter(it => it.type !== "comment")
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
-    const dangling = takeDangling(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
+    const dangling = takeDangling(node, ctx.comments)
+    const danglingDoc = formatDangling(dangling, ctx)
 
     // For empty blocks, return compact format
     if (statements.length === 0 && leading.length === 0 && dangling.length === 0) {
@@ -79,7 +86,7 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     return group([
         text("{"),
-        indent(concat([hardLine(), ...leading, ...docs, ...dangling])),
+        indent(concat([hardLine(), ...leading, ...docs, ...danglingDoc])),
         hardLine(),
         text("}"),
     ])

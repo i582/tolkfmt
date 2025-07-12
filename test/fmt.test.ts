@@ -218,7 +218,7 @@ fun foo() {
         expect(await format(`fun test() { foo(x).bar(y); }`)).toMatchSnapshot()
     })
 
-    it("should format objects", async () => {
+    it("should format object literals", async () => {
         await initParser(
             `${__dirname}/../wasm/tree-sitter.wasm`,
             `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
@@ -326,6 +326,17 @@ fun foo() {
             await format(`fun test() { if (foo.someLongField + someLongVariable) { a = 100; } }`, {
                 maxWidth: 30,
             }),
+        ).toMatchSnapshot()
+        expect(
+            await format(`fun test() { if (true) { a = 100; } else { a = 200 } }`),
+        ).toMatchSnapshot()
+        expect(
+            await format(`fun test() { if (true) { a = 100; } else if (false) { a = 200 } }`),
+        ).toMatchSnapshot()
+        expect(
+            await format(
+                `fun test() { if (true) { a = 100; } else if (false) { a = 200 } else { a = 300 } }`,
+            ),
         ).toMatchSnapshot()
     })
 
@@ -1093,6 +1104,42 @@ fun foo() {
             fun foo() {
                 foo() // comment
                     .bar();
+            }
+            `),
+        ).toMatchSnapshot()
+    })
+
+    it("should format block with only comment", async () => {
+        expect(
+            await format(`
+            fun foo() {
+                match (a) {
+                    TopUpTons => {
+                        // just accept tons
+                    }
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                match (a) {
+                    TopUpTons => {
+                        // just accept tons
+                    }
+
+                    else => throw 0xFFFF,
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                // to do: implement this function
             }
             `),
         ).toMatchSnapshot()

@@ -312,7 +312,7 @@ export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const typeParameters = typeParametersN ? (printNode(typeParametersN, ctx) ?? empty()) : empty()
     const packPrefix = packPrefixN
-        ? concat([text("("), printNode(packPrefixN, ctx) ?? empty(), text(")")])
+        ? concat([text("("), printNode(packPrefixN, ctx) ?? empty(), text(") ")])
         : empty()
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
