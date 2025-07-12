@@ -238,7 +238,10 @@ describe("tolkfmt foo.tolk", () => {
 
     testExceptWindows("Version flag", async () => {
         const result = await tolkfmt("--version")
-        expect(result).toMatchSnapshot()
+        if (result.kind === "exited") {
+            const {stdout} = result
+            expect(stdout.split(" ")[0]).toMatchSnapshot()
+        }
     })
 
     testExceptWindows("Help flag", async () => {

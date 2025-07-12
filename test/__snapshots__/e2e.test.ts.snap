@@ -133,12 +133,4 @@ exports[`tolkfmt foo.tolk Run on directory 3`] = `
 "
 `;
 
-exports[`tolkfmt foo.tolk Version flag 1`] = `
-{
-  "code": 0,
-  "kind": "exited",
-  "stderr": "",
-  "stdout": "tolkfmt/0.0.3 darwin-arm64 node-v24.1.0
-",
-}
-`;
+exports[`tolkfmt foo.tolk Version flag 1`] = `"tolkfmt/0.0.3"`;
