@@ -346,11 +346,11 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     const [first, ...rest] = parts
-    const tailDocs = rest.map(part => concat([hardLine(), part, text(",")]))
+    const tailDocs = rest.map(part => concat([hardLine(), part]))
 
     return group([
         text("{"),
-        indent(concat([hardLine(), first, text(","), ...tailDocs])),
+        indent(concat([hardLine(), first, ...tailDocs])),
         hardLine(),
         text("}"),
         ...trailing,
@@ -372,14 +372,14 @@ export function printInstanceArgument(node: Node, ctx: Ctx): Doc | undefined {
     if (hasColon) {
         if (valueN) {
             const value = printNode(valueN, ctx) ?? empty()
-            return concat([name, text(": "), value, ...trailing])
+            return concat([name, text(": "), value, text(","), ...trailing])
         } else {
             // Case like {foo:}
-            return concat([name, text(":"), ...trailing])
+            return concat([name, text(":"), text(","), ...trailing])
         }
     } else {
         // Case like {foo} without colon
-        return concat([name, ...trailing])
+        return concat([name, text(","), ...trailing])
     }
 }
 

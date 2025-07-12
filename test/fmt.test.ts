@@ -968,4 +968,67 @@ fun foo() {
             `),
         ).toMatchSnapshot()
     })
+
+    it("should format object literal field with comments", async () => {
+        expect(
+            await format(`
+            fun foo() {
+                {
+                    foo: 10, // comment
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                {
+                    foo: 10 /* comment */,
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                {
+                    foo: , // comment
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                {
+                    foo: /* comment */,
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                {
+                    foo, // comment
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                {
+                    foo /* comment */,
+                }
+            }
+            `),
+        ).toMatchSnapshot()
+
+    })
 })

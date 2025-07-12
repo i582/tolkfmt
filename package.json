@@ -45,7 +45,7 @@
         "fmt": "prettier --write -l --cache .",
         "fmt:check": "prettier --check --cache .",
         "lint": "eslint --cache .",
-        "precommit": "yarn run rebuild && yarn test",
+        "precommit": "yarn run rebuild && yarn lint && yarn test",
         "prepublishOnly": "yarn precommit",
         "publish-patch": "yarn version --patch && yarn publish",
         "publish-minor": "yarn version minor && yarn publish",

@@ -11,10 +11,9 @@ const main = async (): Promise<void> => {
 
     const cst = parser.parse(`
 fun foo() {
-    10 +
-    // other number here
-    // and comment
-    true;
+    {
+        bounce: 10,      // comment
+    }
 }`)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)

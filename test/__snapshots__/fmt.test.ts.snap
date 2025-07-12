@@ -947,6 +947,60 @@ exports[`Formatter should format misc constructs 3`] = `
 "
 `;
 
+exports[`Formatter should format object literal field with comments 1`] = `
+"fun foo() {
+    {
+        foo: 10, // comment
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literal field with comments 2`] = `
+"fun foo() {
+    {
+        foo: 10, /* comment */
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literal field with comments 3`] = `
+"fun foo() {
+    {
+        foo:, // comment
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literal field with comments 4`] = `
+"fun foo() {
+    {
+        foo:, /* comment */
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literal field with comments 5`] = `
+"fun foo() {
+    {
+        foo, // comment
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literal field with comments 6`] = `
+"fun foo() {
+    {
+        foo, /* comment */
+    };
+}
+"
+`;
+
 exports[`Formatter should format objects 1`] = `
 "fun test() {
     {}
