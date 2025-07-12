@@ -470,4 +470,65 @@ fun foo() {
         fun test() {}
         `)).toMatchSnapshot()
     })
+
+    it('should format imports with comments', async () => {
+        expect(await format(`
+        import "a" // comment after
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        // comment before
+        import "a"
+        `)).toMatchSnapshot()
+
+        // TODO
+        expect(await format(`
+        import "a"
+        // comment after
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        import "a"
+        // comment between
+        import "b"
+        `)).toMatchSnapshot()
+    })
+
+    it('should format top level declarations with comments', async () => {
+        expect(await format(`
+        /// function comment
+        /// second line
+        fun foo() {}
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        /// method comment
+        /// second line
+        fun Foo.foo() {}
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        /// struct comment
+        /// second line
+        struct Foo {}
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        /// type alias comment
+        /// second line
+        type Foo = int
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        /// constant comment
+        /// second line
+        const FOO = 100
+        `)).toMatchSnapshot()
+
+        expect(await format(`
+        /// global variable comment
+        /// second line
+        global foo: int
+        `)).toMatchSnapshot()
+    })
 });

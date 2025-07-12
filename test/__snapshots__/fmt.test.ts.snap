@@ -676,6 +676,30 @@ exports[`Formatter should format generics 10`] = `
 "
 `;
 
+exports[`Formatter should format imports with comments 1`] = `
+"import "a" // comment after
+"
+`;
+
+exports[`Formatter should format imports with comments 2`] = `
+"// comment before
+import "a"
+"
+`;
+
+exports[`Formatter should format imports with comments 3`] = `
+"import "a"
+"
+`;
+
+exports[`Formatter should format imports with comments 4`] = `
+"import "a"
+
+// comment between
+import "b"
+"
+`;
+
 exports[`Formatter should format loops 1`] = `
 "fun test() {
     while (true) {
@@ -1169,6 +1193,48 @@ exports[`Formatter should format top level declarations 3`] = `
 "fun foo() {}
 
 fun test() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 1`] = `
+"/// function comment
+/// second line
+fun foo() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 2`] = `
+"/// method comment
+/// second line
+fun Foo.foo() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 3`] = `
+"/// struct comment
+/// second line
+struct Foo {}
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 4`] = `
+"/// type alias comment
+/// second line
+type Foo = int
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 5`] = `
+"/// constant comment
+/// second line
+const FOO = 100
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 6`] = `
+"/// global variable comment
+/// second line
+global foo: int
 "
 `;
 
