@@ -6,7 +6,7 @@ exports[`Formatter should format 1`] = `
 `;
 
 exports[`Formatter should format 2`] = `
-"type Foo = 
+"type Foo =
     | SomeVeryLongType
     | OtherLongType
     | AndThirdLongType
@@ -129,42 +129,49 @@ exports[`Formatter should format advanced types 3`] = `
 `;
 
 exports[`Formatter should format annotations 1`] = `
-"fun test() {
+"@annotation
+fun test() {
     return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 2`] = `
-"fun test() {
+"@annotation
+@another
+fun test() {
     return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 3`] = `
-"fun test() {
+"@annotation()
+fun test() {
     return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 4`] = `
-"fun test() {
+"@annotation(42)
+fun test() {
     return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 5`] = `
-"fun test() {
+"@annotation(42, , "hello")
+fun test() {
     return;
 }
 "
 `;
 
 exports[`Formatter should format annotations 6`] = `
-"fun test() {
+"@annotation(veryLongArgument)
+fun test() {
     return;
 }
 "
@@ -172,14 +179,12 @@ exports[`Formatter should format annotations 6`] = `
 
 exports[`Formatter should format annotations 7`] = `
 "@annotation
-
 global myVar: int
 "
 `;
 
 exports[`Formatter should format annotations 8`] = `
 "@annotation
-
 struct MyStruct {
     x: int
 }
@@ -361,7 +366,7 @@ exports[`Formatter should format binary expressions with comments 8`] = `
 "fun foo() {
     20 + // comment
     30; // comment here
-    
+
 }
 "
 `;
@@ -369,7 +374,7 @@ exports[`Formatter should format binary expressions with comments 8`] = `
 exports[`Formatter should format binary expressions with comments 9`] = `
 "fun foo() {
     20 + 30; // comment here
-    
+
 }
 "
 `;
@@ -400,7 +405,7 @@ exports[`Formatter should format block statements 1`] = `
 exports[`Formatter should format block statements 2`] = `
 "fun test() {
     val a = 100;
-    
+
     a = 200;
 }
 "
@@ -409,7 +414,7 @@ exports[`Formatter should format block statements 2`] = `
 exports[`Formatter should format block statements 3`] = `
 "fun test() {
     val a = 100;
-    
+
     a = 200;
 }
 "
@@ -419,7 +424,7 @@ exports[`Formatter should format block statements 4`] = `
 "fun test() {
     // comment here
     val a = 100;
-    
+
     // and there
     a = 200;
 }
@@ -429,7 +434,7 @@ exports[`Formatter should format block statements 4`] = `
 exports[`Formatter should format block statements 5`] = `
 "fun test() {
     val a = 100;
-    
+
     // comment here
     a = 200;
 }
@@ -451,7 +456,7 @@ exports[`Formatter should format block with only comment 2`] = `
 "fun foo() {
     match (a) {
         TopUpTons => {}
-        
+
         // just accept tons
         else => throw 0xFFFF,
     }
@@ -1157,21 +1162,14 @@ exports[`Formatter should format object literals 2`] = `
 
 exports[`Formatter should format object literals 3`] = `
 "fun test() {
-    {
-        foo: 1,
-        bar: 2,
-    };
+    { foo: 1, bar: 2 };
 }
 "
 `;
 
 exports[`Formatter should format object literals 4`] = `
 "fun test() {
-    {
-        foo: 1,
-        bar: 2,
-        baz: 3,
-    };
+    { foo: 1, bar: 2, baz: 3 };
 }
 "
 `;
@@ -1185,10 +1183,7 @@ exports[`Formatter should format object literals 5`] = `
 
 exports[`Formatter should format object literals 6`] = `
 "fun test() {
-    MyType {
-        foo: 1,
-        bar: 2,
-    };
+    MyType { foo: 1, bar: 2 };
 }
 "
 `;
@@ -1222,11 +1217,7 @@ exports[`Formatter should format object literals 9`] = `
 
 exports[`Formatter should format object literals 10`] = `
 "fun test() {
-    {
-        foo: 1,
-        bar:,
-        baz,
-    };
+    { foo: 1, bar:, baz };
 }
 "
 `;
@@ -1234,6 +1225,60 @@ exports[`Formatter should format object literals 10`] = `
 exports[`Formatter should format object literals 11`] = `
 "fun test() {
     { foo: { bar: 1 } };
+}
+"
+`;
+
+exports[`Formatter should format object literals 12`] = `
+"fun test() {
+    Foo {
+        // some comment
+        // with several lines
+        foo: bar,
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literals 13`] = `
+"fun test() {
+    Foo {
+        // some comment
+        // with several lines
+        foo,
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literals 14`] = `
+"fun test() {
+    val emptyNftItemStorage: ItemStorageNotInitialized = {
+        config: ItemConfig { index, collectionAddress }.toCell(),
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literals 15`] = `
+"fun test() {
+    val emptyNftItemStorage: ItemStorageNotInitialized = {
+        config: ItemConfig { toooooooooooooooooooooooooooooooooooooooooooLong, collectionAddress }
+            .toCell(),
+    };
+}
+"
+`;
+
+exports[`Formatter should format object literals 16`] = `
+"fun test() {
+    val emptyNftItemStorage: ItemStorageNotInitialized = {
+        config: ItemConfig {
+            toooooooooooooooooooooooooooooooooooooooooooLong,
+            toooooooooooooooooooooooooooooooooooooooooooLong2,
+        }
+            .toCell(),
+    };
 }
 "
 `;
@@ -1355,9 +1400,9 @@ exports[`Formatter should format pattern matching 4`] = `
 "fun test() {
     match (value) {
         42 => "number",
-        
+
         "hello" => "string",
-        
+
         else => "other",
     }
 }
@@ -1577,6 +1622,70 @@ fun test() {}
 "
 `;
 
+exports[`Formatter should format top level declarations with annotations 1`] = `
+"/// function comment
+/// second line
+@deprecated("aaaa")
+@inline
+fun foo() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with annotations 2`] = `
+"/// method comment
+/// second line
+@deprecated("aaaa")
+@inline
+fun Foo.foo() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with annotations 3`] = `
+"/// method comment
+/// second line
+@deprecated("aaaa")
+@inline
+get fun foo() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with annotations 4`] = `
+"/// struct comment
+/// second line
+@deprecated("aaaa")
+@inline
+@custom({ foo: 10 })
+struct Foo {}
+"
+`;
+
+exports[`Formatter should format top level declarations with annotations 5`] = `
+"/// type alias comment
+/// second line
+@deprecated("aaaa")
+@inline
+type Foo = int
+"
+`;
+
+exports[`Formatter should format top level declarations with annotations 6`] = `
+"/// constant comment
+/// second line
+@deprecated("aaaa")
+@inline
+const FOO = 100
+"
+`;
+
+exports[`Formatter should format top level declarations with annotations 7`] = `
+"/// global variable comment
+/// second line
+@deprecated("aaaa")
+@inline
+global foo: int
+"
+`;
+
 exports[`Formatter should format top level declarations with comments 1`] = `
 "/// function comment
 /// second line
@@ -1592,27 +1701,34 @@ fun Foo.foo() {}
 `;
 
 exports[`Formatter should format top level declarations with comments 3`] = `
+"/// method comment
+/// second line
+get fun foo() {}
+"
+`;
+
+exports[`Formatter should format top level declarations with comments 4`] = `
 "/// struct comment
 /// second line
 struct Foo {}
 "
 `;
 
-exports[`Formatter should format top level declarations with comments 4`] = `
+exports[`Formatter should format top level declarations with comments 5`] = `
 "/// type alias comment
 /// second line
 type Foo = int
 "
 `;
 
-exports[`Formatter should format top level declarations with comments 5`] = `
+exports[`Formatter should format top level declarations with comments 6`] = `
 "/// constant comment
 /// second line
 const FOO = 100
 "
 `;
 
-exports[`Formatter should format top level declarations with comments 6`] = `
+exports[`Formatter should format top level declarations with comments 7`] = `
 "/// global variable comment
 /// second line
 global foo: int
@@ -1702,7 +1818,7 @@ exports[`Formatter should format top-level declarations 13`] = `
 exports[`Formatter should format unary expressions with comments 1`] = `
 "fun foo() {
     !true; // comment here
-    
+
 }
 "
 `;

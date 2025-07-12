@@ -77,6 +77,14 @@ export function render(doc: Doc, printWidth: number): string {
 
         switch (cur.$) {
             case "Text": {
+                if (cur.value === "\n") {
+                    const prev = out.at(-1)
+                    // eslint-disable-next-line @typescript-eslint/no-misused-spread
+                    if (prev?.[0] === " " && ![...prev].some(it => it !== " ")) {
+                        out[out.length - 1] = cur.value
+                        break
+                    }
+                }
                 out.push(cur.value)
                 break
             }

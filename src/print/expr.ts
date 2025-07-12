@@ -354,15 +354,18 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
         return text("{}")
     }
 
-    const parts = args.map(arg => printNode(arg, ctx) ?? empty())
+    const parts = []
+    for (const [index, arg] of args.entries()) {
+        parts.push(printInstanceArgument(arg, ctx, index === args.length - 1) ?? empty())
+    }
     const trailing = takeTrailing(node, ctx.comments).map(c =>
         concat([text(" "), text(c.text), breakParent()]),
     )
 
     const [first, ...rest] = parts
-    const tailDocs = rest.map(part => concat([hardLine(), part]))
 
-    if (parts.length < 3) {
+    if (parts.length <= 3) {
+        const tailDocs = rest.flatMap(part => [line(), part])
         return group([
             text("{"),
             indent(concat([line(), first, ...tailDocs])),
@@ -372,6 +375,7 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
         ])
     }
 
+    const tailDocs = rest.map(part => concat([hardLine(), part]))
     return group([
         text("{"),
         indent(concat([hardLine(), first, ...tailDocs])),
@@ -381,31 +385,39 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
     ])
 }
 
-export function printInstanceArgument(node: Node, ctx: Ctx): Doc | undefined {
+export function printInstanceArgument(
+    node: Node,
+    ctx: Ctx,
+    isLast: boolean = false,
+): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const valueN = node.childForFieldName("value")
 
     if (!nameN) return undefined
 
     const name = printNode(nameN, ctx) ?? empty()
+    const leading = takeLeading(node, ctx.comments)
+    const leadingDoc = formatLeading(leading)
+
     const trailing = takeTrailing(node, ctx.comments).map(c =>
         concat([text(" "), text(c.text), breakParent()]),
     )
 
+    const comma = ifBreak(text(","), isLast ? undefined : text(","))
     // Check if there's a colon in the node
     const hasColon = node.children.some(child => child?.text === ":")
 
     if (hasColon) {
         if (valueN) {
             const value = printNode(valueN, ctx) ?? empty()
-            return concat([name, text(": "), value, ifBreak(text(",")), ...trailing])
+            return concat([...leadingDoc, name, text(": "), value, comma, ...trailing])
         } else {
             // Case like {foo:}
-            return concat([name, text(":"), ifBreak(text(",")), ...trailing])
+            return concat([...leadingDoc, name, text(":"), comma, ...trailing])
         }
     } else {
         // Case like {foo} without colon
-        return concat([name, ifBreak(text(",")), ...trailing])
+        return concat([...leadingDoc, name, comma, ...trailing])
     }
 }
 

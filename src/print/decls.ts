@@ -46,6 +46,7 @@ export function printVersionValue(node: Node, ctx: Ctx): Doc | undefined {
 }
 
 export function printTypeAlias(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("underlying_type")
 
@@ -55,13 +56,25 @@ export function printTypeAlias(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const name = text(nameN.text)
     const type = printNode(typeN, ctx) ?? empty()
 
-    return group([...leading, text("type"), text(" "), name, text(" = "), type, ...trailing])
+    return group([
+        ...leading,
+        annotations,
+        text("type"),
+        text(" "),
+        name,
+        text(" ="),
+        typeN.type === "union_type" ? ifBreak(undefined, text(" ")) : text(" "),
+        type,
+        ...trailing,
+    ])
 }
 
 export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
     const returnTypeN = node.childForFieldName("return_type")
@@ -73,6 +86,7 @@ export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const name = text(nameN.text)
     const parameters = printNode(parametersN, ctx) ?? empty()
     const body = printNode(bodyN, ctx) ?? empty()
@@ -87,6 +101,7 @@ export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
 
     return group([
         ...leading,
+        annotations,
         text("fun "),
         name,
         parameters,
@@ -161,6 +176,7 @@ export function printBuiltinSpecifier(node: Node, ctx: Ctx): Doc | undefined {
 }
 
 export function printConstantDeclaration(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const nameN = node.childForFieldName("name")
     const valueN = node.childForFieldName("value")
     const typeN = node.childForFieldName("type")
@@ -168,15 +184,16 @@ export function printConstantDeclaration(node: Node, ctx: Ctx): Doc | undefined 
     if (!nameN || !valueN) return undefined
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
-
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const name = text(nameN.text)
     const value = printNode(valueN, ctx) ?? empty()
     const type = typeN ? concat([text(": "), printNode(typeN, ctx) ?? empty(), text(" ")]) : empty()
 
     return group([
         ...leading,
+        annotations,
         text("const "),
         name,
         text(" "),
@@ -188,6 +205,7 @@ export function printConstantDeclaration(node: Node, ctx: Ctx): Doc | undefined 
 }
 
 export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const receiverN = node.childForFieldName("receiver")
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
@@ -200,6 +218,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const receiver = printNode(receiverN, ctx) ?? empty()
     const name = text(nameN.text)
     const parameters = printNode(parametersN, ctx) ?? empty()
@@ -215,6 +234,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
 
     return group([
         ...leading,
+        annotations,
         text("fun "),
         receiver,
         name,
@@ -225,6 +245,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
 }
 
 export function printGetMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
     const returnTypeN = node.childForFieldName("return_type")
@@ -234,6 +255,7 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const name = text(nameN.text)
     const parameters = printNode(parametersN, ctx) ?? empty()
     const body = printNode(bodyN, ctx) ?? empty()
@@ -244,7 +266,16 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined
         returnTypePart = concat([text(": "), returnType])
     }
 
-    return group([...leading, text("get fun "), name, parameters, returnTypePart, text(" "), body])
+    return group([
+        ...leading,
+        annotations,
+        text("get fun "),
+        name,
+        parameters,
+        returnTypePart,
+        text(" "),
+        body,
+    ])
 }
 
 export function printTolkRequiredVersion(node: Node, ctx: Ctx): Doc | undefined {
@@ -270,36 +301,27 @@ export function printImportDirective(node: Node, ctx: Ctx): Doc | undefined {
 }
 
 export function printGlobalVarDeclaration(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("type")
-    const annotationsN = node.childForFieldName("annotations")
 
     if (!nameN || !typeN) return undefined
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const name = printNode(nameN, ctx) ?? empty()
     const type = printNode(typeN, ctx) ?? empty()
-    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([
-        ...leading,
-        annotations,
-        annotations.$ === "Empty" ? empty() : hardLine(),
-        text("global "),
-        name,
-        text(": "),
-        type,
-        ...trailing,
-    ])
+    return group([...leading, annotations, text("global "), name, text(": "), type, ...trailing])
 }
 
 export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
+    const annotationsN = node.childForFieldName("annotations")
     const nameN = node.childForFieldName("name")
     const bodyN = node.childForFieldName("body")
-    const annotationsN = node.childForFieldName("annotations")
     const typeParametersN = node.childForFieldName("type_parameters")
     const packPrefixN = node.childForFieldName("pack_prefix")
 
@@ -307,9 +329,9 @@ export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
+    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const name = printNode(nameN, ctx) ?? empty()
     const body = bodyN ? (printNode(bodyN, ctx) ?? empty()) : empty()
-    const annotations = annotationsN ? (printNode(annotationsN, ctx) ?? empty()) : empty()
     const typeParameters = typeParametersN ? (printNode(typeParametersN, ctx) ?? empty()) : empty()
     const packPrefix = packPrefixN
         ? concat([text("("), printNode(packPrefixN, ctx) ?? empty(), text(") ")])
@@ -320,7 +342,6 @@ export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     return group([
         ...leading,
         annotations,
-        annotations.$ === "Empty" ? empty() : hardLine(),
         text("struct "),
         packPrefix,
         name,

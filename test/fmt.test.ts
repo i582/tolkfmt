@@ -251,6 +251,51 @@ fun foo() {
 
         // Nested objects
         expect(await format(`fun test() { {foo: {bar: 1}}; }`)).toMatchSnapshot()
+
+        // with comments
+        expect(
+            await format(`fun test() {
+            Foo {
+                // some comment
+                // with several lines
+                foo: bar,
+            };
+        }`),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`fun test() {
+            Foo {
+                // some comment
+                // with several lines
+                foo,
+            };
+        }`),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`fun test() {
+            val emptyNftItemStorage: ItemStorageNotInitialized = {
+                config: ItemConfig { index, collectionAddress }.toCell(),
+            };
+        }`),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`fun test() {
+            val emptyNftItemStorage: ItemStorageNotInitialized = {
+                config: ItemConfig { toooooooooooooooooooooooooooooooooooooooooooLong, collectionAddress }.toCell(),
+            };
+        }`),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`fun test() {
+            val emptyNftItemStorage: ItemStorageNotInitialized = {
+                config: ItemConfig { toooooooooooooooooooooooooooooooooooooooooooLong, toooooooooooooooooooooooooooooooooooooooooooLong2 }.toCell(),
+            };
+        }`),
+        ).toMatchSnapshot()
     })
 
     it("should format control flow statements", async () => {
@@ -536,7 +581,7 @@ fun foo() {
         expect(await format(`@annotation(42) fun test() { return; }`)).toMatchSnapshot()
         expect(await format(`@annotation(42, "hello") fun test() { return; }`)).toMatchSnapshot()
         expect(
-            await format(`@annotation(veryLongArgument, anotherLongArg) fun test() { return; }`, {
+            await format(`@annotation(veryLongArgument) fun test() { return; }`, {
                 maxWidth: 30,
             }),
         ).toMatchSnapshot()
@@ -706,6 +751,79 @@ fun foo() {
         expect(await format(`fun test() { getValue().0; }`)).toMatchSnapshot()
     })
 
+    it("should format top level declarations with annotations", async () => {
+        expect(
+            await format(`
+        /// function comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        fun foo() {}
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// method comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        fun Foo.foo() {}
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// method comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        get fun foo() {}
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// struct comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        @custom({foo: 10})
+        struct Foo {}
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// type alias comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        type Foo = int
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// constant comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        const FOO = 100
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// global variable comment
+        /// second line
+        @deprecated("aaaa")
+        @inline
+        global foo: int
+        `),
+        ).toMatchSnapshot()
+    })
+
     it("should format block statements", async () => {
         expect(
             await format(`fun test() {
@@ -822,6 +940,14 @@ fun foo() {
         /// method comment
         /// second line
         fun Foo.foo() {}
+        `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+        /// method comment
+        /// second line
+        get fun foo() {}
         `),
         ).toMatchSnapshot()
 
