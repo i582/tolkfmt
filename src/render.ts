@@ -1,6 +1,6 @@
 import {Doc, empty} from "./doc";
 
-export function render(doc: Doc, printWidth: number = 80): string {
+export function render(doc: Doc, printWidth: number): string {
     type Mode = "flat" | "break";
 
     interface Frame {

@@ -10,13 +10,14 @@ const main = async () => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-struct Foo { a: int }
-
 fun main() {
-    // comment here
-    val foo = 10;
-    // and there
-    print(foo);
+    assert (in.valueCoins >
+        msg.forwardTonAmount +
+        // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+        // but last one is optional (it is ok if it fails)
+        forwardedMessagesCount * in.originalForwardFee +
+        (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
+    ) throw ERR_NOT_ENOUGH_TON;
 }`)
 
     if (!cst?.rootNode) throw Error(`Unable to parse file`);

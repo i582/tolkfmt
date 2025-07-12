@@ -374,7 +374,18 @@ fun foo() {
         // Assert statements
         expect(await format(`fun test() { assert(true) throw 1; }`)).toMatchSnapshot()
         expect(await format(`fun test() { assert(condition, 42); }`)).toMatchSnapshot()
-        expect(await format(`fun test() { assert(veryLongCondition) throw veryLongException; }`, {maxWidth: 30})).toMatchSnapshot()
+        expect(await format(`fun test() { assert (veryLongCondition) throw veryLongException; }`, {maxWidth: 30})).toMatchSnapshot()
+
+        // long assert
+        expect(await format(`fun test() {
+             assert (in.valueCoins >
+                msg.forwardTonAmount +
+                // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+                // but last one is optional (it is ok if it fails)
+                forwardedMessagesCount * in.originalForwardFee +
+                (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
+            ) throw ERR_NOT_ENOUGH_TON;
+        }`, {maxWidth: 100})).toMatchSnapshot()
 
         // Try-catch statements
         expect(await format(`fun test() { try { doSomething(); } catch { handleError(); } }`)).toMatchSnapshot()

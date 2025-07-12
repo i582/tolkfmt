@@ -126,7 +126,7 @@ function attachLeading(c: CommentInfo, node: Node, map: CommentMap) {
 }
 
 function attachTrailing(c: CommentInfo, node: Node, map: CommentMap) {
-    console.log(`attach trailing ${c.text} to ${node.text}`)
+    // console.log(`attach trailing ${c.text} to ${node.text}`)
     ensureEntry(node, map).trailing.push(c);
 }
 

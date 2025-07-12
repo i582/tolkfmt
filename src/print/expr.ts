@@ -337,7 +337,7 @@ export function printObjectLiteral(node: Node, ctx: Ctx) {
 
     if (!argumentsN) return undefined
 
-    const type = typeN ? printNode(typeN, ctx) ?? empty() : empty()
+    const type = typeN ? concat([printNode(typeN, ctx) ?? empty(), text(" ")]) : empty()
     const args = printNode(argumentsN, ctx) ?? empty()
 
     const trailing = takeTrailing(node, ctx.comments).map(c =>
@@ -369,26 +369,17 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx) {
         concat([text(" "), text(c.text)])
     );
 
-    // For simple cases, keep it compact
-    if (parts.length === 1) {
-        return concat([text("{ "), parts[0], text(" }"), ...trailing])
-    }
-
-    if (parts.length === 2) {
-        return concat([text("{ "), parts[0], text(", "), parts[1], text(" }"), ...trailing])
-    }
-
     const [first, ...rest] = parts;
-    const tailDocs = rest.map(part => concat([text(", "), part]))
+    const tailDocs = rest.map(part => concat([text(","), hardLine(), part]))
 
     return group([
         text("{"),
         indent(concat([
-            softLine(),
+            hardLine(),
             first,
             ...tailDocs,
         ])),
-        softLine(),
+        hardLine(),
         text("}"),
         ...trailing,
     ])
@@ -512,7 +503,7 @@ export function printMatchExpression(node: Node, ctx: Ctx) {
     );
 
     return group([
-        text("match("),
+        text("match ("),
         expr,
         text(") "),
         body,
@@ -532,12 +523,18 @@ export function printMatchBody(node: Node, ctx: Ctx) {
         concat([text(" "), text(c.text)])
     );
 
+    const [first, ...rest] = parts;
+    const tailDocs = rest.map(part => concat([hardLine(), part, text(",")]))
+
     return group([
         text("{"),
         indent(concat([
             hardLine(),
-            ...parts.map(part => concat([part, hardLine()])),
+            first,
+            text(","),
+            ...tailDocs,
         ])),
+        hardLine(),
         text("}"),
         ...trailing,
     ])
@@ -547,7 +544,10 @@ export function printMatchArm(node: Node, ctx: Ctx) {
     const patternTypeN = node.childForFieldName("pattern_type")
     const patternExprN = node.childForFieldName("pattern_expr")
     const patternElseN = node.childForFieldName("pattern_else")
-    const bodyN = node.childForFieldName("body")
+    const bodyN = node.childForFieldName("block")
+        ?? node.childForFieldName("return")
+        ?? node.childForFieldName("throw")
+        ?? node.childForFieldName("expr")
 
     if (!bodyN) return undefined
 

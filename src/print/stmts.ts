@@ -313,11 +313,11 @@ export function printVarDeclaration(node: Node, ctx: Ctx) {
 }
 
 export function printTupleVarsDeclaration(node: Node, ctx: Ctx) {
-    const varsN = node.childForFieldName("vars")
+    const varsN = node.childrenForFieldName("vars")
     if (!varsN) return undefined
 
     // Extract all vars from the vars field
-    const vars = varsN.namedChildren.filter(child => child !== null) as Node[]
+    const vars = varsN.filter(child => child !== null).filter(child => child?.isNamed)
     const parts = vars.map(v => printNode(v, ctx) ?? empty())
 
     const trailing = takeTrailing(node, ctx.comments).map(c =>
@@ -345,11 +345,11 @@ export function printTupleVarsDeclaration(node: Node, ctx: Ctx) {
 }
 
 export function printTensorVarsDeclaration(node: Node, ctx: Ctx) {
-    const varsN = node.childForFieldName("vars")
+    const varsN = node.childrenForFieldName("vars")
     if (!varsN) return undefined
 
     // Extract all vars from the vars field
-    const vars = varsN.namedChildren.filter(child => child !== null) as Node[]
+    const vars = varsN.filter(child => child !== null).filter(child => child?.isNamed)
     const parts = vars.map(v => printNode(v, ctx) ?? empty())
 
     const trailing = takeTrailing(node, ctx.comments).map(c =>
@@ -402,8 +402,12 @@ export function printAssertStatement(node: Node, ctx: Ctx) {
 
     if (hasThrow) {
         return group([
-            text("assert("),
-            condition,
+            text("assert ("),
+            indent(concat([
+                softLine(),
+                condition,
+            ])),
+            softLine(),
             text(") throw "),
             excNo,
             ...trailing,
@@ -470,7 +474,9 @@ export function printCatchClause(node: Node, ctx: Ctx) {
 }
 
 export function printMatchStatement(node: Node, ctx: Ctx) {
-    return printMatchExpression(node, ctx)
+    const expr = node.firstChild;
+    if (!expr) return undefined
+    return printMatchExpression(expr, ctx)
 }
 
 export function printAssignment(node: Node, ctx: Ctx) {

@@ -374,7 +374,7 @@ exports[`Formatter should format control flow statements 8`] = `
 
 exports[`Formatter should format error handling 1`] = `
 "fun test() {
-    assert(true) throw 1
+    assert (true) throw 1
 }
 "
 `;
@@ -388,12 +388,25 @@ exports[`Formatter should format error handling 2`] = `
 
 exports[`Formatter should format error handling 3`] = `
 "fun test() {
-    assert(veryLongCondition) throw veryLongException
+    assert (
+        veryLongCondition
+    ) throw veryLongException
 }
 "
 `;
 
 exports[`Formatter should format error handling 4`] = `
+"fun test() {
+    assert (
+        in.valueCoins >
+        msg.forwardTonAmount + forwardedMessagesCount * in.originalForwardFee +
+        (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
+    ) throw ERR_NOT_ENOUGH_TON
+}
+"
+`;
+
+exports[`Formatter should format error handling 5`] = `
 "fun test() {
     try {
         doSomething();
@@ -404,7 +417,7 @@ exports[`Formatter should format error handling 4`] = `
 "
 `;
 
-exports[`Formatter should format error handling 5`] = `
+exports[`Formatter should format error handling 6`] = `
 "fun test() {
     try {
         doSomething();
@@ -415,7 +428,7 @@ exports[`Formatter should format error handling 5`] = `
 "
 `;
 
-exports[`Formatter should format error handling 6`] = `
+exports[`Formatter should format error handling 7`] = `
 "fun test() {
     try {
         doSomething();
@@ -823,42 +836,59 @@ exports[`Formatter should format objects 1`] = `
 
 exports[`Formatter should format objects 2`] = `
 "fun test() {
-    { foo: 1 };
+    {
+        foo: 1
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 3`] = `
 "fun test() {
-    { foo: 1, bar: 2 };
+    {
+        foo: 1,
+        bar: 2
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 4`] = `
 "fun test() {
-    {foo: 1, bar: 2, baz: 3};
+    {
+        foo: 1,
+        bar: 2,
+        baz: 3
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 5`] = `
 "fun test() {
-    MyType{ foo: 1 };
+    MyType {
+        foo: 1
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 6`] = `
 "fun test() {
-    MyType{ foo: 1, bar: 2 };
+    MyType {
+        foo: 1,
+        bar: 2
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 7`] = `
 "fun test() {
-    { veryLongFieldName: veryLongValue, anotherLongField: anotherLongValue };
+    {
+        veryLongFieldName: veryLongValue,
+        anotherLongField: anotherLongValue
+    };
 }
 "
 `;
@@ -875,21 +905,31 @@ exports[`Formatter should format objects 8`] = `
 
 exports[`Formatter should format objects 9`] = `
 "fun test() {
-    { foo: };
+    {
+        foo:
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 10`] = `
 "fun test() {
-    {foo: 1, bar:, baz};
+    {
+        foo: 1,
+        bar:,
+        baz
+    };
 }
 "
 `;
 
 exports[`Formatter should format objects 11`] = `
 "fun test() {
-    { foo: { bar: 1 } };
+    {
+        foo: {
+            bar: 1
+        }
+    };
 }
 "
 `;
@@ -981,35 +1021,52 @@ exports[`Formatter should format operators 11`] = `
 
 exports[`Formatter should format pattern matching 1`] = `
 "fun test() {
-    
+    match (value) {}
 }
 "
 `;
 
 exports[`Formatter should format pattern matching 2`] = `
 "fun test() {
-    
+    match (value) {
+        int => 1,
+        string => 2,
+    }
 }
 "
 `;
 
 exports[`Formatter should format pattern matching 3`] = `
 "fun test() {
-    
+    match (value) {
+        42 => "number",
+        "hello" => "string",
+        else => "other",
+    }
 }
 "
 `;
 
 exports[`Formatter should format pattern matching 4`] = `
 "fun test() {
-    
+    match (value) {
+        int => {
+            return 1
+        },
+        string => {
+            return 2
+        },
+    }
 }
 "
 `;
 
 exports[`Formatter should format pattern matching 5`] = `
 "fun test() {
-    
+    match (value) {
+        int => return 1,
+        string => throw 2,
+    }
 }
 "
 `;
@@ -1376,42 +1433,46 @@ exports[`Formatter should format variables 7`] = `
 
 exports[`Formatter should format variables 8`] = `
 "fun test() {
-    var [x] = getTuple();
+    var [x, y] = getTuple();
 }
 "
 `;
 
 exports[`Formatter should format variables 9`] = `
 "fun test() {
-    val [x, int] = getTuple();
+    val [x: int, y: string] = getTuple();
 }
 "
 `;
 
 exports[`Formatter should format variables 10`] = `
 "fun test() {
-    var [veryLongVariableName] = getTuple();
+    var [
+        veryLongVariableName, anotherVeryLongVariableName
+    ] = getTuple();
 }
 "
 `;
 
 exports[`Formatter should format variables 11`] = `
 "fun test() {
-    var (x) = getTensor();
+    var (x, y) = getTensor();
 }
 "
 `;
 
 exports[`Formatter should format variables 12`] = `
 "fun test() {
-    val (x, int) = getTensor();
+    val (x: int, y: string) = getTensor();
 }
 "
 `;
 
 exports[`Formatter should format variables 13`] = `
 "fun test() {
-    var (veryLongVariableName) = getTensor();
+    var (
+        veryLongVariableName, anotherVeryLongVariableName
+    ) = getTensor();
 }
 "
 `;
