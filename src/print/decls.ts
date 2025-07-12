@@ -245,7 +245,7 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx) {
 
     return group([
         ...leading,
-        text("get "),
+        text("get fun "),
         name,
         parameters,
         returnTypePart,
@@ -309,7 +309,7 @@ export function printGlobalVarDeclaration(node: Node, ctx: Ctx) {
     return group([
         ...leading,
         annotations,
-        annotations !== empty() ? hardLine() : empty(),
+        annotations.$ !== "Empty" ? hardLine() : empty(),
         text("global "),
         name,
         text(": "),
@@ -344,7 +344,7 @@ export function printStructDeclaration(node: Node, ctx: Ctx) {
     return group([
         ...leading,
         annotations,
-        annotations !== empty() ? hardLine() : empty(),
+        annotations.$ !== "Empty" ? hardLine() : empty(),
         text("struct "),
         packPrefix,
         name,
@@ -404,7 +404,7 @@ export function printStructFieldDeclaration(node: Node, ctx: Ctx) {
 
     let result = [name, text(": "), type]
 
-    if (defaultVal !== empty()) {
+    if (defaultVal.$ !== "Empty") {
         result = [...result, text(" = "), defaultVal]
     }
 
@@ -458,7 +458,7 @@ export function printTypeParameter(node: Node, ctx: Ctx) {
 
     let result = [name]
 
-    if (defaultVal !== empty()) {
+    if (defaultVal.$ !== "Empty") {
         result = [...result, text(" = "), defaultVal]
     }
 

@@ -140,7 +140,7 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     }
 
     if (node.type === "if_statement") {
-        return stmts.printIf(node, ctx)
+        return stmts.printIfStatement(node, ctx)
     }
 
     if (node.type === "block_statement") {
@@ -331,7 +331,6 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
         return expr.printMatchArm(node, ctx);
     }
 
-    // Misc constructs
     if (node.type === "numeric_index") {
         return expr.printNumericIndex(node, ctx);
     }

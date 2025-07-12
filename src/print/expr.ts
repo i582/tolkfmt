@@ -269,11 +269,15 @@ export function printTernaryOperator(node: Node, ctx: Ctx) {
 
     return group([
         condition,
-        text(" ? "),
-        consequence,
-        text(" : "),
-        alternative,
-        ...trailing,
+        indent(concat([
+            softLine(),
+            text(" ? "),
+            consequence,
+            softLine(),
+            text(" : "),
+            alternative,
+            ...trailing,
+        ])),
     ])
 }
 
@@ -367,11 +371,11 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx) {
 
     // For simple cases, keep it compact
     if (parts.length === 1) {
-        return concat([text("{"), parts[0], text("}"), ...trailing])
+        return concat([text("{ "), parts[0], text(" }"), ...trailing])
     }
 
     if (parts.length === 2) {
-        return concat([text("{"), parts[0], text(", "), parts[1], text("}"), ...trailing])
+        return concat([text("{ "), parts[0], text(", "), parts[1], text(" }"), ...trailing])
     }
 
     const [first, ...rest] = parts;

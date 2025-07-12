@@ -229,7 +229,7 @@ global myVar: int
 exports[`Formatter should format annotations 8`] = `
 "@annotation
 
-struct MyStruct { x: int =  }
+struct MyStruct { x: int }
 
 "
 `;
@@ -400,7 +400,7 @@ exports[`Formatter should format error handling 4`] = `
 "fun test() {
     try {
         doSomething();
-    } catch (, ){
+    } catch {
         handleError();
     }
 }
@@ -412,7 +412,7 @@ exports[`Formatter should format error handling 5`] = `
 "fun test() {
     try {
         doSomething();
-    } catch (e, ){
+    } catch (e) {
         handleError(e);
     }
 }
@@ -424,7 +424,7 @@ exports[`Formatter should format error handling 6`] = `
 "fun test() {
     try {
         doSomething();
-    } catch (e, code){
+    } catch (e, code) {
         handleError(e, code);
     }
 }
@@ -621,15 +621,23 @@ exports[`Formatter should format functions 13`] = `
 `;
 
 exports[`Formatter should format functions 14`] = `
-"get test() {
-    return 42
+"fun MyType.test(self, x: int): string {
+    return "hello"
 }
 
 "
 `;
 
 exports[`Formatter should format functions 15`] = `
-"get test(): int {
+"get fun test() {
+    return 42
+}
+
+"
+`;
+
+exports[`Formatter should format functions 16`] = `
+"get fun test(): int {
     return 42
 }
 
@@ -701,15 +709,13 @@ exports[`Formatter should format generics 8`] = `
 `;
 
 exports[`Formatter should format generics 9`] = `
-"
-struct MyStruct<T = > { value: T =  }
+"struct MyStruct<T> { value: T }
 
 "
 `;
 
 exports[`Formatter should format generics 10`] = `
-"
-struct MyStruct<T = , U = > {first: T = , second: U = }
+"struct MyStruct<T, U> {first: T, second: U}
 
 "
 `;
@@ -842,7 +848,7 @@ exports[`Formatter should format objects 1`] = `
 
 exports[`Formatter should format objects 2`] = `
 "fun test() {
-    {foo: 1};
+    { foo: 1 };
 }
 
 "
@@ -850,7 +856,7 @@ exports[`Formatter should format objects 2`] = `
 
 exports[`Formatter should format objects 3`] = `
 "fun test() {
-    {foo: 1, bar: 2};
+    { foo: 1, bar: 2 };
 }
 
 "
@@ -866,7 +872,7 @@ exports[`Formatter should format objects 4`] = `
 
 exports[`Formatter should format objects 5`] = `
 "fun test() {
-    MyType{foo: 1};
+    MyType{ foo: 1 };
 }
 
 "
@@ -874,7 +880,7 @@ exports[`Formatter should format objects 5`] = `
 
 exports[`Formatter should format objects 6`] = `
 "fun test() {
-    MyType{foo: 1, bar: 2};
+    MyType{ foo: 1, bar: 2 };
 }
 
 "
@@ -882,7 +888,7 @@ exports[`Formatter should format objects 6`] = `
 
 exports[`Formatter should format objects 7`] = `
 "fun test() {
-    {veryLongFieldName: veryLongValue, anotherLongField: anotherLongValue};
+    { veryLongFieldName: veryLongValue, anotherLongField: anotherLongValue };
 }
 
 "
@@ -900,7 +906,7 @@ exports[`Formatter should format objects 8`] = `
 
 exports[`Formatter should format objects 9`] = `
 "fun test() {
-    {foo:};
+    { foo: };
 }
 
 "
@@ -916,7 +922,7 @@ exports[`Formatter should format objects 10`] = `
 
 exports[`Formatter should format objects 11`] = `
 "fun test() {
-    {foo: {bar: 1}};
+    { foo: { bar: 1 } };
 }
 
 "
@@ -996,7 +1002,23 @@ exports[`Formatter should format operators 9`] = `
 
 exports[`Formatter should format operators 10`] = `
 "fun test() {
-    condition ? veryLongConsequence : veryLongAlternative;
+    condition
+         ? veryLongConsequence
+         : veryLongAlternative;
+}
+
+"
+`;
+
+exports[`Formatter should format operators 11`] = `
+"fun test() {
+    condition
+         ? condition1
+             ? veryLongConsequence1
+             : veryLongAlternative1
+         : condition2
+             ? veryLongConsequence2
+             : veryLongAlternative2;
 }
 
 "
@@ -1261,15 +1283,13 @@ exports[`Formatter should format top-level declarations 4`] = `
 `;
 
 exports[`Formatter should format top-level declarations 5`] = `
-"
-global myVar: int
+"global myVar: int
 
 "
 `;
 
 exports[`Formatter should format top-level declarations 6`] = `
-"
-global myVar: VeryLongTypeName
+"global myVar: VeryLongTypeName
 
 "
 `;
@@ -1291,36 +1311,31 @@ exports[`Formatter should format top-level declarations 8`] = `
 `;
 
 exports[`Formatter should format top-level declarations 9`] = `
-"
-struct MyStruct {}
+"struct MyStruct {}
 
 "
 `;
 
 exports[`Formatter should format top-level declarations 10`] = `
-"
-struct MyStruct { x: int =  }
+"struct MyStruct { x: int }
 
 "
 `;
 
 exports[`Formatter should format top-level declarations 11`] = `
-"
-struct MyStruct {x: int = , y: string = }
+"struct MyStruct {x: int, y: string}
 
 "
 `;
 
 exports[`Formatter should format top-level declarations 12`] = `
-"
-struct MyStruct {x: int = 42, y: string = "hello"}
+"struct MyStruct {x: int = 42, y: string = "hello"}
 
 "
 `;
 
 exports[`Formatter should format top-level declarations 13`] = `
-"
-struct (8)MyStruct { x: int =  }
+"struct (8)MyStruct { x: int }
 
 "
 `;

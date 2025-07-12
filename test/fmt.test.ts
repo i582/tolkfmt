@@ -121,6 +121,7 @@ fun foo() {
         // Ternary operator
         expect(await format(`fun test() { true ? 1 : 2; }`)).toMatchSnapshot()
         expect(await format(`fun test() { condition ? veryLongConsequence : veryLongAlternative; }`, {maxWidth: 30})).toMatchSnapshot()
+        expect(await format(`fun test() { condition ? condition1 ? veryLongConsequence1 : veryLongAlternative1 : condition2 ? veryLongConsequence2 : veryLongAlternative2; }`, {maxWidth: 30})).toMatchSnapshot()
     });
 
     it('should format function calls', async () => {
@@ -264,11 +265,12 @@ fun foo() {
         // Functions with long parameters  
         expect(await format(`fun test(veryLongParameterName: VeryLongTypeName, anotherLongParameter: AnotherLongType): ReturnType { return value; }`, {maxWidth: 30})).toMatchSnapshot()
 
-        // Method declarations (if supported by grammar)
+        // Method declarations
         expect(await format(`fun MyType.test() { return; }`)).toMatchSnapshot()
         expect(await format(`fun MyType.test(x: int): string { return "hello"; }`)).toMatchSnapshot()
+        expect(await format(`fun MyType.test(self, x: int): string { return "hello"; }`)).toMatchSnapshot()
 
-        // Get method declarations (if supported by grammar)
+        // Get method declarations
         expect(await format(`get test() { return 42; }`)).toMatchSnapshot()
         expect(await format(`get test(): int { return 42; }`)).toMatchSnapshot()
     });

@@ -5,7 +5,7 @@ import {concat, empty, group, hardLine, indent, softLine, text} from "../doc";
 import {takeDangling, takeLeading, takeTrailing} from "../comments";
 import {printMatchExpression} from "./expr";
 
-export const printIf = (node: Node, ctx: Ctx) => {
+export const printIfStatement = (node: Node, ctx: Ctx) => {
     const conditionN = node.childForFieldName("condition")
     const bodyN = node.childForFieldName("body")
 
@@ -444,11 +444,11 @@ export function printCatchClause(node: Node, ctx: Ctx) {
     );
 
     let vars = empty()
-    if (catchVar1 !== empty()) {
-        if (catchVar2 !== empty()) {
-            vars = concat([text("("), catchVar1, text(", "), catchVar2, text(")")])
+    if (catchVar1.$ !== "Empty") {
+        if (catchVar2.$ !== "Empty") {
+            vars = concat([text("("), catchVar1, text(", "), catchVar2, text(") ")])
         } else {
-            vars = concat([text("("), catchVar1, text(")")])
+            vars = concat([text("("), catchVar1, text(") ")])
         }
     }
 
