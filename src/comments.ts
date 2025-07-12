@@ -19,6 +19,26 @@ export interface Bound {
 // eslint-disable-next-line functional/type-declaration-immutability
 export type CommentMap = Map<number /* node.id */, Bound>
 
+function isReallyTrailing(node: Node): boolean {
+    const {nextSibling} = node
+    if (nextSibling?.type === "comment") {
+        // simple case
+        return true
+    }
+    const nextNextSibling = nextSibling?.nextSibling
+    if (nextSibling?.type === ",") {
+        if (node.type === "call_argument") {
+            // cannot step over comma in `foo(...)`
+            return false
+        }
+    }
+    if (nextNextSibling?.type === "comment") {
+        return true
+    }
+    // likely not a trailing
+    return false
+}
+
 export function bindComments(root: Node): CommentMap {
     const comments = collectComments(root)
     const byNode: CommentMap = new Map()
@@ -40,7 +60,8 @@ export function bindComments(root: Node): CommentMap {
             while (
                 index < comments.length &&
                 comments[index].start >= lastTok.endIndex &&
-                comments[index].startRow === lastTok.endPosition.row
+                comments[index].startRow === lastTok.endPosition.row &&
+                isReallyTrailing(node)
             ) {
                 attachTrailing(comments[index++], node, byNode)
                 continue outer

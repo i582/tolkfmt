@@ -342,6 +342,10 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
 }
 
 export function formatLeading(leading: CommentInfo[]): Doc[] {
+    if (leading.length === 1 && leading[0].text.startsWith("/*")) {
+        return [text(leading[0].text)] // inline /* foo */
+    }
+
     return leading.flatMap(c => [text(c.text), hardLine()])
 }
 

@@ -1270,4 +1270,89 @@ fun foo() {
             `),
         ).toMatchSnapshot()
     })
+
+    it("should format struct with comments", async () => {
+        expect(
+            await format(`
+            struct Foo {
+                // value doc
+                value: int
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            struct Foo {
+                // value doc
+                value: int // inline doc
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            struct Foo {
+                // value doc
+                // with several lines
+                value: int /* wtf */ /* idk */
+            }
+            `),
+        ).toMatchSnapshot()
+
+        // TODO
+        expect(
+            await format(`
+            struct Foo {
+                value: int
+                // after doc
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            struct Foo {
+                // value doc
+                value: int // inline doc
+                // after doc
+                other: int // inline doc 2
+            }
+            `),
+        ).toMatchSnapshot()
+    })
+
+    it("should format call expression with comments", async () => {
+        expect(
+            await format(`
+            fun foo() {
+                bar(/* init: */ true);
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                bar(/* init: */ true, /* other: */ false);
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                bar(/* init: */ true, /* other: */ false /* other after */);
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                bar(/* init: */ toooooooooooLooooooooooooooooooooooooooooooooooooooong, /* other: */ toooooooooooLooooooooooooooooooooooooooooooooooooooong /* other after */);
+            }
+            `),
+        ).toMatchSnapshot()
+    })
 })

@@ -15,7 +15,7 @@ import {
 import {takeLeading, takeTrailing} from "../comments"
 
 import type {Ctx} from "./ctx"
-import {printNode} from "./node"
+import {formatLeading, printNode} from "./node"
 
 export function printSourceFile(node: Node, ctx: Ctx): Doc | undefined {
     const decls = node.children.filter(it => it !== null).filter(it => it.type !== "comment")
@@ -387,6 +387,8 @@ export function printStructFieldDeclaration(node: Node, ctx: Ctx): Doc | undefin
     const type = printNode(typeN, ctx) ?? empty()
     const defaultVal = defaultN ? (printNode(defaultN, ctx) ?? empty()) : empty()
 
+    const leading = takeLeading(node, ctx.comments)
+    const leadingDoc = formatLeading(leading)
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     let result = [name, text(": "), type]
@@ -395,7 +397,7 @@ export function printStructFieldDeclaration(node: Node, ctx: Ctx): Doc | undefin
         result = [...result, text(" = "), defaultVal]
     }
 
-    return concat([...result, ...trailing])
+    return concat([...leadingDoc, ...result, ...trailing])
 }
 
 export function printTypeParameters(node: Node, ctx: Ctx): Doc | undefined {

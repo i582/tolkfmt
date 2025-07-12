@@ -4,7 +4,7 @@ import * as path from "node:path"
 import {glob} from "glob"
 import {format} from "./index"
 
-const version = "0.0.7"
+const version = "0.0.8"
 
 type FormatMode = "format" | "format-and-write" | "check"
 

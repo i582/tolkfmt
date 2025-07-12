@@ -11,8 +11,14 @@ const main = async (): Promise<void> => {
 
     const cst = parser.parse(`
 fun foo() {
-    Foo { /*aa*/ foo: bar, bar: foo}
-}`)
+   foo(
+      true, // hello world
+      false, // hello earth
+   )
+}
+
+`)
+    // bar(/* init: */ true, /* other: */ true /* other after */)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)
 

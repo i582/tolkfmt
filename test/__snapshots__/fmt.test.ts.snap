@@ -471,6 +471,37 @@ exports[`Formatter should format block with only comment 3`] = `
 "
 `;
 
+exports[`Formatter should format call expression with comments 1`] = `
+"fun foo() {
+    bar(/* init: */true);
+}
+"
+`;
+
+exports[`Formatter should format call expression with comments 2`] = `
+"fun foo() {
+    bar(/* init: */true, /* other: */false);
+}
+"
+`;
+
+exports[`Formatter should format call expression with comments 3`] = `
+"fun foo() {
+    bar(/* init: */true, /* other: */false /* other after */);
+}
+"
+`;
+
+exports[`Formatter should format call expression with comments 4`] = `
+"fun foo() {
+    bar(
+        /* init: */toooooooooooLooooooooooooooooooooooooooooooooooooooong,
+        /* other: */toooooooooooLooooooooooooooooooooooooooooooooooooooong /* other after */
+    );
+}
+"
+`;
+
 exports[`Formatter should format chain with comments 1`] = `
 "fun foo() {
     foo() // comment
@@ -730,7 +761,9 @@ exports[`Formatter should format function calls 5`] = `
 exports[`Formatter should format function calls 6`] = `
 "fun test() {
     foo(
-        veryLongArgument, anotherVeryLongArgument, thirdLongArgument
+        veryLongArgument,
+        anotherVeryLongArgument,
+        thirdLongArgument
     );
 }
 "
@@ -1598,6 +1631,48 @@ exports[`Formatter should format simple literals 8`] = `
 exports[`Formatter should format simple literals 9`] = `
 "fun test() {
     _;
+}
+"
+`;
+
+exports[`Formatter should format struct with comments 1`] = `
+"struct Foo {
+    // value doc
+    value: int
+}
+"
+`;
+
+exports[`Formatter should format struct with comments 2`] = `
+"struct Foo {
+    // value doc
+    value: int // inline doc
+}
+"
+`;
+
+exports[`Formatter should format struct with comments 3`] = `
+"struct Foo {
+    // value doc
+    // with several lines
+    value: int /* wtf */ /* idk */
+}
+"
+`;
+
+exports[`Formatter should format struct with comments 4`] = `
+"struct Foo {
+    value: int
+}
+"
+`;
+
+exports[`Formatter should format struct with comments 5`] = `
+"struct Foo {
+    // value doc
+    value: int // inline doc
+    // after doc
+    other: int // inline doc 2
 }
 "
 `;

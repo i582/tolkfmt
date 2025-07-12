@@ -294,7 +294,7 @@ export function printArgumentList(node: Node, ctx: Ctx): Doc | undefined {
     }
 
     const [first, ...rest] = parts
-    const tailDocs = rest.map(part => concat([text(", "), part]))
+    const tailDocs = rest.map(part => concat([text(","), line(), part]))
 
     return group([
         text("("),
@@ -310,6 +310,8 @@ export function printCallArgument(node: Node, ctx: Ctx): Doc | undefined {
     if (!exprN) return undefined
 
     const expr = printNode(exprN, ctx) ?? empty()
+    const leading = takeLeading(node, ctx.comments)
+    const leadingDoc = formatLeading(leading)
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     // Check if there's a "mutate" keyword
@@ -318,7 +320,7 @@ export function printCallArgument(node: Node, ctx: Ctx): Doc | undefined {
         return concat([text("mutate "), expr, ...trailing])
     }
 
-    return concat([expr, ...trailing])
+    return concat([...leadingDoc, expr, ...trailing])
 }
 
 export function printObjectLiteral(node: Node, ctx: Ctx): Doc | undefined {
