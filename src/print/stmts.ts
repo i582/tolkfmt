@@ -1,7 +1,7 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import {printNode} from "./node"
-import type {Doc} from "../doc"
+import {breakParent, Doc, lineSuffix} from "../doc"
 import {
     blank,
     blankLinesBetween,
@@ -91,7 +91,11 @@ export function printExpressionStatement(node: Node, ctx: Ctx): Doc | undefined 
     const expr = node.firstChild
     if (!expr) return undefined
 
-    return concat([printNode(expr, ctx) ?? empty(), text(";")])
+    const trailing = takeTrailing(node, ctx.comments).map(c =>
+        concat([text(" "), lineSuffix(text(c.text)), breakParent()]),
+    )
+
+    return concat([printNode(expr, ctx) ?? empty(), ...trailing, text(";")])
 }
 
 export function printReturnStatement(node: Node, ctx: Ctx): Doc | undefined {

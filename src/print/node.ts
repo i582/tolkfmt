@@ -1,10 +1,11 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
-import type {Doc} from "../doc"
+import {Doc, hardLine, text} from "../doc"
 import * as stmts from "./stmts"
 import * as decls from "./decls"
 import * as expr from "./expr"
 import * as types from "./types"
+import {CommentInfo} from "../comments"
 
 export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     if (node.type === "source_file") {
@@ -336,4 +337,12 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     }
 
     return undefined
+}
+
+export function formatLeading(leading: CommentInfo[]): Doc[] {
+    const leadingDoc = leading.flatMap(c => [hardLine(), text(c.text)])
+    if (leading.length > 0) {
+        leadingDoc.push(hardLine())
+    }
+    return leadingDoc
 }

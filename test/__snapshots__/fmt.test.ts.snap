@@ -265,6 +265,98 @@ exports[`Formatter should format basic types 11`] = `
 "
 `;
 
+exports[`Formatter should format binary expressions with comments 1`] = `
+"fun foo() {
+    10 + // comment
+     20;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 2`] = `
+"fun foo() {
+    10 + // comment
+     20;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 3`] = `
+"fun foo() {
+    foo + // comment 2
+     true;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 4`] = `
+"fun foo() {
+    10 + 
+    // other number here
+    // and comment
+    20;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 5`] = `
+"fun foo() {
+    10 + 
+    // other number here
+    // and comment
+    foo;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 6`] = `
+"fun foo() {
+    10 + 
+    // other number here
+    // and comment
+    true;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 7`] = `
+"fun foo() {
+    10 + 
+    // other number here
+    // and comment
+    null;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 8`] = `
+"fun foo() {
+    20 + // comment
+     30 // comment here
+    ;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 9`] = `
+"fun foo() {
+    20 + 30 // comment here
+    ;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 10`] = `
+"fun foo() {
+    assert (in.valueCoins > msg.forwardTonAmount + 
+        // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+        // but last one is optional (it is ok if it fails)
+        forwardedMessagesCount * in.originalForwardFee + (2 * JETTON_WALLET_GAS_CONSUMPTION +
+        MIN_TONS_FOR_STORAGE)) throw ERR_NOT_ENOUGH_TON;
+}
+"
+`;
+
 exports[`Formatter should format block statements 1`] = `
 "fun test() {
     val a = 100;
@@ -397,11 +489,11 @@ exports[`Formatter should format error handling 3`] = `
 
 exports[`Formatter should format error handling 4`] = `
 "fun test() {
-    assert (
-        in.valueCoins >
-        msg.forwardTonAmount + forwardedMessagesCount * in.originalForwardFee +
-        (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
-    ) throw ERR_NOT_ENOUGH_TON;
+    assert (in.valueCoins > msg.forwardTonAmount + 
+        // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+        // but last one is optional (it is ok if it fails)
+        forwardedMessagesCount * in.originalForwardFee + (2 * JETTON_WALLET_GAS_CONSUMPTION +
+        MIN_TONS_FOR_STORAGE)) throw ERR_NOT_ENOUGH_TON;
 }
 "
 `;
@@ -1389,6 +1481,38 @@ exports[`Formatter should format top-level declarations 12`] = `
 exports[`Formatter should format top-level declarations 13`] = `
 "struct (8)MyStruct {
     x: int
+}
+"
+`;
+
+exports[`Formatter should format unary expressions with comments 1`] = `
+"fun foo() {
+    !true // comment here
+    ;
+}
+"
+`;
+
+exports[`Formatter should format unary expressions with comments 2`] = `
+"fun foo() {
+    !
+    // comment here
+    true;
+}
+"
+`;
+
+exports[`Formatter should format unary expressions with comments 3`] = `
+"fun foo() {
+    // comment here
+    !true;
+}
+"
+`;
+
+exports[`Formatter should format unary expressions with comments 4`] = `
+"fun foo() {
+    !true;
 }
 "
 `;

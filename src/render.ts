@@ -1,4 +1,5 @@
 import type {Doc} from "./doc"
+import {text} from "./doc"
 import {empty} from "./doc"
 
 export function render(doc: Doc, printWidth: number): string {
@@ -85,10 +86,10 @@ export function render(doc: Doc, printWidth: number): string {
                     out.push(" ")
                 } else {
                     flushLineSuffix()
-                    out.push("\n")
                     if (indent !== 0) {
-                        out.push(" ".repeat(indent))
+                        stack.push({doc: text(" ".repeat(indent)), mode: "flat", indent: 0})
                     }
+                    stack.push({doc: text("\n"), mode: "flat", indent: 0})
                 }
                 break
             }
@@ -96,20 +97,20 @@ export function render(doc: Doc, printWidth: number): string {
             case "SoftLine": {
                 if (mode !== "flat") {
                     flushLineSuffix()
-                    out.push("\n")
                     if (indent !== 0) {
-                        out.push(" ".repeat(indent))
+                        stack.push({doc: text(" ".repeat(indent)), mode: "flat", indent: 0})
                     }
+                    stack.push({doc: text("\n"), mode: "flat", indent: 0})
                 }
                 break
             }
 
             case "HardLine": {
                 flushLineSuffix()
-                out.push("\n")
                 if (indent !== 0) {
-                    out.push(" ".repeat(indent))
+                    stack.push({doc: text(" ".repeat(indent)), mode: "flat", indent: 0})
                 }
+                stack.push({doc: text("\n"), mode: "flat", indent: 0})
                 break
             }
 
@@ -137,11 +138,12 @@ export function render(doc: Doc, printWidth: number): string {
             }
 
             case "BreakParent": {
-                flushLineSuffix()
-                out.push("\n")
                 if (indent !== 0) {
-                    out.push(" ".repeat(indent))
+                    stack.push({doc: text(" ".repeat(indent)), mode: "flat", indent: 0})
                 }
+                stack.push({doc: text("\n"), mode: "flat", indent: 0})
+
+                flushLineSuffix()
                 break
             }
 

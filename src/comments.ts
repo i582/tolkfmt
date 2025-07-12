@@ -25,36 +25,55 @@ export function bindComments(root: Node): CommentMap {
 
     const nodes = collectNamedNodes(root)
 
-    let ci = 0
+    console.error("nodes:", nodes.map(it => "`" + it.text + `\` (${it.type})`).join("\n"))
 
-    for (const node of nodes) {
-        while (ci < comments.length && comments[ci].end <= node.startIndex) {
-            attachLeading(comments[ci++], node, byNode)
+    let index = 0
+
+    outer: while (index < comments.length) {
+        for (const node of nodes) {
+            while (index < comments.length && comments[index].end <= node.startIndex) {
+                attachLeading(comments[index++], node, byNode)
+                continue outer
+            }
+
+            const lastTok = lastTokenRow(node)
+            while (
+                index < comments.length &&
+                comments[index].start >= lastTok.endIndex &&
+                comments[index].startRow === lastTok.endPosition.row
+            ) {
+                attachTrailing(comments[index++], node, byNode)
+                continue outer
+            }
+
+            while (
+                index < comments.length &&
+                comments[index].start > node.startIndex &&
+                comments[index].end < node.endIndex &&
+                !isInsideChild(comments[index].node, node)
+            ) {
+                attachDangling(comments[index++], node, byNode)
+                continue outer
+            }
         }
 
-        while (
-            ci < comments.length &&
-            comments[ci].start >= node.endIndex &&
-            comments[ci].startRow === node.endPosition.row
-        ) {
-            attachTrailing(comments[ci++], node, byNode)
-        }
-
-        while (
-            ci < comments.length &&
-            comments[ci].start > node.startIndex &&
-            comments[ci].end < node.endIndex &&
-            !isInsideChild(comments[ci].node, node)
-        ) {
-            attachDangling(comments[ci++], node, byNode)
-        }
+        // TODO: warn, we cannot attach comment!
+        index++
     }
 
-    while (ci < comments.length) {
-        attachTrailing(comments[ci++], root, byNode)
+    while (index < comments.length) {
+        attachTrailing(comments[index++], root, byNode)
     }
 
     return byNode
+}
+
+function lastTokenRow(node: Node): Node {
+    let cur: Node | undefined = node
+    while (cur !== undefined && cur.namedChildCount > 0) {
+        cur = cur.namedChildren[cur.namedChildCount - 1] ?? undefined
+    }
+    return cur ?? node
 }
 
 export function takeLeading(node: Node, comments: CommentMap): CommentInfo[] {
@@ -124,15 +143,17 @@ function ensureEntry(n: Node, map: CommentMap): Bound {
 }
 
 function attachLeading(c: CommentInfo, node: Node, map: CommentMap): void {
+    console.error(`attach leading ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
     ensureEntry(node, map).leading.push(c)
 }
 
 function attachTrailing(c: CommentInfo, node: Node, map: CommentMap): void {
-    // console.log(`attach trailing ${c.text} to ${node.text}`)
+    console.error(`attach trailing ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
     ensureEntry(node, map).trailing.push(c)
 }
 
 function attachDangling(c: CommentInfo, node: Node, map: CommentMap): void {
+    console.error(`attach dangling ${c.text} to ${node.text}, id: ${node.id}, type: ${node.type}`)
     ensureEntry(node, map).dangling.push(c)
 }
 

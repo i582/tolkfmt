@@ -10,14 +10,10 @@ const main = async (): Promise<void> => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-fun main() {
-    match (1) {
-        10 => {}
-
-
-        20 => {}
-        30 => 20
-    }
+fun foo() {
+    assert (in.valueCoins > msg.forwardTonAmount +
+    // but last one is optional (it is ok if it fails)
+    forwardedMessagesCount * in.originalForwardFee + (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)) throw ERR_NOT_ENOUGH_TON;
 }`)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)

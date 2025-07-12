@@ -1,7 +1,8 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
-import {printNode} from "./node"
+import {formatLeading, printNode} from "./node"
 import type {Doc} from "../doc"
+import {breakParent, lineSuffix} from "../doc"
 import {
     blank,
     blankLinesBetween,
@@ -53,45 +54,56 @@ export function printBinaryExpression(node: Node, ctx: Ctx): Doc | undefined {
     const right = printNode(rightN, ctx) ?? empty()
     const operator = operatorN.text
 
-    const afterOperator = takeTrailing(leftN, ctx.comments).map(c =>
-        concat([text(" "), text(c.text)]),
+    const leading = takeLeading(node, ctx.comments)
+    const leadingDoc = formatLeading(leading)
+
+    const trailingForLeft = takeTrailing(leftN, ctx.comments).map(c =>
+        concat([text(" "), lineSuffix(text(c.text)), breakParent()]),
+    )
+    const trailing = takeTrailing(node, ctx.comments).map(c =>
+        concat([text(" "), lineSuffix(text(c.text))]),
     )
 
-    return group([left, text(" " + operator), ...afterOperator, line(), group([right])])
+    return group([
+        ...leadingDoc,
+        left,
+        text(" " + operator),
+        ...trailingForLeft,
+        line(),
+        group([right]),
+        ...trailing,
+    ])
 }
 
 export function printIdentifier(node: Node, ctx: Ctx): Doc | undefined {
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
-
-    return concat([text(node.text), ...trailing])
+    return printTextCommon(node, ctx)
 }
 
-export const printNumberLiteral = (node: Node, _ctx: Ctx): Doc | undefined => {
-    return text(node.text)
+export const printNumberLiteral = (node: Node, ctx: Ctx): Doc | undefined => {
+    return printTextCommon(node, ctx)
 }
 
 export function printStringLiteral(node: Node, ctx: Ctx): Doc | undefined {
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
-
-    return concat([text(node.text), ...trailing])
+    return printTextCommon(node, ctx)
 }
 
 export function printBooleanLiteral(node: Node, ctx: Ctx): Doc | undefined {
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
-
-    return concat([text(node.text), ...trailing])
+    return printTextCommon(node, ctx)
 }
 
 export function printNullLiteral(node: Node, ctx: Ctx): Doc | undefined {
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
-
-    return concat([text(node.text), ...trailing])
+    return printTextCommon(node, ctx)
 }
 
 export function printUnderscore(node: Node, ctx: Ctx): Doc | undefined {
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
+    return printTextCommon(node, ctx)
+}
 
-    return concat([text(node.text), ...trailing])
+function printTextCommon(node: Node, ctx: Ctx): Doc {
+    const leading = takeLeading(node, ctx.comments)
+    const leadingDoc = formatLeading(leading)
+
+    return concat([...leadingDoc, text(node.text)])
 }
 
 export function printUnaryOperator(node: Node, ctx: Ctx): Doc | undefined {

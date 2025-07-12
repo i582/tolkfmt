@@ -605,10 +605,10 @@ fun foo() {
             await format(`fun test() {
             match(value) {
                 42 => "number",
-        
+
                 "hello" => "string",
-                
-    
+
+
                 else => "other"
             }
         }`),
@@ -663,7 +663,7 @@ fun foo() {
         expect(
             await format(`fun test() {
             val a = 100;
-        
+
             a = 200;
         }`),
         ).toMatchSnapshot()
@@ -671,8 +671,8 @@ fun foo() {
         expect(
             await format(`fun test() {
             val a = 100;
-        
-        
+
+
             a = 200;
         }`),
         ).toMatchSnapshot()
@@ -701,7 +701,7 @@ fun foo() {
         expect(
             await format(`
         fun foo() {}
-        
+
         fun test() {}
         `),
         ).toMatchSnapshot()
@@ -716,8 +716,8 @@ fun foo() {
         expect(
             await format(`
         fun foo() {}
-        
-        
+
+
         fun test() {}
         `),
         ).toMatchSnapshot()
@@ -801,6 +801,156 @@ fun foo() {
         /// second line
         global foo: int
         `),
+        ).toMatchSnapshot()
+    })
+
+    it("should format binary expressions with comments", async () => {
+        expect(
+            await format(`
+            fun foo() {
+                10 + // comment
+                20;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                10 // comment
+                +
+                20;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                foo + // comment 2
+                true;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                10 +
+                // other number here
+                // and comment
+                20;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                10 +
+                // other number here
+                // and comment
+                foo;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                10 +
+                // other number here
+                // and comment
+                true;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                10 +
+                // other number here
+                // and comment
+                null;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                20 + // comment
+                30 // comment here
+                ;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                20 +
+                30 // comment here
+                ;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                assert (in.valueCoins >
+                    msg.forwardTonAmount +
+                    // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+                    // but last one is optional (it is ok if it fails)
+                    forwardedMessagesCount * in.originalForwardFee +
+                    (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
+                ) throw ERR_NOT_ENOUGH_TON;
+            }
+            `),
+        ).toMatchSnapshot()
+    })
+
+    it("should format unary expressions with comments", async () => {
+        expect(
+            await format(`
+            fun foo() {
+                !true // comment here
+                ;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                ! // comment here
+                true
+                ;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                // comment here
+                !true
+                ;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        // TODO
+        expect(
+            await format(`
+            fun foo() {
+                !true
+                // comment here
+                ;
+            }
+            `),
         ).toMatchSnapshot()
     })
 })
