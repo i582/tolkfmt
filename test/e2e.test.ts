@@ -1,12 +1,14 @@
-import {join, normalize} from "path"
+import {join, normalize} from "node:path"
+import type {CommandResult} from "./utils/test-util"
 import {runCommand} from "./utils/test-util"
-import {readFileSync, rmSync, writeFileSync} from "fs"
-import {mkdir} from "fs/promises"
+import {readFileSync, rmSync, writeFileSync} from "node:fs"
+import {mkdir} from "node:fs/promises"
 
 // disable tests on windows
-const testExceptWindows = process.platform === "win32" && process.env["CI"] ? test.skip : test
+const testExceptWindows =
+    process.platform === "win32" && Boolean(process.env["CI"]) ? test.skip : test
 
-const tolkfmt = (...args: string[]) => {
+const tolkfmt = async (...args: string[]): Promise<CommandResult> => {
     const tolkfmtPath = normalize(join(__dirname, "..", "bin", "tolkfmt"))
     const command = `node ${tolkfmtPath} ${args.join(" ")}`
     return runCommand(command)

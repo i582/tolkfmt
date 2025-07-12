@@ -1,9 +1,9 @@
-import {Node} from "web-tree-sitter"
+import type {Node} from "web-tree-sitter"
+import type {Doc} from "../doc"
 import {
     blank,
     blankLinesBetween,
     concat,
-    Doc,
     empty,
     group,
     hardLine,
@@ -13,11 +13,11 @@ import {
 } from "../doc"
 import {takeLeading, takeTrailing} from "../comments"
 
-import {Ctx} from "./ctx"
+import type {Ctx} from "./ctx"
 import {printNode} from "./node"
 
-export function printSourceFile(node: Node, ctx: Ctx) {
-    const decls = node.children.filter(it => it !== null).filter(it => it?.type !== "comment")
+export function printSourceFile(node: Node, ctx: Ctx): Doc | undefined {
+    const decls = node.children.filter(it => it !== null).filter(it => it.type !== "comment")
 
     const docs: Doc[] = []
     for (let i = 0; i < decls.length; i++) {
@@ -38,13 +38,13 @@ export function printSourceFile(node: Node, ctx: Ctx) {
     return concat(docs)
 }
 
-export function printVersionValue(node: Node, ctx: Ctx) {
+export function printVersionValue(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
-export function printTypeAlias(node: Node, ctx: Ctx) {
+export function printTypeAlias(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("underlying_type")
 
@@ -60,7 +60,7 @@ export function printTypeAlias(node: Node, ctx: Ctx) {
     return group([...leading, text("type"), text(" "), name, text(" = "), type, ...trailing])
 }
 
-export function printFunction(node: Node, ctx: Ctx) {
+export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
     const returnTypeN = node.childForFieldName("return_type")
@@ -83,7 +83,7 @@ export function printFunction(node: Node, ctx: Ctx) {
     return group([...leading, text("fun "), name, parameters, returnTypePart, text(" "), body])
 }
 
-export function printParameterList(node: Node, ctx: Ctx) {
+export function printParameterList(node: Node, ctx: Ctx): Doc | undefined {
     const params = node.namedChildren
         .filter(child => child?.type === "parameter_declaration")
         .filter(child => child !== null)
@@ -111,7 +111,7 @@ export function printParameterList(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printParameterDeclaration(node: Node, ctx: Ctx) {
+export function printParameterDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const mutateN = node.childForFieldName("mutate")
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("type")
@@ -141,13 +141,13 @@ export function printParameterDeclaration(node: Node, ctx: Ctx) {
     return concat([...result, ...trailing])
 }
 
-export function printBuiltinSpecifier(node: Node, ctx: Ctx) {
+export function printBuiltinSpecifier(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text("builtin"), ...trailing])
 }
 
-export function printConstantDeclaration(node: Node, ctx: Ctx) {
+export function printConstantDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const valueN = node.childForFieldName("value")
     const typeN = node.childForFieldName("type")
@@ -174,7 +174,7 @@ export function printConstantDeclaration(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printMethodDeclaration(node: Node, ctx: Ctx) {
+export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const receiverN = node.childForFieldName("receiver")
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
@@ -208,7 +208,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printGetMethodDeclaration(node: Node, ctx: Ctx) {
+export function printGetMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const parametersN = node.childForFieldName("parameters")
     const returnTypeN = node.childForFieldName("return_type")
@@ -231,7 +231,7 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx) {
     return group([...leading, text("get fun "), name, parameters, returnTypePart, text(" "), body])
 }
 
-export function printTolkRequiredVersion(node: Node, ctx: Ctx) {
+export function printTolkRequiredVersion(node: Node, ctx: Ctx): Doc | undefined {
     const valueN = node.childForFieldName("value")
     if (!valueN) return undefined
 
@@ -241,7 +241,7 @@ export function printTolkRequiredVersion(node: Node, ctx: Ctx) {
     return concat([text("tolk "), value, ...trailing])
 }
 
-export function printImportDirective(node: Node, ctx: Ctx) {
+export function printImportDirective(node: Node, ctx: Ctx): Doc | undefined {
     const pathN = node.childForFieldName("path")
     if (!pathN) return undefined
 
@@ -253,7 +253,7 @@ export function printImportDirective(node: Node, ctx: Ctx) {
     return group([...leading, text("import "), path, ...trailing])
 }
 
-export function printGlobalVarDeclaration(node: Node, ctx: Ctx) {
+export function printGlobalVarDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("type")
     const annotationsN = node.childForFieldName("annotations")
@@ -271,7 +271,7 @@ export function printGlobalVarDeclaration(node: Node, ctx: Ctx) {
     return group([
         ...leading,
         annotations,
-        annotations.$ !== "Empty" ? hardLine() : empty(),
+        annotations.$ === "Empty" ? empty() : hardLine(),
         text("global "),
         name,
         text(": "),
@@ -280,7 +280,7 @@ export function printGlobalVarDeclaration(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printStructDeclaration(node: Node, ctx: Ctx) {
+export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const bodyN = node.childForFieldName("body")
     const annotationsN = node.childForFieldName("annotations")
@@ -304,7 +304,7 @@ export function printStructDeclaration(node: Node, ctx: Ctx) {
     return group([
         ...leading,
         annotations,
-        annotations.$ !== "Empty" ? hardLine() : empty(),
+        annotations.$ === "Empty" ? empty() : hardLine(),
         text("struct "),
         packPrefix,
         name,
@@ -315,7 +315,7 @@ export function printStructDeclaration(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printStructBody(node: Node, ctx: Ctx) {
+export function printStructBody(node: Node, ctx: Ctx): Doc | undefined {
     const fields = node.namedChildren
         .filter(child => child?.type === "struct_field_declaration")
         .filter(child => child !== null)
@@ -339,7 +339,7 @@ export function printStructBody(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printStructFieldDeclaration(node: Node, ctx: Ctx) {
+export function printStructFieldDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("type")
     const defaultN = node.childForFieldName("default")
@@ -361,7 +361,7 @@ export function printStructFieldDeclaration(node: Node, ctx: Ctx) {
     return concat([...result, ...trailing])
 }
 
-export function printTypeParameters(node: Node, ctx: Ctx) {
+export function printTypeParameters(node: Node, ctx: Ctx): Doc | undefined {
     const params = node.namedChildren
         .filter(child => child?.type === "type_parameter")
         .filter(child => child !== null)
@@ -389,7 +389,7 @@ export function printTypeParameters(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printTypeParameter(node: Node, ctx: Ctx) {
+export function printTypeParameter(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const defaultN = node.childForFieldName("default")
 
@@ -409,7 +409,7 @@ export function printTypeParameter(node: Node, ctx: Ctx) {
     return concat([...result, ...trailing])
 }
 
-export function printAsmBody(node: Node, ctx: Ctx) {
+export function printAsmBody(node: Node, ctx: Ctx): Doc | undefined {
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
@@ -422,7 +422,7 @@ export function printAsmBody(node: Node, ctx: Ctx) {
     return group([...leading, text("asm "), ...stringParts, ...trailing])
 }
 
-export function printMethodReceiver(node: Node, ctx: Ctx) {
+export function printMethodReceiver(node: Node, ctx: Ctx): Doc | undefined {
     const receiverTypeN = node.childForFieldName("receiver_type")
     if (!receiverTypeN) return undefined
 
@@ -432,7 +432,7 @@ export function printMethodReceiver(node: Node, ctx: Ctx) {
     return concat([receiverType, text("."), ...trailing])
 }
 
-export function printAnnotationList(node: Node, ctx: Ctx) {
+export function printAnnotationList(node: Node, ctx: Ctx): Doc | undefined {
     const annotations = node.namedChildren
         .filter(child => child?.type === "annotation")
         .filter(child => child !== null)
@@ -447,7 +447,7 @@ export function printAnnotationList(node: Node, ctx: Ctx) {
     return concat([...parts.map(part => concat([part, hardLine()])), ...trailing])
 }
 
-export function printAnnotation(node: Node, ctx: Ctx) {
+export function printAnnotation(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const argumentsN = node.childForFieldName("arguments")
 
@@ -459,7 +459,7 @@ export function printAnnotation(node: Node, ctx: Ctx) {
     return concat([text("@"), name, args, ...trailing])
 }
 
-export function printAnnotationArguments(node: Node, ctx: Ctx) {
+export function printAnnotationArguments(node: Node, ctx: Ctx): Doc | undefined {
     const exprs = node.namedChildren
         .filter(child => child?.type !== "," && child?.type !== "(" && child?.type !== ")")
         .filter(child => child !== null)

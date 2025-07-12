@@ -1,4 +1,4 @@
-import {Node} from "web-tree-sitter"
+import type {Node} from "web-tree-sitter"
 
 export type Doc =
     | Text
@@ -13,7 +13,7 @@ export type Doc =
     | IfBreak
     | Empty
 
-export type Text = {
+export interface Text {
     readonly $: "Text"
     readonly value: string
 }
@@ -23,7 +23,7 @@ export const text = (value: string): Doc => ({
     value,
 })
 
-export type Line = {
+export interface Line {
     readonly $: "Line"
 }
 
@@ -31,7 +31,7 @@ export const line = (): Doc => ({
     $: "Line",
 })
 
-export type SoftLine = {
+export interface SoftLine {
     readonly $: "SoftLine"
 }
 
@@ -39,7 +39,7 @@ export const softLine = (): Doc => ({
     $: "SoftLine",
 })
 
-export type HardLine = {
+export interface HardLine {
     readonly $: "HardLine"
 }
 
@@ -47,7 +47,7 @@ export const hardLine = (): Doc => ({
     $: "HardLine",
 })
 
-export type LineSuffix = {
+export interface LineSuffix {
     readonly $: "LineSuffix"
     readonly suffix: Doc
 }
@@ -57,7 +57,7 @@ export const lineSuffix = (suffix: Doc): Doc => ({
     suffix,
 })
 
-export type BreakParent = {
+export interface BreakParent {
     readonly $: "BreakParent"
 }
 
@@ -65,7 +65,7 @@ export const breakParent = (): Doc => ({
     $: "BreakParent",
 })
 
-export type IfBreak = {
+export interface IfBreak {
     readonly $: "IfBreak"
     readonly breakContent: Doc | undefined
     readonly flatContent: Doc | undefined
@@ -77,7 +77,7 @@ export const ifBreak = (breakContent: Doc | undefined, flatContent: Doc | undefi
     flatContent,
 })
 
-export type Indent = {
+export interface Indent {
     readonly $: "Indent"
     readonly indent: number
     readonly content: Doc
@@ -89,7 +89,7 @@ export const indent = (content: Doc): Doc => ({
     content,
 })
 
-export type Group = {
+export interface Group {
     readonly $: "Group"
     readonly content: Doc
 }
@@ -99,7 +99,7 @@ export const group = (content: Doc[]): Doc => ({
     content: concat(content),
 })
 
-export type Concat = {
+export interface Concat {
     readonly $: "Concat"
     readonly parts: Doc[]
 }
@@ -109,7 +109,7 @@ export const concat = (parts: Doc[]): Doc => ({
     parts,
 })
 
-export type Empty = {
+export interface Empty {
     readonly $: "Empty"
 }
 

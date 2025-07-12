@@ -1,12 +1,13 @@
-import {Doc, empty} from "./doc"
+import type {Doc} from "./doc"
+import {empty} from "./doc"
 
 export function render(doc: Doc, printWidth: number): string {
     type Mode = "flat" | "break"
 
     interface Frame {
-        doc: Doc
-        mode: Mode
-        indent: number
+        readonly doc: Doc
+        readonly mode: Mode
+        readonly indent: number
     }
 
     const out: string[] = []
@@ -17,55 +18,69 @@ export function render(doc: Doc, printWidth: number): string {
         const fitStack: Doc[] = [d]
         let width = w
 
-        while (width >= 0 && fitStack.length) {
-            const cur = fitStack.pop()!
+        while (width >= 0 && fitStack.length > 0) {
+            const cur = fitStack.pop() ?? empty()
             switch (cur.$) {
-                case "Text":
+                case "Text": {
                     width -= cur.value.length
                     break
-                case "Line":
+                }
+                case "Line": {
                     width -= 1
                     break
-                case "SoftLine":
+                }
+                case "SoftLine": {
                     break
-                case "HardLine":
+                }
+                case "HardLine": {
                     return true
-                case "Concat":
+                }
+                case "Concat": {
                     for (let i = cur.parts.length - 1; i >= 0; i--) {
                         fitStack.push(cur.parts[i])
                     }
                     break
-                case "Indent":
+                }
+                case "Indent": {
                     fitStack.push(cur.content)
                     break
-                case "Group":
+                }
+                case "Group": {
                     fitStack.push(cur.content)
                     break
-                case "LineSuffix":
+                }
+                case "LineSuffix": {
                     fitStack.push(cur.suffix)
                     break
-                case "BreakParent":
+                }
+                case "BreakParent": {
                     return true
-                case "IfBreak":
+                }
+                case "IfBreak": {
                     if (cur.flatContent) {
                         fitStack.push(cur.flatContent)
                     }
                     break
+                }
+                case "Empty": {
+                    break
+                }
             }
         }
         return width >= 0
     }
 
     // main loop
-    while (stack.length) {
-        const {doc: cur, mode, indent} = stack.pop()!
+    while (stack.length > 0) {
+        const {doc: cur, mode, indent} = stack.pop() ?? {doc: empty(), mode: "break", indent: 0}
 
         switch (cur.$) {
-            case "Text":
+            case "Text": {
                 out.push(cur.value)
                 break
+            }
 
-            case "Line":
+            case "Line": {
                 if (mode === "flat") {
                     out.push(" ")
                 } else {
@@ -76,8 +91,9 @@ export function render(doc: Doc, printWidth: number): string {
                     }
                 }
                 break
+            }
 
-            case "SoftLine":
+            case "SoftLine": {
                 if (mode !== "flat") {
                     flushLineSuffix()
                     out.push("\n")
@@ -86,24 +102,28 @@ export function render(doc: Doc, printWidth: number): string {
                     }
                 }
                 break
+            }
 
-            case "HardLine":
+            case "HardLine": {
                 flushLineSuffix()
                 out.push("\n")
                 if (indent !== 0) {
                     out.push(" ".repeat(indent))
                 }
                 break
+            }
 
-            case "Concat":
+            case "Concat": {
                 for (let i = cur.parts.length - 1; i >= 0; i--) {
                     stack.push({doc: cur.parts[i], mode, indent})
                 }
                 break
+            }
 
-            case "Indent":
+            case "Indent": {
                 stack.push({doc: cur.content, mode, indent: indent + cur.indent})
                 break
+            }
 
             case "Group": {
                 const shouldFlat = fits(cur.content, printWidth - currentColumn(out))
@@ -111,19 +131,21 @@ export function render(doc: Doc, printWidth: number): string {
                 break
             }
 
-            case "LineSuffix":
+            case "LineSuffix": {
                 lineSuffix.push(cur.suffix)
                 break
+            }
 
-            case "BreakParent":
+            case "BreakParent": {
                 flushLineSuffix()
                 out.push("\n")
                 if (indent !== 0) {
                     out.push(" ".repeat(indent))
                 }
                 break
+            }
 
-            case "IfBreak":
+            case "IfBreak": {
                 stack.push({
                     doc:
                         mode === "break"
@@ -133,30 +155,37 @@ export function render(doc: Doc, printWidth: number): string {
                     indent,
                 })
                 break
+            }
+
+            case "Empty": {
+                break
+            }
         }
     }
 
     return out.join("")
 
-    function currentColumn(buf: string[]): number {
-        let col = 0
-
-        for (let i = buf.length - 1; i >= 0; i--) {
-            const piece = buf[i]
-            const nl = piece.lastIndexOf("\n")
-
-            if (nl !== -1) {
-                return col + piece.length - nl - 1
+    function flushLineSuffix(): void {
+        while (lineSuffix.length > 0) {
+            const suffix = lineSuffix.shift()
+            if (suffix) {
+                stack.push({doc: suffix, mode: "flat", indent: 0})
             }
-            col += piece.length
         }
-        return col
     }
+}
 
-    function flushLineSuffix() {
-        while (lineSuffix.length) {
-            const suffix = lineSuffix.shift()!
-            stack.push({doc: suffix, mode: "flat", indent: 0})
+function currentColumn(buf: string[]): number {
+    let col = 0
+
+    for (let i = buf.length - 1; i >= 0; i--) {
+        const piece = buf[i]
+        const nl = piece.lastIndexOf("\n")
+
+        if (nl !== -1) {
+            return col + piece.length - nl - 1
         }
+        col += piece.length
     }
+    return col
 }

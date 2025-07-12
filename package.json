@@ -42,7 +42,8 @@
         "test": "NODE_OPTIONS=--experimental-vm-modules jest",
         "fmt": "prettier --write -l --cache .",
         "fmt:check": "prettier --check --cache .",
-        "precommit": "yarn rebuild && yarn test",
+        "lint": "eslint --cache .",
+        "precommit": "yarn run rebuild && yarn test",
         "prepublishOnly": "yarn precommit",
         "publish-patch": "yarn version --patch && yarn publish",
         "publish-minor": "yarn version minor && yarn publish",
@@ -50,11 +51,16 @@
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
+        "eslint": "^9.19.0",
+        "eslint-plugin-functional": "^9.0.1",
+        "eslint-plugin-unicorn": "^56.0.1",
+        "eslint-plugin-unused-imports": "^4.1.4",
         "jest": "^30.0.4",
         "prettier": "^3.6.2",
         "ts-jest": "^29.4.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.22.0"
     },
     "dependencies": {
         "cac": "^6.7.14",

@@ -1,4 +1,4 @@
-import {Node} from "web-tree-sitter"
+import type {Node} from "web-tree-sitter"
 
 export interface CommentInfo {
     readonly node: Node
@@ -9,12 +9,14 @@ export interface CommentInfo {
     readonly text: string
 }
 
+// eslint-disable-next-line functional/type-declaration-immutability
 export interface Bound {
     leading: CommentInfo[]
     trailing: CommentInfo[]
     dangling: CommentInfo[]
 }
 
+// eslint-disable-next-line functional/type-declaration-immutability
 export type CommentMap = Map<number /* node.id */, Bound>
 
 export function bindComments(root: Node): CommentMap {
@@ -79,7 +81,7 @@ export function takeDangling(node: Node, comments: CommentMap): CommentInfo[] {
     return out
 }
 
-function dfs(n: Node, cb: (n: Node) => void) {
+function dfs(n: Node, cb: (n: Node) => void): void {
     cb(n)
     for (const child of n.namedChildren) {
         if (!child) continue
@@ -121,16 +123,16 @@ function ensureEntry(n: Node, map: CommentMap): Bound {
     return e
 }
 
-function attachLeading(c: CommentInfo, node: Node, map: CommentMap) {
+function attachLeading(c: CommentInfo, node: Node, map: CommentMap): void {
     ensureEntry(node, map).leading.push(c)
 }
 
-function attachTrailing(c: CommentInfo, node: Node, map: CommentMap) {
+function attachTrailing(c: CommentInfo, node: Node, map: CommentMap): void {
     // console.log(`attach trailing ${c.text} to ${node.text}`)
     ensureEntry(node, map).trailing.push(c)
 }
 
-function attachDangling(c: CommentInfo, node: Node, map: CommentMap) {
+function attachDangling(c: CommentInfo, node: Node, map: CommentMap): void {
     ensureEntry(node, map).dangling.push(c)
 }
 

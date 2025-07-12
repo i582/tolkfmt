@@ -1,10 +1,11 @@
 import {takeTrailing} from "../comments"
-import {Node} from "web-tree-sitter"
+import type {Node} from "web-tree-sitter"
+import type {Doc} from "../doc"
 import {concat, empty, group, ifBreak, indent, line, softLine, text} from "../doc"
-import {Ctx} from "./ctx"
+import type {Ctx} from "./ctx"
 import {printNode} from "./node"
 
-export function printUnionType(node: Node, ctx: Ctx) {
+export function printUnionType(node: Node, ctx: Ctx): Doc | undefined {
     const parts = unionTypeParts(node).map(it => printNode(it, ctx) ?? empty())
 
     const [first, ...rest] = parts
@@ -23,14 +24,13 @@ const unionTypeParts = (node: Node): Node[] => {
 
     if (rhs.type === "union_type") {
         const rhsTypes = unionTypeParts(rhs)
-        if (!rhsTypes) return []
         return [lhs, ...rhsTypes]
     }
 
     return [lhs, rhs]
 }
 
-export function printNullableType(node: Node, ctx: Ctx) {
+export function printNullableType(node: Node, ctx: Ctx): Doc | undefined {
     const innerN = node.childForFieldName("inner")
     if (!innerN) return undefined
 
@@ -40,7 +40,7 @@ export function printNullableType(node: Node, ctx: Ctx) {
     return concat([inner, text("?"), ...trailing])
 }
 
-export function printParenthesizedType(node: Node, ctx: Ctx) {
+export function printParenthesizedType(node: Node, ctx: Ctx): Doc | undefined {
     const innerN = node.childForFieldName("inner")
     if (!innerN) return undefined
 
@@ -50,10 +50,10 @@ export function printParenthesizedType(node: Node, ctx: Ctx) {
     return concat([text("("), inner, text(")"), ...trailing])
 }
 
-export function printTensorType(node: Node, ctx: Ctx) {
-    const types = node.namedChildren.filter(
-        child => child !== null && child.type !== "," && child.type !== "(" && child.type !== ")",
-    ) as Node[]
+export function printTensorType(node: Node, ctx: Ctx): Doc | undefined {
+    const types = node.namedChildren
+        .filter(child => child?.type !== "," && child?.type !== "(" && child?.type !== ")")
+        .filter(child => child !== null)
 
     if (types.length === 0) {
         return text("()")
@@ -78,10 +78,10 @@ export function printTensorType(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printTupleType(node: Node, ctx: Ctx) {
-    const types = node.namedChildren.filter(
-        child => child !== null && child.type !== "," && child.type !== "[" && child.type !== "]",
-    ) as Node[]
+export function printTupleType(node: Node, ctx: Ctx): Doc | undefined {
+    const types = node.namedChildren
+        .filter(child => child?.type !== "," && child?.type !== "[" && child?.type !== "]")
+        .filter(child => child !== null)
 
     if (types.length === 0) {
         return text("[]")
@@ -106,7 +106,7 @@ export function printTupleType(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printFunCallableType(node: Node, ctx: Ctx) {
+export function printFunCallableType(node: Node, ctx: Ctx): Doc | undefined {
     const paramTypesN = node.childForFieldName("param_types")
     const returnTypeN = node.childForFieldName("return_type")
 

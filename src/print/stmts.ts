@@ -1,11 +1,11 @@
-import {Node} from "web-tree-sitter"
-import {Ctx} from "./ctx"
+import type {Node} from "web-tree-sitter"
+import type {Ctx} from "./ctx"
 import {printNode} from "./node"
+import type {Doc} from "../doc"
 import {
     blank,
     blankLinesBetween,
     concat,
-    Doc,
     empty,
     group,
     hardLine,
@@ -16,7 +16,7 @@ import {
 import {takeDangling, takeLeading, takeTrailing} from "../comments"
 import {printMatchExpression} from "./expr"
 
-export const printIfStatement = (node: Node, ctx: Ctx) => {
+export const printIfStatement = (node: Node, ctx: Ctx): Doc | undefined => {
     const conditionN = node.childForFieldName("condition")
     const bodyN = node.childForFieldName("body")
 
@@ -34,7 +34,7 @@ export const printIfStatement = (node: Node, ctx: Ctx) => {
     ])
 }
 
-export function printSetAssignment(node: Node, ctx: Ctx) {
+export function printSetAssignment(node: Node, ctx: Ctx): Doc | undefined {
     const leftN = node.childForFieldName("left")
     const rightN = node.childForFieldName("right")
     const operatorN = node.childForFieldName("operator_name")
@@ -50,10 +50,10 @@ export function printSetAssignment(node: Node, ctx: Ctx) {
     return group([left, text(" "), text(operator), text(" "), right, ...trailing])
 }
 
-export function printBlockStatement(node: Node, ctx: Ctx) {
+export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
     const statements = node.namedChildren
         .filter(it => it !== null)
-        .filter(it => it?.type !== "comment")
+        .filter(it => it.type !== "comment")
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
     const dangling = takeDangling(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
@@ -67,11 +67,11 @@ export function printBlockStatement(node: Node, ctx: Ctx) {
     for (let i = 0; i < statements.length; i++) {
         const statement = statements[i]
 
-        const leading = takeLeading(statement, ctx.comments).map(c =>
+        const stmtLeading = takeLeading(statement, ctx.comments).map(c =>
             concat([text(c.text), hardLine()]),
         )
 
-        const doc = concat([...leading, printNode(statement, ctx) ?? empty()])
+        const doc = concat([...stmtLeading, printNode(statement, ctx) ?? empty()])
         docs.push(doc)
 
         if (i < statements.length - 1) {
@@ -87,14 +87,14 @@ export function printBlockStatement(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printExpressionStatement(node: Node, ctx: Ctx) {
+export function printExpressionStatement(node: Node, ctx: Ctx): Doc | undefined {
     const expr = node.firstChild
     if (!expr) return undefined
 
     return concat([printNode(expr, ctx) ?? empty(), text(";")])
 }
 
-export function printReturnStatement(node: Node, ctx: Ctx) {
+export function printReturnStatement(node: Node, ctx: Ctx): Doc | undefined {
     const bodyN = node.childForFieldName("body")
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
@@ -109,7 +109,7 @@ export function printReturnStatement(node: Node, ctx: Ctx) {
     }
 }
 
-export function printBreakStatement(node: Node, ctx: Ctx) {
+export function printBreakStatement(node: Node, ctx: Ctx): Doc | undefined {
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
@@ -117,7 +117,7 @@ export function printBreakStatement(node: Node, ctx: Ctx) {
     return concat([...leading, text("break"), ...trailing])
 }
 
-export function printContinueStatement(node: Node, ctx: Ctx) {
+export function printContinueStatement(node: Node, ctx: Ctx): Doc | undefined {
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
@@ -125,7 +125,7 @@ export function printContinueStatement(node: Node, ctx: Ctx) {
     return concat([...leading, text("continue"), ...trailing])
 }
 
-export function printThrowStatement(node: Node, ctx: Ctx) {
+export function printThrowStatement(node: Node, ctx: Ctx): Doc | undefined {
     const exprN = node.firstNamedChild // The expression to throw
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
@@ -140,7 +140,7 @@ export function printThrowStatement(node: Node, ctx: Ctx) {
     }
 }
 
-export function printWhileStatement(node: Node, ctx: Ctx) {
+export function printWhileStatement(node: Node, ctx: Ctx): Doc | undefined {
     const conditionN = node.childForFieldName("condition")
     const bodyN = node.childForFieldName("body")
 
@@ -161,7 +161,7 @@ export function printWhileStatement(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printDoWhileStatement(node: Node, ctx: Ctx) {
+export function printDoWhileStatement(node: Node, ctx: Ctx): Doc | undefined {
     const conditionN = node.childForFieldName("condition")
     const bodyN = node.childForFieldName("body")
 
@@ -183,7 +183,7 @@ export function printDoWhileStatement(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printRepeatStatement(node: Node, ctx: Ctx) {
+export function printRepeatStatement(node: Node, ctx: Ctx): Doc | undefined {
     const countN = node.childForFieldName("count")
     const bodyN = node.childForFieldName("body")
 
@@ -204,7 +204,7 @@ export function printRepeatStatement(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printLocalVarsDeclaration(node: Node, ctx: Ctx) {
+export function printLocalVarsDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const kindN = node.childForFieldName("kind")
     const lhsN = node.childForFieldName("lhs")
     const assignedValN = node.childForFieldName("assigned_val")
@@ -235,7 +235,7 @@ export function printLocalVarsDeclaration(node: Node, ctx: Ctx) {
     }
 }
 
-export function printVarDeclaration(node: Node, ctx: Ctx) {
+export function printVarDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const typeN = node.childForFieldName("type")
     const redefN = node.childForFieldName("redef")
@@ -255,12 +255,11 @@ export function printVarDeclaration(node: Node, ctx: Ctx) {
     }
 }
 
-export function printTupleVarsDeclaration(node: Node, ctx: Ctx) {
+export function printTupleVarsDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const varsN = node.childrenForFieldName("vars")
-    if (!varsN) return undefined
 
     // Extract all vars from the vars field
-    const vars = varsN.filter(child => child !== null).filter(child => child?.isNamed)
+    const vars = varsN.filter(child => child !== null).filter(child => child.isNamed)
     const parts = vars.map(v => printNode(v, ctx) ?? empty())
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
@@ -281,12 +280,11 @@ export function printTupleVarsDeclaration(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printTensorVarsDeclaration(node: Node, ctx: Ctx) {
+export function printTensorVarsDeclaration(node: Node, ctx: Ctx): Doc | undefined {
     const varsN = node.childrenForFieldName("vars")
-    if (!varsN) return undefined
 
     // Extract all vars from the vars field
-    const vars = varsN.filter(child => child !== null).filter(child => child?.isNamed)
+    const vars = varsN.filter(child => child !== null).filter(child => child.isNamed)
     const parts = vars.map(v => printNode(v, ctx) ?? empty())
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
@@ -307,13 +305,13 @@ export function printTensorVarsDeclaration(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printEmptyStatement(node: Node, ctx: Ctx) {
+export function printEmptyStatement(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(";"), ...trailing])
 }
 
-export function printAssertStatement(node: Node, ctx: Ctx) {
+export function printAssertStatement(node: Node, ctx: Ctx): Doc | undefined {
     const conditionN = node.childForFieldName("condition")
     const excNoN = node.childForFieldName("excNo")
 
@@ -327,22 +325,20 @@ export function printAssertStatement(node: Node, ctx: Ctx) {
     // Check if it's the throw form: assert(...) throw ...
     const hasThrow = node.children.some(child => child?.text === "throw")
 
-    if (hasThrow) {
-        return group([
-            text("assert ("),
-            indent(concat([softLine(), condition])),
-            softLine(),
-            text(") throw "),
-            excNo,
-            text(";"),
-            ...trailing,
-        ])
-    } else {
-        return group([text("assert("), condition, text(", "), excNo, text(");"), ...trailing])
-    }
+    return hasThrow
+        ? group([
+              text("assert ("),
+              indent(concat([softLine(), condition])),
+              softLine(),
+              text(") throw "),
+              excNo,
+              text(";"),
+              ...trailing,
+          ])
+        : group([text("assert("), condition, text(", "), excNo, text(");"), ...trailing])
 }
 
-export function printTryCatchStatement(node: Node, ctx: Ctx) {
+export function printTryCatchStatement(node: Node, ctx: Ctx): Doc | undefined {
     const tryBodyN = node.childForFieldName("try_body")
     const catchN = node.childForFieldName("catch")
 
@@ -356,7 +352,7 @@ export function printTryCatchStatement(node: Node, ctx: Ctx) {
     return group([text("try "), tryBody, text(" catch "), catchClause, ...trailing])
 }
 
-export function printCatchClause(node: Node, ctx: Ctx) {
+export function printCatchClause(node: Node, ctx: Ctx): Doc | undefined {
     const catchBodyN = node.childForFieldName("catch_body")
     const catchVar1N = node.childForFieldName("catch_var1")
     const catchVar2N = node.childForFieldName("catch_var2")
@@ -371,23 +367,22 @@ export function printCatchClause(node: Node, ctx: Ctx) {
 
     let vars = empty()
     if (catchVar1.$ !== "Empty") {
-        if (catchVar2.$ !== "Empty") {
-            vars = concat([text("("), catchVar1, text(", "), catchVar2, text(") ")])
-        } else {
-            vars = concat([text("("), catchVar1, text(") ")])
-        }
+        vars =
+            catchVar2.$ === "Empty"
+                ? concat([text("("), catchVar1, text(") ")])
+                : concat([text("("), catchVar1, text(", "), catchVar2, text(") ")])
     }
 
     return concat([vars, catchBody, ...trailing])
 }
 
-export function printMatchStatement(node: Node, ctx: Ctx) {
+export function printMatchStatement(node: Node, ctx: Ctx): Doc | undefined {
     const expr = node.firstChild
     if (!expr) return undefined
     return printMatchExpression(expr, ctx)
 }
 
-export function printAssignment(node: Node, ctx: Ctx) {
+export function printAssignment(node: Node, ctx: Ctx): Doc | undefined {
     const leftN = node.childForFieldName("left")
     const rightN = node.childForFieldName("right")
 

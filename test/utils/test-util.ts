@@ -1,5 +1,6 @@
-import {exec} from "child_process"
-import {promisify} from "util"
+import type {ExecException} from "node:child_process"
+import {exec} from "node:child_process"
+import {promisify} from "node:util"
 
 const execAsync = promisify(exec)
 
@@ -28,23 +29,25 @@ export async function runCommand(command: string): Promise<CommandResult> {
             stdout,
             stderr,
         }
-    } catch (error: any) {
-        if (error.code !== undefined) {
+    } catch (error: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+        const err = error as ExecException
+        if (err.code !== undefined) {
             return {
                 kind: "exited",
-                code: error.code,
-                stdout: error.stdout || "",
-                stderr: error.stderr || "",
+                code: err.code,
+                stdout: err.stdout ?? "",
+                stderr: err.stderr ?? "",
             }
-        } else if (error.signal !== undefined) {
+        } else if (err.signal === undefined) {
+            throw err
+        } else {
             return {
                 kind: "killed",
-                signal: error.signal,
-                stdout: error.stdout || "",
-                stderr: error.stderr || "",
+                signal: err.signal,
+                stdout: err.stdout ?? "",
+                stderr: err.stderr ?? "",
             }
-        } else {
-            throw error
         }
     }
 }

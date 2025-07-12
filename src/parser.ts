@@ -1,6 +1,6 @@
 import {Parser, Language} from "web-tree-sitter"
 
-export let tolkLanguage: Language | null = null
+export let tolkLanguage: Language | undefined = undefined
 
 export const initParser = async (treeSitterUri: string, tolkLangUri: string): Promise<void> => {
     if (tolkLanguage) {
@@ -17,6 +17,8 @@ export const initParser = async (treeSitterUri: string, tolkLangUri: string): Pr
 
 export function createTolkParser(): Parser {
     const parser = new Parser()
-    parser.setLanguage(tolkLanguage)
+    if (tolkLanguage) {
+        parser.setLanguage(tolkLanguage)
+    }
     return parser
 }

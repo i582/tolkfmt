@@ -1,11 +1,11 @@
-import {Node} from "web-tree-sitter"
-import {Ctx} from "./ctx"
+import type {Node} from "web-tree-sitter"
+import type {Ctx} from "./ctx"
 import {printNode} from "./node"
+import type {Doc} from "../doc"
 import {
     blank,
     blankLinesBetween,
     concat,
-    Doc,
     empty,
     group,
     hardLine,
@@ -16,7 +16,7 @@ import {
 } from "../doc"
 import {takeLeading, takeTrailing} from "../comments"
 
-export function printDotAccess(node: Node, ctx: Ctx) {
+export function printDotAccess(node: Node, ctx: Ctx): Doc | undefined {
     const qualifierN = node.childForFieldName("obj")
     const fieldN = node.childForFieldName("field")
 
@@ -30,7 +30,7 @@ export function printDotAccess(node: Node, ctx: Ctx) {
     return group([qualifier, indent(concat([softLine(), text("."), field, ...trailing]))])
 }
 
-export function printFunctionCall(node: Node, ctx: Ctx) {
+export function printFunctionCall(node: Node, ctx: Ctx): Doc | undefined {
     const calleeN = node.childForFieldName("callee")
     const argumentsN = node.childForFieldName("arguments")
 
@@ -42,7 +42,7 @@ export function printFunctionCall(node: Node, ctx: Ctx) {
     return concat([callee, args])
 }
 
-export function printBinaryExpression(node: Node, ctx: Ctx) {
+export function printBinaryExpression(node: Node, ctx: Ctx): Doc | undefined {
     const leftN = node.child(0)
     const operatorN = node.childForFieldName("operator_name")
     const rightN = node.child(node.childCount - 1)
@@ -60,41 +60,41 @@ export function printBinaryExpression(node: Node, ctx: Ctx) {
     return group([left, text(" " + operator), ...afterOperator, line(), group([right])])
 }
 
-export function printIdentifier(node: Node, ctx: Ctx) {
+export function printIdentifier(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
-export const printNumberLiteral = (node: Node, _ctx: Ctx) => {
+export const printNumberLiteral = (node: Node, _ctx: Ctx): Doc | undefined => {
     return text(node.text)
 }
 
-export function printStringLiteral(node: Node, ctx: Ctx) {
+export function printStringLiteral(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
-export function printBooleanLiteral(node: Node, ctx: Ctx) {
+export function printBooleanLiteral(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
-export function printNullLiteral(node: Node, ctx: Ctx) {
+export function printNullLiteral(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
-export function printUnderscore(node: Node, ctx: Ctx) {
+export function printUnderscore(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])
 }
 
-export function printUnaryOperator(node: Node, ctx: Ctx) {
+export function printUnaryOperator(node: Node, ctx: Ctx): Doc | undefined {
     const operatorN = node.childForFieldName("operator_name")
     const argumentN = node.childForFieldName("argument")
 
@@ -108,7 +108,7 @@ export function printUnaryOperator(node: Node, ctx: Ctx) {
     return concat([text(operator), argument, ...trailing])
 }
 
-export function printParenthesizedExpression(node: Node, ctx: Ctx) {
+export function printParenthesizedExpression(node: Node, ctx: Ctx): Doc | undefined {
     const innerN = node.childForFieldName("inner")
     if (!innerN) return undefined
 
@@ -118,10 +118,10 @@ export function printParenthesizedExpression(node: Node, ctx: Ctx) {
     return concat([text("("), inner, text(")"), ...trailing])
 }
 
-export function printTensorExpression(node: Node, ctx: Ctx) {
-    const expressions = node.namedChildren.filter(
-        child => child !== null && child.type !== "," && child.type !== "(" && child.type !== ")",
-    ) as Node[]
+export function printTensorExpression(node: Node, ctx: Ctx): Doc | undefined {
+    const expressions = node.namedChildren
+        .filter(child => child?.type !== "," && child?.type !== "(" && child?.type !== ")")
+        .filter(child => child !== null)
 
     if (expressions.length === 0) {
         return text("()")
@@ -146,10 +146,10 @@ export function printTensorExpression(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printTypedTuple(node: Node, ctx: Ctx) {
-    const expressions = node.namedChildren.filter(
-        child => child !== null && child.type !== "," && child.type !== "[" && child.type !== "]",
-    ) as Node[]
+export function printTypedTuple(node: Node, ctx: Ctx): Doc | undefined {
+    const expressions = node.namedChildren
+        .filter(child => child?.type !== "," && child?.type !== "[" && child?.type !== "]")
+        .filter(child => child !== null)
 
     if (expressions.length === 0) {
         return text("[]")
@@ -174,7 +174,7 @@ export function printTypedTuple(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printCastAsOperator(node: Node, ctx: Ctx) {
+export function printCastAsOperator(node: Node, ctx: Ctx): Doc | undefined {
     const exprN = node.childForFieldName("expr")
     const castedToN = node.childForFieldName("casted_to")
 
@@ -188,7 +188,7 @@ export function printCastAsOperator(node: Node, ctx: Ctx) {
     return group([expr, text(" as "), castedTo, ...trailing])
 }
 
-export function printIsTypeOperator(node: Node, ctx: Ctx) {
+export function printIsTypeOperator(node: Node, ctx: Ctx): Doc | undefined {
     const exprN = node.childForFieldName("expr")
     const operatorN = node.childForFieldName("operator")
     const rhsTypeN = node.childForFieldName("rhs_type")
@@ -204,7 +204,7 @@ export function printIsTypeOperator(node: Node, ctx: Ctx) {
     return group([expr, text(" "), text(operator), text(" "), rhsType, ...trailing])
 }
 
-export function printNotNullOperator(node: Node, ctx: Ctx) {
+export function printNotNullOperator(node: Node, ctx: Ctx): Doc | undefined {
     const innerN = node.childForFieldName("inner")
     if (!innerN) return undefined
 
@@ -214,7 +214,7 @@ export function printNotNullOperator(node: Node, ctx: Ctx) {
     return concat([inner, text("!"), ...trailing])
 }
 
-export function printLazyExpression(node: Node, ctx: Ctx) {
+export function printLazyExpression(node: Node, ctx: Ctx): Doc | undefined {
     const argumentN = node.childForFieldName("argument")
     if (!argumentN) return undefined
 
@@ -224,7 +224,7 @@ export function printLazyExpression(node: Node, ctx: Ctx) {
     return group([text("lazy "), argument, ...trailing])
 }
 
-export function printTernaryOperator(node: Node, ctx: Ctx) {
+export function printTernaryOperator(node: Node, ctx: Ctx): Doc | undefined {
     const conditionN = node.childForFieldName("condition")
     const consequenceN = node.childForFieldName("consequence")
     const alternativeN = node.childForFieldName("alternative")
@@ -253,10 +253,10 @@ export function printTernaryOperator(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printArgumentList(node: Node, ctx: Ctx) {
-    const args = node.namedChildren.filter(
-        child => child !== null && child.type === "call_argument",
-    ) as Node[]
+export function printArgumentList(node: Node, ctx: Ctx): Doc | undefined {
+    const args = node.namedChildren
+        .filter(child => child?.type === "call_argument")
+        .filter(child => child !== null)
 
     if (args.length === 0) {
         return text("()")
@@ -281,7 +281,7 @@ export function printArgumentList(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printCallArgument(node: Node, ctx: Ctx) {
+export function printCallArgument(node: Node, ctx: Ctx): Doc | undefined {
     const exprN = node.childForFieldName("expr")
     if (!exprN) return undefined
 
@@ -297,7 +297,7 @@ export function printCallArgument(node: Node, ctx: Ctx) {
     return concat([expr, ...trailing])
 }
 
-export function printObjectLiteral(node: Node, ctx: Ctx) {
+export function printObjectLiteral(node: Node, ctx: Ctx): Doc | undefined {
     const typeN = node.childForFieldName("type")
     const argumentsN = node.childForFieldName("arguments")
 
@@ -311,14 +311,14 @@ export function printObjectLiteral(node: Node, ctx: Ctx) {
     return concat([type, args, ...trailing])
 }
 
-export function printObjectLiteralBody(node: Node, ctx: Ctx) {
-    const args = node.namedChildren.filter(
-        child => child !== null && child.type === "instance_argument",
-    ) as Node[]
+export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
+    const args = node.namedChildren
+        .filter(child => child?.type === "instance_argument")
+        .filter(child => child !== null)
 
     if (args.length === 1) {
         // Check if this is actually an empty object
-        const singleArg = args[0]
+        const [singleArg] = args
 
         // If the argument is empty or just whitespace, treat as empty object
         if (singleArg.text.trim() === "") {
@@ -345,7 +345,7 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printInstanceArgument(node: Node, ctx: Ctx) {
+export function printInstanceArgument(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const valueN = node.childForFieldName("value")
 
@@ -371,7 +371,7 @@ export function printInstanceArgument(node: Node, ctx: Ctx) {
     }
 }
 
-export function printTypeInstantiatedTs(node: Node, ctx: Ctx) {
+export function printTypeInstantiatedTs(node: Node, ctx: Ctx): Doc | undefined {
     const nameN = node.childForFieldName("name")
     const argumentsN = node.childForFieldName("arguments")
 
@@ -385,7 +385,7 @@ export function printTypeInstantiatedTs(node: Node, ctx: Ctx) {
     return concat([name, args, ...trailing])
 }
 
-export function printGenericInstantiation(node: Node, ctx: Ctx) {
+export function printGenericInstantiation(node: Node, ctx: Ctx): Doc | undefined {
     const exprN = node.childForFieldName("expr")
     const instantiationTsN = node.childForFieldName("instantiationTs")
 
@@ -399,15 +399,14 @@ export function printGenericInstantiation(node: Node, ctx: Ctx) {
     return concat([expr, instantiationTs, ...trailing])
 }
 
-export function printInstantiationTList(node: Node, ctx: Ctx) {
+export function printInstantiationTList(node: Node, ctx: Ctx): Doc | undefined {
     const typesN = node.childForFieldName("types")
 
     if (!typesN) {
         // Handle case where types are direct children
-        const types = node.namedChildren.filter(
-            child =>
-                child !== null && child.type !== "," && child.type !== "<" && child.type !== ">",
-        ) as Node[]
+        const types = node.namedChildren
+            .filter(child => child?.type !== "," && child?.type !== "<" && child?.type !== ">")
+            .filter(child => child !== null)
 
         if (types.length === 0) {
             return text("<>")
@@ -440,7 +439,7 @@ export function printInstantiationTList(node: Node, ctx: Ctx) {
     return concat([text("<"), types, text(">"), ...trailing])
 }
 
-export function printMatchExpression(node: Node, ctx: Ctx) {
+export function printMatchExpression(node: Node, ctx: Ctx): Doc | undefined {
     const exprN = node.childForFieldName("expr")
     const bodyN = node.childForFieldName("body")
 
@@ -454,10 +453,10 @@ export function printMatchExpression(node: Node, ctx: Ctx) {
     return group([text("match ("), expr, text(") "), body, ...trailing])
 }
 
-export function printMatchBody(node: Node, ctx: Ctx) {
-    const arms = node.namedChildren.filter(
-        child => child !== null && child.type === "match_arm",
-    ) as Node[]
+export function printMatchBody(node: Node, ctx: Ctx): Doc | undefined {
+    const arms = node.namedChildren
+        .filter(child => child?.type === "match_arm")
+        .filter(child => child !== null)
 
     if (arms.length === 0) {
         return text("{}")
@@ -488,7 +487,7 @@ export function printMatchBody(node: Node, ctx: Ctx) {
     ])
 }
 
-export function printMatchArm(node: Node, ctx: Ctx) {
+export function printMatchArm(node: Node, ctx: Ctx): Doc | undefined {
     const patternTypeN = node.childForFieldName("pattern_type")
     const patternExprN = node.childForFieldName("pattern_expr")
     const patternElseN = node.childForFieldName("pattern_else")
@@ -517,12 +516,12 @@ export function printMatchArm(node: Node, ctx: Ctx) {
         pattern,
         text(" => "),
         body,
-        bodyN?.id === bodyBlockN?.id ? empty() : text(","), // add `,` after arm only for non-blocks
+        bodyN.id === bodyBlockN?.id ? empty() : text(","), // add `,` after arm only for non-blocks
         ...trailing,
     ])
 }
 
-export function printNumericIndex(node: Node, ctx: Ctx) {
+export function printNumericIndex(node: Node, ctx: Ctx): Doc | undefined {
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
     return concat([text(node.text), ...trailing])

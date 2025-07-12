@@ -1,5 +1,5 @@
-import {CommentMap} from "../comments"
+import type {CommentMap} from "../comments"
 
-export type Ctx = {
+export interface Ctx {
     readonly comments: CommentMap
 }

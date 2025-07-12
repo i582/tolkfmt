@@ -1,6 +1,6 @@
 import {cac} from "cac"
-import * as fs from "fs"
-import * as path from "path"
+import * as fs from "node:fs"
+import * as path from "node:path"
 import {glob} from "glob"
 import {format} from "./index"
 
@@ -10,11 +10,11 @@ type FormatMode = "format" | "format-and-write" | "check"
 
 async function formatFile(filepath: string, mode: FormatMode): Promise<boolean | undefined> {
     const content = readFileOrFail(filepath)
-    if (typeof content === "undefined") return undefined
+    if (content === undefined) return undefined
 
     try {
         const [formattedCode, time] = await measureTime(async () => {
-            return await format(content, {maxWidth: 100})
+            return format(content, {maxWidth: 100})
         })
 
         const alreadyFormatted = content === formattedCode
@@ -40,15 +40,17 @@ async function formatFile(filepath: string, mode: FormatMode): Promise<boolean |
             return alreadyFormatted
         }
     } catch (error) {
-        console.error(
-            `Cannot format file ${path.relative(process.cwd(), filepath)}:`,
-            (error as Error).message,
-        )
+        if (error instanceof Error) {
+            console.error(
+                `Cannot format file ${path.relative(process.cwd(), filepath)}:`,
+                error.message,
+            )
+        }
         return undefined
     }
 }
 
-function status(before: string, after: string) {
+function status(before: string, after: string): string {
     if (before !== after) {
         return "(reformatted)"
     }
@@ -66,9 +68,10 @@ async function measureTime<T>(fn: () => Promise<T>): Promise<[T, number]> {
 function readFileOrFail(filePath: string): string | undefined {
     try {
         return fs.readFileSync(filePath, "utf8")
-    } catch (e) {
-        const error = e as Error
-        console.error(`Cannot read file: ${error.message}`)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(`Cannot read file: ${error.message}`)
+        }
         return undefined
     }
 }
@@ -80,16 +83,21 @@ function collectFilesToFormat(paths: string[]): string[] {
             return []
         }
 
-        if (!fs.statSync(inputPath).isFile()) {
-            // for directory, find all .tolk files
-            return glob.sync("**/*.tolk", {cwd: inputPath}).map(file => path.join(inputPath, file))
-        } else {
+        if (fs.statSync(inputPath).isFile()) {
             return inputPath
         }
+
+        // for directory, find all .tolk files
+        return glob.sync("**/*.tolk", {cwd: inputPath}).map(file => path.join(inputPath, file))
     })
 }
 
-export async function main() {
+interface CliOptions {
+    readonly write: boolean | undefined
+    readonly check: boolean | undefined
+}
+
+export async function main(): Promise<void> {
     const cli = cac("tolkfmt")
 
     cli.version(version)
@@ -99,10 +107,11 @@ export async function main() {
         .help()
 
     const parsed = cli.parse()
-    const {write, check} = parsed.options
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+    const {write, check} = parsed.options as CliOptions
     const filePaths = parsed.args
 
-    if (write && check) {
+    if (write !== undefined && check !== undefined) {
         console.error("Error: Cannot use both --write and --check options together")
         process.exit(1)
     }
@@ -111,7 +120,8 @@ export async function main() {
         return
     }
 
-    const mode: FormatMode = check ? "check" : write ? "format-and-write" : "format"
+    const mode: FormatMode =
+        check === undefined ? (write === undefined ? "format" : "format-and-write") : "check"
 
     if (mode === "check") {
         console.log("Checking formatting...")
@@ -129,21 +139,21 @@ export async function main() {
 
     for (const file of filesToFormat) {
         const res = await formatFile(file, mode)
-        if (typeof res === "undefined") {
+        if (res === undefined) {
             someFileCannotBeFormatted = true
         } else {
             allFormatted &&= res
         }
     }
 
-    if (check) {
-        if (!allFormatted) {
+    if (check !== undefined) {
+        if (allFormatted) {
+            console.log("All Tolk files are properly formatted!")
+        } else {
             console.log(
                 "Code style issues found in the above files. Run tolkfmt with --write to fix.",
             )
             process.exit(1)
-        } else {
-            console.log("All Tolk files are properly formatted!")
         }
     }
 

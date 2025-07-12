@@ -1,15 +1,15 @@
 import {createTolkParser, initParser} from "./parser"
 import {render} from "./render"
 import {bindComments} from "./comments"
-import {Ctx} from "./print/ctx"
+import type {Ctx} from "./print/ctx"
 import {printNode} from "./print/node"
 
 export const format = async (code: string, opts?: {maxWidth?: number}): Promise<string> => {
     const {maxWidth = 100} = opts ?? {}
 
     await initParser(
-        `${__dirname}/wasm/tree-sitter.wasm`,
-        `${__dirname}/wasm/tree-sitter-tolk.wasm`,
+        `${__dirname}/../wasm/tree-sitter.wasm`,
+        `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
     )
     const parser = createTolkParser()
 
