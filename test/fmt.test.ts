@@ -401,6 +401,18 @@ fun foo() {
         expect(await format(`fun test() { match(value) { int => 1, string => 2 } }`)).toMatchSnapshot()
         expect(await format(`fun test() { match(value) { 42 => "number", "hello" => "string", else => "other" } }`)).toMatchSnapshot()
 
+        // with empty lines
+        expect(await format(`fun test() {
+            match(value) {
+                42 => "number",
+        
+                "hello" => "string",
+                
+    
+                else => "other"
+            }
+        }`)).toMatchSnapshot()
+
         // Match with blocks
         expect(await format(`fun test() { match(value) { int => { return 1; }, string => { return 2; } } }`)).toMatchSnapshot()
         expect(await format(`fun test() { match(value) { int => return 1, string => throw 2 } }`)).toMatchSnapshot()

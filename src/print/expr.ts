@@ -1,8 +1,8 @@
 import {Node} from "web-tree-sitter";
 import {Ctx} from "./ctx";
 import {printNode} from "./node";
-import {concat, empty, group, hardLine, indent, line, softLine, text} from "../doc";
-import {takeTrailing} from "../comments";
+import {blank, blankLinesBetween, concat, Doc, empty, group, hardLine, indent, line, softLine, text} from "../doc";
+import {takeLeading, takeTrailing} from "../comments";
 
 export function printDotAccess(node: Node, ctx: Ctx) {
     const qualifierN = node.childForFieldName("obj")
@@ -55,7 +55,13 @@ export function printBinaryExpression(node: Node, ctx: Ctx) {
         concat([text(" "), text(c.text)])
     );
 
-    return group([left, text(" "), text(operator), ...afterOperator, line(), group([right])])
+    return group([
+        left,
+        text(" " + operator),
+        ...afterOperator,
+        line(),
+        group([right]),
+    ])
 }
 
 export function printIdentifier(node: Node, ctx: Ctx) {
@@ -370,13 +376,14 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx) {
     );
 
     const [first, ...rest] = parts;
-    const tailDocs = rest.map(part => concat([text(","), hardLine(), part]))
+    const tailDocs = rest.map(part => concat([hardLine(), part, text(",")]))
 
     return group([
         text("{"),
         indent(concat([
             hardLine(),
             first,
+            text(","),
             ...tailDocs,
         ])),
         hardLine(),
@@ -518,20 +525,30 @@ export function printMatchBody(node: Node, ctx: Ctx) {
         return text("{}")
     }
 
-    const parts = arms.map(arm => printNode(arm, ctx) ?? empty())
     const trailing = takeTrailing(node, ctx.comments).map(c =>
         concat([text(" "), text(c.text)])
     );
 
-    const [first, ...rest] = parts;
-    const tailDocs = rest.map(part => concat([hardLine(), part, text(",")]))
+    const tailDocs: Doc[] = [];
+    for (let i = 0; i < arms.length; i++) {
+        const arm = arms[i];
+
+        const leading = takeLeading(arm, ctx.comments).map(c =>
+            concat([text(c.text), hardLine()])
+        );
+
+        const doc = concat([...leading, printNode(arm, ctx) ?? empty()]);
+        tailDocs.push(doc);
+
+        if (i < arms.length - 1) {
+            tailDocs.push(blank(blankLinesBetween(arm, arms[i + 1])));
+        }
+    }
 
     return group([
         text("{"),
         indent(concat([
             hardLine(),
-            first,
-            text(","),
             ...tailDocs,
         ])),
         hardLine(),
@@ -544,7 +561,8 @@ export function printMatchArm(node: Node, ctx: Ctx) {
     const patternTypeN = node.childForFieldName("pattern_type")
     const patternExprN = node.childForFieldName("pattern_expr")
     const patternElseN = node.childForFieldName("pattern_else")
-    const bodyN = node.childForFieldName("block")
+    const bodyBlockN = node.childForFieldName("block");
+    const bodyN = bodyBlockN
         ?? node.childForFieldName("return")
         ?? node.childForFieldName("throw")
         ?? node.childForFieldName("expr")
@@ -569,6 +587,7 @@ export function printMatchArm(node: Node, ctx: Ctx) {
         pattern,
         text(" => "),
         body,
+        bodyN?.id === bodyBlockN?.id ? empty() : text(","), // add `,` after arm only for non-blocks
         ...trailing,
     ])
 }

@@ -374,14 +374,14 @@ exports[`Formatter should format control flow statements 8`] = `
 
 exports[`Formatter should format error handling 1`] = `
 "fun test() {
-    assert (true) throw 1
+    assert (true) throw 1;
 }
 "
 `;
 
 exports[`Formatter should format error handling 2`] = `
 "fun test() {
-    assert(condition, 42)
+    assert(condition, 42);
 }
 "
 `;
@@ -390,7 +390,7 @@ exports[`Formatter should format error handling 3`] = `
 "fun test() {
     assert (
         veryLongCondition
-    ) throw veryLongException
+    ) throw veryLongException;
 }
 "
 `;
@@ -401,7 +401,7 @@ exports[`Formatter should format error handling 4`] = `
         in.valueCoins >
         msg.forwardTonAmount + forwardedMessagesCount * in.originalForwardFee +
         (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
-    ) throw ERR_NOT_ENOUGH_TON
+    ) throw ERR_NOT_ENOUGH_TON;
 }
 "
 `;
@@ -796,9 +796,7 @@ exports[`Formatter should format loops 8`] = `
 
 exports[`Formatter should format loops 9`] = `
 "fun test() {
-    repeat (
-        veryLongCount
-    ) {
+    repeat (veryLongCount) {
         doSomething();
     }
 }
@@ -837,7 +835,7 @@ exports[`Formatter should format objects 1`] = `
 exports[`Formatter should format objects 2`] = `
 "fun test() {
     {
-        foo: 1
+        foo: 1,
     };
 }
 "
@@ -847,7 +845,7 @@ exports[`Formatter should format objects 3`] = `
 "fun test() {
     {
         foo: 1,
-        bar: 2
+        bar: 2,
     };
 }
 "
@@ -858,7 +856,7 @@ exports[`Formatter should format objects 4`] = `
     {
         foo: 1,
         bar: 2,
-        baz: 3
+        baz: 3,
     };
 }
 "
@@ -867,7 +865,7 @@ exports[`Formatter should format objects 4`] = `
 exports[`Formatter should format objects 5`] = `
 "fun test() {
     MyType {
-        foo: 1
+        foo: 1,
     };
 }
 "
@@ -877,7 +875,7 @@ exports[`Formatter should format objects 6`] = `
 "fun test() {
     MyType {
         foo: 1,
-        bar: 2
+        bar: 2,
     };
 }
 "
@@ -887,7 +885,7 @@ exports[`Formatter should format objects 7`] = `
 "fun test() {
     {
         veryLongFieldName: veryLongValue,
-        anotherLongField: anotherLongValue
+        anotherLongField: anotherLongValue,
     };
 }
 "
@@ -906,7 +904,7 @@ exports[`Formatter should format objects 8`] = `
 exports[`Formatter should format objects 9`] = `
 "fun test() {
     {
-        foo:
+        foo:,
     };
 }
 "
@@ -917,7 +915,7 @@ exports[`Formatter should format objects 10`] = `
     {
         foo: 1,
         bar:,
-        baz
+        baz,
     };
 }
 "
@@ -927,8 +925,8 @@ exports[`Formatter should format objects 11`] = `
 "fun test() {
     {
         foo: {
-            bar: 1
-        }
+            bar: 1,
+        },
     };
 }
 "
@@ -1050,18 +1048,31 @@ exports[`Formatter should format pattern matching 3`] = `
 exports[`Formatter should format pattern matching 4`] = `
 "fun test() {
     match (value) {
-        int => {
-            return 1
-        },
-        string => {
-            return 2
-        },
+        42 => "number",
+        
+        "hello" => "string",
+        
+        else => "other",
     }
 }
 "
 `;
 
 exports[`Formatter should format pattern matching 5`] = `
+"fun test() {
+    match (value) {
+        int => {
+            return 1
+        }
+        string => {
+            return 2
+        }
+    }
+}
+"
+`;
+
+exports[`Formatter should format pattern matching 6`] = `
 "fun test() {
     match (value) {
         int => return 1,

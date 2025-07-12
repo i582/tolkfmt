@@ -72,20 +72,29 @@ export function render(doc: Doc, printWidth: number): string {
                     out.push(" ");
                 } else {
                     flushLineSuffix();
-                    out.push("\n", " ".repeat(indent));
+                    out.push("\n");
+                    if (indent !== 0) {
+                        out.push(" ".repeat(indent));
+                    }
                 }
                 break;
 
             case "SoftLine":
                 if (mode !== "flat") {
                     flushLineSuffix();
-                    out.push("\n", " ".repeat(indent));
+                    out.push("\n");
+                    if (indent !== 0) {
+                        out.push(" ".repeat(indent));
+                    }
                 }
                 break;
 
             case "HardLine":
                 flushLineSuffix();
-                out.push("\n", " ".repeat(indent));
+                out.push("\n");
+                if (indent !== 0) {
+                    out.push(" ".repeat(indent));
+                }
                 break;
 
             case "Concat":
@@ -99,7 +108,7 @@ export function render(doc: Doc, printWidth: number): string {
                 break;
 
             case "Group": {
-                const shouldFlat = fits(cur.content, printWidth - currentColumn(out) - indent);
+                const shouldFlat = fits(cur.content, printWidth - currentColumn(out));
                 stack.push({doc: cur.content, mode: shouldFlat ? "flat" : "break", indent});
                 break;
             }
@@ -112,7 +121,10 @@ export function render(doc: Doc, printWidth: number): string {
                 // Сигнал вверх: превращаем текущий режим в break
                 // (Алгоритм: просто вставляем hardline прямо здесь.)
                 flushLineSuffix();
-                out.push("\n", " ".repeat(indent));
+                out.push("\n");
+                if (indent !== 0) {
+                    out.push(" ".repeat(indent));
+                }
                 break;
 
             case "IfBreak":

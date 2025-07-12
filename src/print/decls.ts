@@ -19,7 +19,9 @@ export function printSourceFile(node: Node, ctx: Ctx) {
 
         if (i < decls.length - 1) {
             docs.push(blank(blankLinesBetween(decl, decls[i + 1])));
-        } else {
+        }
+
+        if (i === decls.length - 1) {
             docs.push(hardLine())
         }
     }

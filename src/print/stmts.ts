@@ -410,6 +410,7 @@ export function printAssertStatement(node: Node, ctx: Ctx) {
             softLine(),
             text(") throw "),
             excNo,
+            text(";"),
             ...trailing,
         ])
     } else {
@@ -418,7 +419,7 @@ export function printAssertStatement(node: Node, ctx: Ctx) {
             condition,
             text(", "),
             excNo,
-            text(")"),
+            text(");"),
             ...trailing,
         ])
     }

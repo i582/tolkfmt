@@ -11,13 +11,13 @@ const main = async () => {
 
     const cst = parser.parse(`
 fun main() {
-    assert (in.valueCoins >
-        msg.forwardTonAmount +
-        // 3 messages: wal1->wal2,  wal2->owner, wal2->response
-        // but last one is optional (it is ok if it fails)
-        forwardedMessagesCount * in.originalForwardFee +
-        (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
-    ) throw ERR_NOT_ENOUGH_TON;
+    match (1) {
+        10 => {}
+
+
+        20 => {}
+        30 => 20
+    }
 }`)
 
     if (!cst?.rootNode) throw Error(`Unable to parse file`);
@@ -26,7 +26,7 @@ fun main() {
     const doc = printNode(cst?.rootNode, ctx)
 
     if (doc) {
-        console.log(render(doc, 30))
+        console.log(render(doc, 100))
     }
 }
 
