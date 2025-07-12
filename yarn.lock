@@ -1131,7 +1131,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^24.0.13":
   version: 24.0.13
   resolution: "@types/node@npm:24.0.13"
   dependencies:
@@ -4589,6 +4589,7 @@ __metadata:
   resolution: "tolkfmt-test-dev@workspace:."
   dependencies:
     "@types/jest": "npm:^30.0.0"
+    "@types/node": "npm:^24.0.13"
     cac: "npm:^6.7.14"
     eslint: "npm:^9.19.0"
     eslint-plugin-functional: "npm:^9.0.1"
