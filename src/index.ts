@@ -1,7 +1,8 @@
 import {createTolkParser, initParser} from "./parser";
-import {Ctx, printNode} from "./rules";
 import {render} from "./render";
 import {bindComments} from "./comments";
+import {Ctx} from "./print/ctx";
+import {printNode} from "./print/node";
 
 export const format = async (code: string, opts?: { maxWidth?: number }): Promise<string> => {
     const {maxWidth = 80} = opts ?? {};

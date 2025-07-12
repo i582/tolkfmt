@@ -1,7 +1,8 @@
 import {createTolkParser, initParser} from "./parser";
-import {Ctx, printNode} from "./rules";
 import {bindComments} from "./comments";
 import {render} from "./render";
+import {Ctx} from "./print/ctx";
+import {printNode} from "./print/node";
 
 const main = async () => {
     await initParser("../wasm/tree-sitter.wasm", "../wasm/tree-sitter-tolk.wasm")
