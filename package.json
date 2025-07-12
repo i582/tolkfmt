@@ -1,6 +1,6 @@
 {
     "name": "tolkfmt-test-dev",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A code formatter for the Tolk programming language",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -10,7 +10,9 @@
     "files": [
         "dist/**/*",
         "bin/**/*",
-        "wasm/**/*",
+        "!dist/test/**/*",
+        "!*/**/*.js.map",
+        "!*/**/*.ts.map",
         "README.md",
         "CHANGELOG.md"
     ],
