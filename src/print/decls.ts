@@ -21,7 +21,6 @@ export function printSourceFile(node: Node, ctx: Ctx) {
             docs.push(blank(blankLinesBetween(decl, decls[i + 1])));
         } else {
             docs.push(hardLine())
-            docs.push(hardLine())
         }
     }
 
