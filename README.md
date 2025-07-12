@@ -1,12 +1,15 @@
 # tolkfmt
 
+> [!NOTE]
+> Development version!
+
 A code formatter for the Tolk programming language.
 
 ## Installation
 
 ```bash
 # Install from npm
-npm i -g tolkfmt
+npm i -g tolkfmt-test-dev
 
 # Or build locally
 git clone https://github.com/ton-blockchain/tolkfmt
