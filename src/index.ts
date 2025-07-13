@@ -3,15 +3,15 @@ import {render} from "./render"
 import {bindComments} from "./comments"
 import type {Ctx} from "./print/ctx"
 import {printNode} from "./print/node"
+import type {Parser} from "web-tree-sitter"
 
-export const format = async (code: string, opts?: {maxWidth?: number}): Promise<string> => {
-    const {maxWidth = 100} = opts ?? {}
+export interface FormatOptions {
+    readonly maxWidth?: number
+    readonly parser?: Parser
+}
 
-    await initParser(
-        `${__dirname}/../wasm/tree-sitter.wasm`,
-        `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
-    )
-    const parser = createTolkParser()
+export const format = async (code: string, opts?: FormatOptions): Promise<string> => {
+    const {maxWidth = 100, parser = await createAndInitTolkParser()} = opts ?? {}
 
     const cst = parser.parse(code)
 
@@ -23,4 +23,12 @@ export const format = async (code: string, opts?: {maxWidth?: number}): Promise<
     if (!doc) return code
 
     return render(doc, maxWidth)
+}
+
+async function createAndInitTolkParser(): Promise<Parser> {
+    await initParser(
+        `${__dirname}/../wasm/tree-sitter.wasm`,
+        `${__dirname}/../wasm/tree-sitter-tolk.wasm`,
+    )
+    return createTolkParser()
 }
