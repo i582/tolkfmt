@@ -62,7 +62,7 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
     const dangling = takeDangling(node, ctx.comments)
-    const danglingDoc = formatDangling(dangling, ctx)
+    const danglingDoc = formatDangling(dangling)
 
     if (statements.length === 0 && leading.length === 0 && dangling.length === 0) {
         return text("{}")

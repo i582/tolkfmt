@@ -488,8 +488,10 @@ exports[`Formatter should format block with only comment 1`] = `
 exports[`Formatter should format block with only comment 2`] = `
 "fun foo() {
     match (a) {
-        TopUpTons => {}
-        // just accept tons
+        TopUpTons => {
+            // just accept tons
+        }
+
         else => throw 0xFFFF,
     }
 }

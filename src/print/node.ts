@@ -1,7 +1,7 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import type {Doc} from "../doc"
-import {concat, empty, hardLine, text} from "../doc"
+import {concat, hardLine, text} from "../doc"
 import * as stmts from "./stmts"
 import * as decls from "./decls"
 import * as expr from "./expr"
@@ -356,7 +356,7 @@ export function formatLeading(leading: CommentInfo[]): Doc[] {
     return leading.flatMap(c => [text(c.text), hardLine()])
 }
 
-export function formatDangling(dangling: CommentInfo[], ctx: Ctx): Doc[] {
+export function formatDangling(dangling: CommentInfo[]): Doc[] {
     if (dangling.length === 0) {
         return []
     }
@@ -366,7 +366,7 @@ export function formatDangling(dangling: CommentInfo[], ctx: Ctx): Doc[] {
     }
 
     const [first, ...rest] = dangling
-    return [printNode(first.node, ctx) ?? empty(), ...rest.flatMap(c => [hardLine(), text(c.text)])]
+    return [text(first.text), ...rest.flatMap(c => [hardLine(), text(c.text)])]
 }
 
 function nodeIntersectsRange(node: Node, range: Range): boolean {

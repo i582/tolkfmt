@@ -76,6 +76,55 @@ export function bindComments(root: Node): CommentMap {
                 attachDangling(comments[index++], node, byNode)
                 continue outer
             }
+
+            // Special handling for block_statement: comments inside empty blocks or between statements
+            if (
+                node.type === "block_statement" &&
+                index < comments.length &&
+                comments[index].start > node.startIndex &&
+                comments[index].end < node.endIndex
+            ) {
+                const comment = comments[index]
+                const statements = node.namedChildren.filter(
+                    child => child !== null && child.type !== "comment",
+                )
+
+                // If block has no statements, comment should be dangling
+                if (statements.length === 0) {
+                    attachDangling(comments[index++], node, byNode)
+                    continue outer
+                }
+
+                // Check if comment is between statements or not attached to any statement
+                let attachedToStatement = false
+                for (const stmt of statements) {
+                    if (!stmt) continue
+                    if (comment.end <= stmt.startIndex) {
+                        // Comment is before this statement, should be leading to statement
+                        attachedToStatement = true
+                        break
+                    }
+                    if (comment.start >= stmt.endIndex) {
+                        // Check if comment is on the same line as statement end - should be trailing
+                        if (comment.startRow === stmt.endPosition.row) {
+                            attachedToStatement = true
+                            break
+                        }
+                        // Comment might be after this statement, continue checking
+                        continue
+                    }
+                    if (comment.start >= stmt.startIndex && comment.end <= stmt.endIndex) {
+                        // Comment is inside statement, let normal logic handle it
+                        attachedToStatement = true
+                        break
+                    }
+                }
+
+                if (!attachedToStatement) {
+                    attachDangling(comments[index++], node, byNode)
+                    continue outer
+                }
+            }
         }
 
         const comment = comments[index]
