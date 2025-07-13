@@ -86,7 +86,7 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
         }
     }
 
-    return group([
+    return concat([
         text("{"),
         indent(concat([hardLine(), ...leading, ...docs, ...danglingDoc])),
         hardLine(),
@@ -162,7 +162,7 @@ export function printWhileStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-    return group([
+    return concat([
         ...leading,
         group([text("while ("), indent(concat([softLine(), condition])), softLine(), text(") ")]),
         body,
@@ -180,7 +180,7 @@ export function printDoWhileStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-    return group([
+    return concat([
         ...leading,
         text("do "),
         body,
@@ -199,7 +199,7 @@ export function printRepeatStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
-    return group([
+    return concat([
         ...leading,
         group([text("repeat ("), indent(concat([softLine(), count])), softLine(), text(") ")]),
         body,
@@ -222,7 +222,7 @@ export function printLocalVarsDeclaration(node: Node, ctx: Ctx): Doc | undefined
 
     if (assignedValN) {
         const assignedVal = printNode(assignedValN, ctx) ?? empty()
-        return group([
+        return concat([
             ...leading,
             text(kind),
             text(" "),
@@ -233,7 +233,7 @@ export function printLocalVarsDeclaration(node: Node, ctx: Ctx): Doc | undefined
             ...trailing,
         ])
     } else {
-        return group([...leading, text(kind), text(" "), lhs, text(";"), ...trailing])
+        return concat([...leading, text(kind), text(" "), lhs, text(";"), ...trailing])
     }
 }
 
@@ -351,7 +351,7 @@ export function printTryCatchStatement(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([text("try "), tryBody, text(" catch "), catchClause, ...trailing])
+    return concat([text("try "), tryBody, text(" catch "), catchClause, ...trailing])
 }
 
 export function printCatchClause(node: Node, ctx: Ctx): Doc | undefined {
@@ -395,5 +395,5 @@ export function printAssignment(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([left, text(" = "), right, ...trailing])
+    return concat([left, text(" = "), right, ...trailing])
 }

@@ -117,5 +117,5 @@ export function printFunCallableType(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([paramTypes, text(" -> "), returnType, ...trailing])
+    return concat([paramTypes, text(" -> "), returnType, ...trailing])
 }

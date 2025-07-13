@@ -212,7 +212,7 @@ export function printCastAsOperator(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([expr, text(" as "), castedTo, ...trailing])
+    return concat([expr, text(" as "), castedTo, ...trailing])
 }
 
 export function printIsTypeOperator(node: Node, ctx: Ctx): Doc | undefined {
@@ -228,7 +228,7 @@ export function printIsTypeOperator(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([expr, text(" "), text(operator), text(" "), rhsType, ...trailing])
+    return concat([expr, text(" "), text(operator), text(" "), rhsType, ...trailing])
 }
 
 export function printNotNullOperator(node: Node, ctx: Ctx): Doc | undefined {
@@ -248,7 +248,7 @@ export function printLazyExpression(node: Node, ctx: Ctx): Doc | undefined {
     const argument = printNode(argumentN, ctx) ?? empty()
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([text("lazy "), argument, ...trailing])
+    return concat([text("lazy "), argument, ...trailing])
 }
 
 export function printTernaryOperator(node: Node, ctx: Ctx): Doc | undefined {
@@ -479,7 +479,7 @@ export function printInstantiationTList(node: Node, ctx: Ctx): Doc | undefined {
         const [first, ...rest] = parts
         const tailDocs = rest.map(part => concat([text(", "), part]))
 
-        return group([
+        return concat([
             text("<"),
             indent(concat([softLine(), first, ...tailDocs])),
             softLine(),
@@ -505,7 +505,7 @@ export function printMatchExpression(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([text("match ("), expr, text(") "), body, ...trailing])
+    return concat([text("match ("), expr, text(") "), body, ...trailing])
 }
 
 export function printMatchBody(node: Node, ctx: Ctx): Doc | undefined {
@@ -533,7 +533,7 @@ export function printMatchBody(node: Node, ctx: Ctx): Doc | undefined {
         }
     }
 
-    return group([
+    return concat([
         text("{"),
         indent(concat([hardLine(), ...tailDocs])),
         hardLine(),

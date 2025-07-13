@@ -168,7 +168,7 @@ export function printFunction(node: Node, ctx: Ctx): Doc | undefined {
 
     const isSpecialBody = specialBodyN !== null
 
-    return group([
+    return concat([
         ...leading,
         annotations,
         text("fun "),
@@ -260,7 +260,7 @@ export function printConstantDeclaration(node: Node, ctx: Ctx): Doc | undefined 
     const value = printNode(valueN, ctx) ?? empty()
     const type = typeN ? concat([text(": "), printNode(typeN, ctx) ?? empty(), text(" ")]) : empty()
 
-    return group([
+    return concat([
         ...leading,
         annotations,
         text("const "),
@@ -301,7 +301,7 @@ export function printMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined {
 
     const isSpecialBody = specialBodyN !== null
 
-    return group([
+    return concat([
         ...leading,
         annotations,
         text("fun "),
@@ -335,7 +335,7 @@ export function printGetMethodDeclaration(node: Node, ctx: Ctx): Doc | undefined
         returnTypePart = concat([text(": "), returnType])
     }
 
-    return group([
+    return concat([
         ...leading,
         annotations,
         text("get fun "),
@@ -366,7 +366,7 @@ export function printImportDirective(node: Node, ctx: Ctx): Doc | undefined {
     const path = printNode(pathN, ctx) ?? empty()
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([...leading, text("import "), path, ...trailing])
+    return concat([...leading, text("import "), path, ...trailing])
 }
 
 export function printGlobalVarDeclaration(node: Node, ctx: Ctx): Doc | undefined {
@@ -384,7 +384,7 @@ export function printGlobalVarDeclaration(node: Node, ctx: Ctx): Doc | undefined
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([...leading, annotations, text("global "), name, text(": "), type, ...trailing])
+    return concat([...leading, annotations, text("global "), name, text(": "), type, ...trailing])
 }
 
 export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
@@ -408,7 +408,7 @@ export function printStructDeclaration(node: Node, ctx: Ctx): Doc | undefined {
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return group([
+    return concat([
         ...leading,
         annotations,
         text("struct "),
@@ -436,7 +436,7 @@ export function printStructBody(node: Node, ctx: Ctx): Doc | undefined {
     const [first, ...rest] = parts
     const tailDocs = rest.map(part => concat([hardLine(), part]))
 
-    return group([
+    return concat([
         text("{"),
         indent(concat([hardLine(), first, ...tailDocs])),
         hardLine(),
@@ -528,7 +528,7 @@ export function printAsmBody(node: Node, ctx: Ctx): Doc | undefined {
 
     const stringParts = strings.flatMap(str => [text(" "), printNode(str, ctx) ?? empty()])
 
-    return group([...leading, text("asm"), ...stringParts, ...trailing])
+    return concat([...leading, text("asm"), ...stringParts, ...trailing])
 }
 
 export function printMethodReceiver(node: Node, ctx: Ctx): Doc | undefined {
