@@ -424,7 +424,6 @@ exports[`Formatter should format block statements 4`] = `
 "fun test() {
     // comment here
     val a = 100;
-
     // and there
     a = 200;
 }
@@ -434,7 +433,6 @@ exports[`Formatter should format block statements 4`] = `
 exports[`Formatter should format block statements 5`] = `
 "fun test() {
     val a = 100;
-
     // comment here
     a = 200;
 }
@@ -456,7 +454,6 @@ exports[`Formatter should format block with only comment 2`] = `
 "fun foo() {
     match (a) {
         TopUpTons => {}
-
         // just accept tons
         else => throw 0xFFFF,
     }
@@ -1012,7 +1009,6 @@ exports[`Formatter should format imports with comments 3`] = `
 
 exports[`Formatter should format imports with comments 4`] = `
 "import "a"
-
 // comment between
 import "b"
 "

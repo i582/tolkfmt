@@ -22,7 +22,6 @@ exports[`fmt-ignore directive should ignore formatting for multiple consecutive 
 
     // fmt-ignore
     val   y   =   2;
-
     // fmt-ignore
     val   z   =   3;
 

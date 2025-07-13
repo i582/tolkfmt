@@ -526,7 +526,7 @@ export function printMatchBody(node: Node, ctx: Ctx): Doc | undefined {
         tailDocs.push(doc)
 
         if (i < arms.length - 1) {
-            tailDocs.push(blank(blankLinesBetween(arm, arms[i + 1])))
+            tailDocs.push(blank(blankLinesBetween(arm, arms[i + 1], ctx.comments)))
         }
     }
 

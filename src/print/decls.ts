@@ -97,7 +97,7 @@ function printDeclarations(decls: Node[], ctx: Ctx): Doc {
         }
 
         if (i < decls.length - 1) {
-            docs.push(blank(blankLinesBetween(decl, decls[i + 1])))
+            docs.push(blank(blankLinesBetween(decl, decls[i + 1], ctx.comments)))
         }
 
         if (i === decls.length - 1) {

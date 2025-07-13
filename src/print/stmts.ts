@@ -2,15 +2,16 @@ import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import {formatDangling, printNode, hasFmtIgnoreDirective, printOriginalNodeText} from "./node"
 import type {Doc} from "../doc"
-import {breakParent, lineSuffix} from "../doc"
 import {
     blank,
     blankLinesBetween,
+    breakParent,
     concat,
     empty,
     group,
     hardLine,
     indent,
+    lineSuffix,
     softLine,
     text,
 } from "../doc"
@@ -82,7 +83,9 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
         }
 
         if (i < statements.length - 1) {
-            docs.push(blank(blankLinesBetween(statement, statements[i + 1])))
+            docs.push(
+                blank(blankLinesBetween(statement, statements[i + 1], ctx.comments)),
+            )
         }
     }
 
