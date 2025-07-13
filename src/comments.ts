@@ -104,6 +104,12 @@ function lastTokenRow(node: Node): Node {
     return cur ?? node
 }
 
+export function getLeading(node: Node, comments: CommentMap): CommentInfo[] {
+    const entry = comments.get(node.id)
+    if (!entry) return []
+    return entry.leading
+}
+
 export function takeLeading(node: Node, comments: CommentMap): CommentInfo[] {
     const entry = comments.get(node.id)
     if (!entry) return []

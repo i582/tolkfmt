@@ -72,3 +72,16 @@ fun foo() {
 }
 "
 `;
+
+exports[`Range Formatter should format selected struct definition and function with comment after it 1`] = `
+"struct MyStruct {
+    field1: int;
+    field2: string;
+}
+
+// comment
+fun foo() {
+    val x = 1;
+}
+"
+`;

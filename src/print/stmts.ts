@@ -1,6 +1,6 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
-import {formatDangling, printNode} from "./node"
+import {formatDangling, printNode, hasFmtIgnoreDirective, printOriginalNodeText} from "./node"
 import type {Doc} from "../doc"
 import {breakParent, lineSuffix} from "../doc"
 import {
@@ -14,7 +14,7 @@ import {
     softLine,
     text,
 } from "../doc"
-import {takeDangling, takeLeading, takeTrailing} from "../comments"
+import {getLeading, takeDangling, takeLeading, takeTrailing} from "../comments"
 import {printMatchExpression} from "./expr"
 
 export const printIfStatement = (node: Node, ctx: Ctx): Doc | undefined => {
@@ -72,12 +72,14 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
     for (let i = 0; i < statements.length; i++) {
         const statement = statements[i]
 
-        const stmtLeading = takeLeading(statement, ctx.comments).map(c =>
-            concat([text(c.text), hardLine()]),
-        )
-
-        const doc = concat([...stmtLeading, printNode(statement, ctx) ?? empty()])
-        docs.push(doc)
+        if (hasFmtIgnoreDirective(getLeading(statement, ctx.comments))) {
+            docs.push(printOriginalNodeText(statement, ctx))
+        } else {
+            const stmtLeading = takeLeading(statement, ctx.comments)
+            const leadingDoc = stmtLeading.map(c => concat([text(c.text), hardLine()]))
+            const doc = concat([...leadingDoc, printNode(statement, ctx) ?? empty()])
+            docs.push(doc)
+        }
 
         if (i < statements.length - 1) {
             docs.push(blank(blankLinesBetween(statement, statements[i + 1])))

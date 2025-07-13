@@ -1,30 +1,19 @@
 import type {Node} from "web-tree-sitter"
 import type {Ctx} from "./ctx"
 import type {Doc} from "../doc"
-import {empty} from "../doc"
-import {hardLine, text} from "../doc"
+import {concat, empty, hardLine, text} from "../doc"
 import * as stmts from "./stmts"
 import * as decls from "./decls"
 import * as expr from "./expr"
 import * as types from "./types"
 import type {CommentInfo} from "../comments"
+import {takeTrailing, takeLeading} from "../comments"
 import type {Range} from "../index"
 
 export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
     if (ctx.range && !nodeIntersectsRange(node, ctx.range)) {
         if (node.type !== "source_file") {
-            // semicolon is not a part of the following nodes, so we need to add it manually
-            const needSemicolon =
-                node.type === "local_vars_declaration" ||
-                node.type === "return_statement" ||
-                node.type === "do_while_statement" ||
-                node.type === "break_statement" ||
-                node.type === "continue_statement" ||
-                node.type === "throw_statement" ||
-                node.type === "assert_statement" ||
-                node.type === "expression_statement"
-
-            return text(node.text + (needSemicolon ? ";" : ""))
+            return printOriginalNodeText(node, ctx)
         }
     }
 
@@ -400,4 +389,35 @@ function nodeIntersectsRange(node: Node, range: Range): boolean {
 
     // intersects
     return true
+}
+
+export function getOriginalNodeText(node: Node): string {
+    // semicolon is not a part of the following nodes, so we need to add it manually
+    const needSemicolon =
+        node.type === "local_vars_declaration" ||
+        node.type === "return_statement" ||
+        node.type === "do_while_statement" ||
+        node.type === "break_statement" ||
+        node.type === "continue_statement" ||
+        node.type === "throw_statement" ||
+        node.type === "assert_statement" ||
+        node.type === "expression_statement"
+
+    return node.text + (needSemicolon ? ";" : "")
+}
+
+export function printOriginalNodeText(node: Node, ctx: Ctx): Doc {
+    const leading = takeLeading(node, ctx.comments)
+    const trailing = takeTrailing(node, ctx.comments)
+    const leadingDoc = leading.map(c => concat([text(c.text), hardLine()]))
+    const trailingDoc = trailing.map(c => concat([text(" "), text(c.text)]))
+    return concat([...leadingDoc, text(getOriginalNodeText(node)), ...trailingDoc])
+}
+
+export function isFmtIgnoreComment(comment: CommentInfo): boolean {
+    return comment.text.trim() === "// fmt-ignore"
+}
+
+export function hasFmtIgnoreDirective(leadingComments: CommentInfo[]): boolean {
+    return leadingComments.some(comment => isFmtIgnoreComment(comment))
 }

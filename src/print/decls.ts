@@ -12,10 +12,9 @@ import {
     softLine,
     text,
 } from "../doc"
-import {takeLeading, takeTrailing} from "../comments"
-
+import {getLeading, takeLeading, takeTrailing} from "../comments"
 import type {Ctx} from "./ctx"
-import {formatLeading, printNode} from "./node"
+import {formatLeading, printNode, hasFmtIgnoreDirective, printOriginalNodeText} from "./node"
 
 export function printSourceFile(node: Node, ctx: Ctx): Doc | undefined {
     const decls = node.children.filter(it => it !== null).filter(it => it.type !== "comment")
@@ -24,8 +23,14 @@ export function printSourceFile(node: Node, ctx: Ctx): Doc | undefined {
     for (let i = 0; i < decls.length; i++) {
         const decl = decls[i]
 
-        const doc = concat([printNode(decl, ctx) ?? empty()])
-        docs.push(doc)
+        const leading = getLeading(decl, ctx.comments)
+
+        if (hasFmtIgnoreDirective(leading)) {
+            docs.push(printOriginalNodeText(decl, ctx))
+        } else {
+            const doc = concat([printNode(decl, ctx) ?? empty()])
+            docs.push(doc)
+        }
 
         if (i < decls.length - 1) {
             docs.push(blank(blankLinesBetween(decl, decls[i + 1])))

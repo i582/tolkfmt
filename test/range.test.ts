@@ -107,4 +107,23 @@ fun foo() {
 
         expect(result).toMatchSnapshot()
     })
+
+    it("should format selected struct definition and function with comment after it", async () => {
+        const input = `
+<selection>struct MyStruct</selection> {
+    field1: int;
+    field2: string;
+}
+
+// comment
+fun foo() {
+    val x = 1;
+}
+`
+
+        const {code, range} = parseSelection(input)
+        const result = await format(code, {range})
+
+        expect(result).toMatchSnapshot()
+    })
 })

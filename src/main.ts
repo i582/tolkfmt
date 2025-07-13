@@ -10,13 +10,16 @@ const main = async (): Promise<void> => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-fun foo() {
-   foo(
-      true, // hello world
-      false, // hello earth
-   )
+// fmt-ignore
+struct MyStruct {
+    field1:   int;
+    field2:   string;
 }
 
+struct OtherStruct {
+    field1:   int;
+    field2:   string;
+}
 `)
     // bar(/* init: */ true, /* other: */ true /* other after */)
 
