@@ -8,8 +8,26 @@ import * as decls from "./decls"
 import * as expr from "./expr"
 import * as types from "./types"
 import type {CommentInfo} from "../comments"
+import type {Range} from "../index"
 
 export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
+    if (ctx.range && !nodeIntersectsRange(node, ctx.range)) {
+        if (node.type !== "source_file") {
+            // semicolon is not a part of the following nodes, so we need to add it manually
+            const needSemicolon =
+                node.type === "local_vars_declaration" ||
+                node.type === "return_statement" ||
+                node.type === "do_while_statement" ||
+                node.type === "break_statement" ||
+                node.type === "continue_statement" ||
+                node.type === "throw_statement" ||
+                node.type === "assert_statement" ||
+                node.type === "expression_statement"
+
+            return text(node.text + (needSemicolon ? ";" : ""))
+        }
+    }
+
     if (node.type === "source_file") {
         return decls.printSourceFile(node, ctx)
     }
@@ -360,4 +378,26 @@ export function formatDangling(dangling: CommentInfo[], ctx: Ctx): Doc[] {
 
     const [first, ...rest] = dangling
     return [printNode(first.node, ctx) ?? empty(), ...rest.flatMap(c => [hardLine(), text(c.text)])]
+}
+
+function nodeIntersectsRange(node: Node, range: Range): boolean {
+    const nodeStart = node.startPosition
+    const nodeEnd = node.endPosition
+
+    if (
+        nodeEnd.row < range.start.line ||
+        (nodeEnd.row === range.start.line && nodeEnd.column < range.start.character)
+    ) {
+        return false
+    }
+
+    if (
+        nodeStart.row > range.end.line ||
+        (nodeStart.row === range.end.line && nodeStart.column > range.end.character)
+    ) {
+        return false
+    }
+
+    // intersects
+    return true
 }

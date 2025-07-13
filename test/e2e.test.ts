@@ -253,4 +253,148 @@ describe("tolkfmt foo.tolk", () => {
         const result = await tolkfmt()
         expect(result).toMatchSnapshot()
     })
+
+    testExceptWindows("Range formatting: basic", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-test.tolk")
+        const codeWithBadFormatting = `fun foo(){
+    val   x   =   1;
+    val   y   =   2;
+    val   z   =   3;
+    return x + y + z;
+}`
+        writeFileSync(file, codeWithBadFormatting)
+
+        // Format only the second line (val y = 2)
+        const result = await tolkfmt(file, "--range", "1:4-1:20")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: with check", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-check.tolk")
+        const codeWithBadFormatting = `fun foo(){
+    val   x   =   1;
+    val   y   =   2;
+    val   z   =   3;
+    return x + y + z;
+}`
+        writeFileSync(file, codeWithBadFormatting)
+
+        // Check only the second line (not formatted)
+        const result = await tolkfmt(file, "--range", "1:4-1:20", "--check")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: multiple lines", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-multi.tolk")
+        const codeWithBadFormatting = `fun foo(){
+    val   x   =   1;
+    val   y   =   2;
+    val   z   =   3;
+    return x + y + z;
+}`
+        writeFileSync(file, codeWithBadFormatting)
+
+        // Format lines 1-2 (val x and val y)
+        const result = await tolkfmt(file, "--range", "1:0-2:20")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: struct", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-struct.tolk")
+        const codeWithBadFormatting = `type MyType = int;
+
+struct MyStruct {
+    field1:   int;
+    field2:   string;
+}
+
+fun foo() {
+    val   x   =   1;
+}`
+        writeFileSync(file, codeWithBadFormatting)
+
+        // Format only the struct
+        const result = await tolkfmt(file, "--range", "2:0-5:1")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: invalid format", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-invalid.tolk")
+        writeFileSync(file, goodContract)
+
+        // Invalid range format
+        const result = await tolkfmt(file, "--range", "invalid-range")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: invalid range values", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-invalid-values.tolk")
+        writeFileSync(file, goodContract)
+
+        // Invalid range values (not numbers)
+        const result = await tolkfmt(file, "--range", "a:b-c:d")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: short form flag", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-short.tolk")
+        const codeWithBadFormatting = `fun foo(){
+    val   x   =   1;
+    val   y   =   2;
+}`
+        writeFileSync(file, codeWithBadFormatting)
+
+        // Use short form -r flag
+        const result = await tolkfmt(file, "-r", "1:4-1:20")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: zero-based indexing", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-zero.tolk")
+        const codeWithBadFormatting = `fun foo(){
+    val   x   =   1;
+}`
+        writeFileSync(file, codeWithBadFormatting)
+
+        // Format first line (line 0)
+        const result = await tolkfmt(file, "--range", "0:0-0:99")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
+
+    testExceptWindows("Range formatting: out of bounds", async () => {
+        await mkdir(outputDir, {recursive: true})
+        const file = join(outputDir, "range-bounds.tolk")
+        const shortCode = `fun foo(){}`
+        writeFileSync(file, shortCode)
+
+        // Range beyond file bounds, format all file
+        const result = await tolkfmt(file, "--range", "0:0-10:50")
+        expect(result).toMatchSnapshot()
+
+        rmSync(file)
+    })
 })

@@ -2,19 +2,23 @@ import {cac} from "cac"
 import * as fs from "node:fs"
 import * as path from "node:path"
 import {glob} from "glob"
-import {format} from "./index"
+import {format, type Range} from "./index"
 
 const version = "0.0.8"
 
 type FormatMode = "format" | "format-and-write" | "check"
 
-async function formatFile(filepath: string, mode: FormatMode): Promise<boolean | undefined> {
+async function formatFile(
+    filepath: string,
+    mode: FormatMode,
+    range?: Range,
+): Promise<boolean | undefined> {
     const content = readFileOrFail(filepath)
     if (content === undefined) return undefined
 
     try {
         const [formattedCode, time] = await measureTime(async () => {
-            return format(content, {maxWidth: 100})
+            return format(content, {maxWidth: 100, range})
         })
 
         const alreadyFormatted = content === formattedCode
@@ -95,6 +99,29 @@ function collectFilesToFormat(paths: string[]): string[] {
 interface CliOptions {
     readonly write: boolean | undefined
     readonly check: boolean | undefined
+    readonly range: string | undefined
+}
+
+function parseRange(rangeStr: string): Range {
+    const regex = /^(\d+):(\d+)-(\d+):(\d+)$/
+    const match = regex.exec(rangeStr)
+    if (!match) {
+        throw new Error(
+            "Invalid range format. Expected: startLine:startChar-endLine:endChar (e.g., 1:5-3:10)",
+        )
+    }
+
+    const [, startLine, startChar, endLine, endChar] = match
+    return {
+        start: {
+            line: Number.parseInt(startLine, 10),
+            character: Number.parseInt(startChar, 10),
+        },
+        end: {
+            line: Number.parseInt(endLine, 10),
+            character: Number.parseInt(endChar, 10),
+        },
+    }
 }
 
 export async function main(): Promise<void> {
@@ -104,16 +131,30 @@ export async function main(): Promise<void> {
         .usage("[options] <files or directories>")
         .option("-w, --write", "Write result to same file")
         .option("-c, --check", "Check if the given files are formatted")
+        .option(
+            "-r, --range <range>",
+            "Format only the specified range (format: startLine:startChar-endLine:endChar)",
+        )
         .help()
 
     const parsed = cli.parse()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    const {write, check} = parsed.options as CliOptions
+    const {write, check, range} = parsed.options as CliOptions
     const filePaths = parsed.args
 
     if (write !== undefined && check !== undefined) {
         console.error("Error: Cannot use both --write and --check options together")
         process.exit(1)
+    }
+
+    let parsedRange: Range | undefined = undefined
+    if (range !== undefined) {
+        try {
+            parsedRange = parseRange(range)
+        } catch (error) {
+            console.error("Error:", error instanceof Error ? error.message : "Invalid range format")
+            process.exit(1)
+        }
     }
 
     if (filePaths.length === 0) {
@@ -138,7 +179,7 @@ export async function main(): Promise<void> {
     let allFormatted = true
 
     for (const file of filesToFormat) {
-        const res = await formatFile(file, mode)
+        const res = await formatFile(file, mode, parsedRange)
         if (res === undefined) {
             someFileCannotBeFormatted = true
         } else {
