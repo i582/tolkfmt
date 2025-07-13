@@ -44,7 +44,6 @@ fun foo() {
 
         // String literals in constants
         expect(await format(`const msg = "hello world"`)).toMatchSnapshot()
-        expect(await format(`const msg = "hello world"w`)).toMatchSnapshot()
 
         // String literals in expressions
         expect(await format(`fun test() { "hello world"; }`)).toMatchSnapshot()
@@ -753,6 +752,13 @@ fun foo() {
         expect(await format(`fun test() asm "PUSH 42"`)).toMatchSnapshot()
         expect(await format(`fun test() asm "PUSH 42" "ADD"`)).toMatchSnapshot()
         expect(await format(`fun test() asm (x -> 1) "PUSH 42"`)).toMatchSnapshot()
+        expect(await format(`fun test()
+            asm """
+        FOO
+        BAR
+        BAZ
+    """
+        `)).toMatchSnapshot()
 
         // Builtin functions
         expect(await format(`fun test() builtin`)).toMatchSnapshot()

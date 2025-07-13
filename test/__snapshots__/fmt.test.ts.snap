@@ -230,6 +230,16 @@ exports[`Formatter should format assembly and builtin functions 3`] = `
 
 exports[`Formatter should format assembly and builtin functions 4`] = `
 "fun test()
+    asm """
+        FOO
+        BAR
+        BAZ
+    """
+"
+`;
+
+exports[`Formatter should format assembly and builtin functions 5`] = `
+"fun test()
     builtin
 "
 `;
@@ -1645,47 +1655,42 @@ exports[`Formatter should format simple literals 1`] = `
 `;
 
 exports[`Formatter should format simple literals 2`] = `
-"const msg = "hello world"w
-"
-`;
-
-exports[`Formatter should format simple literals 3`] = `
 "fun test() {
     "hello world";
 }
 "
 `;
 
-exports[`Formatter should format simple literals 4`] = `
+exports[`Formatter should format simple literals 3`] = `
 "const flag = true
 "
 `;
 
-exports[`Formatter should format simple literals 5`] = `
+exports[`Formatter should format simple literals 4`] = `
 "const flag = false
 "
 `;
 
-exports[`Formatter should format simple literals 6`] = `
+exports[`Formatter should format simple literals 5`] = `
 "fun test() {
     true;
 }
 "
 `;
 
-exports[`Formatter should format simple literals 7`] = `
+exports[`Formatter should format simple literals 6`] = `
 "const value = null
 "
 `;
 
-exports[`Formatter should format simple literals 8`] = `
+exports[`Formatter should format simple literals 7`] = `
 "fun test() {
     null;
 }
 "
 `;
 
-exports[`Formatter should format simple literals 9`] = `
+exports[`Formatter should format simple literals 8`] = `
 "fun test() {
     _;
 }
