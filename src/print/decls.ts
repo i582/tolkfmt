@@ -1,6 +1,5 @@
 import type {Node} from "web-tree-sitter"
 import type {Doc} from "../doc"
-import {ifBreak, line} from "../doc"
 import {
     blank,
     blankLinesBetween,
@@ -8,17 +7,82 @@ import {
     empty,
     group,
     hardLine,
+    ifBreak,
     indent,
+    line,
     softLine,
     text,
 } from "../doc"
 import {getLeading, takeLeading, takeTrailing} from "../comments"
 import type {Ctx} from "./ctx"
-import {formatLeading, printNode, hasFmtIgnoreDirective, printOriginalNodeText} from "./node"
+import {formatLeading, hasFmtIgnoreDirective, printNode, printOriginalNodeText} from "./node"
+import type {ImportInfo} from "./imports"
+import {categorizeImport, extractImportPath, getImportSubcategory, sortImports} from "./imports"
 
 export function printSourceFile(node: Node, ctx: Ctx): Doc | undefined {
     const decls = node.children.filter(it => it !== null).filter(it => it.type !== "comment")
 
+    if (ctx.sortImports) {
+        const imports: Node[] = []
+        const nonImports: Node[] = []
+
+        for (const decl of decls) {
+            if (decl.type === "import_directive") {
+                imports.push(decl)
+            } else {
+                nonImports.push(decl)
+            }
+        }
+
+        const importInfos: ImportInfo[] = []
+        for (const importNode of imports) {
+            const path = extractImportPath(importNode)
+            const category = categorizeImport(path)
+            const subcategory = getImportSubcategory(path, category)
+
+            importInfos.push({
+                node: importNode,
+                path,
+                category,
+                subcategory,
+            })
+        }
+
+        const sortedImports = sortImports(importInfos)
+        const sortedImportNodes = sortedImports.map(info => info.node)
+
+        return concat([
+            printImports(sortedImportNodes, nonImports, ctx),
+            printDeclarations(nonImports, ctx),
+        ])
+    }
+
+    return printDeclarations(decls, ctx)
+}
+
+function printImports(imports: Node[], nonImports: Node[], ctx: Ctx): Doc {
+    const docs: Doc[] = []
+    for (const importDecl of imports) {
+        const leading = getLeading(importDecl, ctx.comments)
+
+        if (hasFmtIgnoreDirective(leading)) {
+            docs.push(printOriginalNodeText(importDecl, ctx))
+        } else {
+            const doc = concat([printNode(importDecl, ctx) ?? empty()])
+            docs.push(doc)
+        }
+
+        docs.push(hardLine())
+    }
+
+    if (imports.length > 0 && nonImports.length > 0) {
+        docs.push(hardLine())
+    }
+
+    return concat(docs)
+}
+
+function printDeclarations(decls: Node[], ctx: Ctx): Doc {
     const docs: Doc[] = []
     for (let i = 0; i < decls.length; i++) {
         const decl = decls[i]

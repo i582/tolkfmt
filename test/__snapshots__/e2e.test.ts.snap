@@ -105,6 +105,7 @@ Options:
   -w, --write          Write result to same file 
   -c, --check          Check if the given files are formatted 
   -r, --range <range>  Format only the specified range (format: startLine:startChar-endLine:endChar) 
+  -s, --sort-imports   Sort imports in the formatted file 
   -h, --help           Display this message 
 ",
 }

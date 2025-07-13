@@ -10,26 +10,26 @@ const main = async (): Promise<void> => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-// fmt-ignore
-struct MyStruct {
-    field1:   int;
-    field2:   string;
-}
+import "../parent"
+import "./local"
+import "@stdlib/foo"
+import "nested/file"
+import "../../grandparent"
+import "./other_local"
 
 struct OtherStruct {
     field1:   int;
     field2:   string;
-}
-`)
+}`)
     // bar(/* init: */ true, /* other: */ true /* other after */)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)
 
-    const ctx: Ctx = {comments: bindComments(cst.rootNode)}
+    const ctx: Ctx = {comments: bindComments(cst.rootNode), sortImports: true}
     const doc = printNode(cst.rootNode, ctx)
 
     if (doc) {
-        console.log(render(doc, 100))
+        console.log(render(doc, 100) + "---")
     }
 }
 

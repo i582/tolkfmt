@@ -8,17 +8,24 @@ const version = "0.0.8"
 
 type FormatMode = "format" | "format-and-write" | "check"
 
+interface FormatFileOptions {
+    readonly mode: FormatMode
+    readonly range?: Range
+    readonly sortImports: boolean
+}
+
 async function formatFile(
     filepath: string,
-    mode: FormatMode,
-    range?: Range,
+    options: FormatFileOptions,
 ): Promise<boolean | undefined> {
     const content = readFileOrFail(filepath)
     if (content === undefined) return undefined
 
+    const {mode, range, sortImports} = options
+
     try {
         const [formattedCode, time] = await measureTime(async () => {
-            return format(content, {maxWidth: 100, range})
+            return format(content, {maxWidth: 100, range, sortImports})
         })
 
         const alreadyFormatted = content === formattedCode
@@ -100,6 +107,7 @@ interface CliOptions {
     readonly write: boolean | undefined
     readonly check: boolean | undefined
     readonly range: string | undefined
+    readonly sortImports: boolean | undefined
 }
 
 function parseRange(rangeStr: string): Range {
@@ -135,11 +143,12 @@ export async function main(): Promise<void> {
             "-r, --range <range>",
             "Format only the specified range (format: startLine:startChar-endLine:endChar)",
         )
+        .option("-s, --sort-imports", "Sort imports in the formatted file")
         .help()
 
     const parsed = cli.parse()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    const {write, check, range} = parsed.options as CliOptions
+    const {write, check, range, sortImports = false} = parsed.options as CliOptions
     const filePaths = parsed.args
 
     if (write !== undefined && check !== undefined) {
@@ -179,7 +188,7 @@ export async function main(): Promise<void> {
     let allFormatted = true
 
     for (const file of filesToFormat) {
-        const res = await formatFile(file, mode, parsedRange)
+        const res = await formatFile(file, {mode, range: parsedRange, sortImports})
         if (res === undefined) {
             someFileCannotBeFormatted = true
         } else {
