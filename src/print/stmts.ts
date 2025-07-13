@@ -64,7 +64,6 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
     const dangling = takeDangling(node, ctx.comments)
     const danglingDoc = formatDangling(dangling, ctx)
 
-    // For empty blocks, return compact format
     if (statements.length === 0 && leading.length === 0 && dangling.length === 0) {
         return text("{}")
     }
@@ -83,9 +82,7 @@ export function printBlockStatement(node: Node, ctx: Ctx): Doc | undefined {
         }
 
         if (i < statements.length - 1) {
-            docs.push(
-                blank(blankLinesBetween(statement, statements[i + 1], ctx.comments)),
-            )
+            docs.push(blank(blankLinesBetween(statement, statements[i + 1], ctx.comments)))
         }
     }
 
@@ -102,22 +99,22 @@ export function printExpressionStatement(node: Node, ctx: Ctx): Doc | undefined 
     if (!expr) return undefined
 
     const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), lineSuffix(text(c.text)), breakParent(), softLine()]),
+        concat([text(" "), lineSuffix(text(c.text)), breakParent()]),
     )
 
     return concat([printNode(expr, ctx) ?? empty(), text(";"), ...trailing])
 }
 
 export function printReturnStatement(node: Node, ctx: Ctx): Doc | undefined {
-    const bodyN = node.childForFieldName("body")
+    const exprN = node.childForFieldName("body")
 
     const leading = takeLeading(node, ctx.comments).map(c => concat([text(c.text), hardLine()]))
 
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    if (bodyN) {
-        const body = printNode(bodyN, ctx) ?? empty()
-        return concat([...leading, text("return "), body, text(";"), ...trailing])
+    if (exprN) {
+        const expr = printNode(exprN, ctx) ?? empty()
+        return concat([...leading, text("return "), expr, text(";"), ...trailing])
     } else {
         return concat([...leading, text("return;"), ...trailing])
     }

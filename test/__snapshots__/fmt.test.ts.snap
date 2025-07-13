@@ -191,6 +191,25 @@ struct MyStruct {
 "
 `;
 
+exports[`Formatter should format annotations 9`] = `
+"@annotation // inline comment
+struct MyStruct {
+    x: int
+}
+"
+`;
+
+exports[`Formatter should format annotations 10`] = `
+"@annotation // inline comment 1
+@annotation // inline comment 2
+@annotation // inline comment 3
+@annotation // inline comment 4
+struct MyStruct {
+    x: int
+}
+"
+`;
+
 exports[`Formatter should format assembly and builtin functions 1`] = `
 "fun test()
     asm "PUSH 42"
@@ -366,7 +385,6 @@ exports[`Formatter should format binary expressions with comments 8`] = `
 "fun foo() {
     20 + // comment
     30; // comment here
-
 }
 "
 `;
@@ -374,7 +392,6 @@ exports[`Formatter should format binary expressions with comments 8`] = `
 exports[`Formatter should format binary expressions with comments 9`] = `
 "fun foo() {
     20 + 30; // comment here
-
 }
 "
 `;
@@ -390,6 +407,24 @@ exports[`Formatter should format binary expressions with comments 10`] = `
         in.originalForwardFee +
         (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
     ) throw ERR_NOT_ENOUGH_TON;
+}
+"
+`;
+
+exports[`Formatter should format binary expressions with comments 11`] = `
+"fun foo() {
+    assert (
+        msgValue >
+        forwardTonAmount +
+        // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+        // but last one is optional (it is ok if it fails)
+        fwdCount *
+        fwdFee +
+        forwardInitStateOverhead() + // additional fwd fees related to initstate in iternal_transfer
+        calculateGasFee(MY_WORKCHAIN, sendTransferGasConsumption) +
+        calculateGasFee(MY_WORKCHAIN, receiveTransferGasConsumption) +
+        calculateJettonWalletMinStorageFee()
+    ) throw ERROR_NOT_ENOUGH_GAS;
 }
 "
 `;
@@ -612,6 +647,30 @@ exports[`Formatter should format control flow statements 3`] = `
 
 exports[`Formatter should format control flow statements 4`] = `
 "fun test() {
+    return (self.minBid < MIN_TONS_FOR_STORAGE + MINTING_PRICE_UPPER_BOUND) |
+    ((self.maxBid != 0) & (self.maxBid < self.minBid)) |
+    (self.minBidStep <= 0) |
+    (self.minExtendTime > 60 * 60 * 24 * 7) |
+    (self.duration > 60 * 60 * 24 * 365);
+}
+"
+`;
+
+exports[`Formatter should format control flow statements 5`] = `
+"fun test() {
+    return {
+        foo: bar,
+        bar: baz,
+        bar: baz,
+        bar: baz,
+        bar: baz,
+    };
+}
+"
+`;
+
+exports[`Formatter should format control flow statements 6`] = `
+"fun test() {
     while (true) {
         break
     }
@@ -619,7 +678,7 @@ exports[`Formatter should format control flow statements 4`] = `
 "
 `;
 
-exports[`Formatter should format control flow statements 5`] = `
+exports[`Formatter should format control flow statements 7`] = `
 "fun test() {
     while (true) {
         continue
@@ -628,21 +687,21 @@ exports[`Formatter should format control flow statements 5`] = `
 "
 `;
 
-exports[`Formatter should format control flow statements 6`] = `
+exports[`Formatter should format control flow statements 8`] = `
 "fun test() {
     throw 42
 }
 "
 `;
 
-exports[`Formatter should format control flow statements 7`] = `
+exports[`Formatter should format control flow statements 9`] = `
 "fun test() {
     throw (1, 2)
 }
 "
 `;
 
-exports[`Formatter should format control flow statements 8`] = `
+exports[`Formatter should format control flow statements 10`] = `
 "fun test() {
     throw someVeryLongExpression
 }
@@ -1889,7 +1948,6 @@ exports[`Formatter should format top-level declarations 13`] = `
 exports[`Formatter should format unary expressions with comments 1`] = `
 "fun foo() {
     !true; // comment here
-
 }
 "
 `;

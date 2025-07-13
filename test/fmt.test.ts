@@ -308,6 +308,26 @@ fun foo() {
         expect(await format(`fun test() { return; }`)).toMatchSnapshot()
         expect(await format(`fun test() { return 42; }`)).toMatchSnapshot()
         expect(await format(`fun test() { return someVeryLongExpression; }`)).toMatchSnapshot()
+        expect(
+            await format(`fun test() {
+            return (self.minBid < MIN_TONS_FOR_STORAGE + MINTING_PRICE_UPPER_BOUND) |
+                   ((self.maxBid != 0) & (self.maxBid < self.minBid)) |
+                   (self.minBidStep <= 0) |
+                   (self.minExtendTime > 60 * 60 * 24 * 7) |
+                   (self.duration > 60 * 60 * 24 * 365);
+        }`),
+        ).toMatchSnapshot()
+        expect(
+            await format(`fun test() {
+            return {
+                foo: bar,
+                bar: baz,
+                bar: baz,
+                bar: baz,
+                bar: baz,
+            };
+        }`),
+        ).toMatchSnapshot()
 
         // Break statements
         expect(await format(`fun test() { while (true) { break; } }`)).toMatchSnapshot()
@@ -589,6 +609,20 @@ fun foo() {
         // Annotations on different declarations
         expect(await format(`@annotation global myVar: int`)).toMatchSnapshot()
         expect(await format(`@annotation struct MyStruct { x: int }`)).toMatchSnapshot()
+
+        // Annotation with comment
+        expect(
+            await format(`@annotation // inline comment
+        struct MyStruct { x: int }`),
+        ).toMatchSnapshot()
+        expect(
+            await format(`
+        @annotation // inline comment 1
+        @annotation // inline comment 2
+        @annotation // inline comment 3
+        @annotation // inline comment 4
+        struct MyStruct { x: int }`),
+        ).toMatchSnapshot()
     })
 
     it("should format advanced types", async () => {
@@ -1087,6 +1121,23 @@ fun foo() {
                     forwardedMessagesCount * in.originalForwardFee +
                     (2 * JETTON_WALLET_GAS_CONSUMPTION + MIN_TONS_FOR_STORAGE)
                 ) throw ERR_NOT_ENOUGH_TON;
+            }
+            `),
+        ).toMatchSnapshot()
+
+        expect(
+            await format(`
+            fun foo() {
+                assert (msgValue >
+                    forwardTonAmount +
+                    // 3 messages: wal1->wal2,  wal2->owner, wal2->response
+                    // but last one is optional (it is ok if it fails)
+                    fwdCount * fwdFee +
+                    forwardInitStateOverhead() + // additional fwd fees related to initstate in iternal_transfer
+                    calculateGasFee(MY_WORKCHAIN, sendTransferGasConsumption) +
+                    calculateGasFee(MY_WORKCHAIN, receiveTransferGasConsumption) +
+                    calculateJettonWalletMinStorageFee()
+                ) throw ERROR_NOT_ENOUGH_GAS;
             }
             `),
         ).toMatchSnapshot()

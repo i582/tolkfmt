@@ -10,17 +10,10 @@ const main = async (): Promise<void> => {
     const parser = createTolkParser()
 
     const cst = parser.parse(`
-import "../parent"
-import "./local"
-import "@stdlib/foo"
-import "nested/file"
-import "../../grandparent"
-import "./other_local"
-
-struct OtherStruct {
-    field1:   int;
-    field2:   string;
-}`)
+fun main() {
+    return 2;
+}
+`)
     // bar(/* init: */ true, /* other: */ true /* other after */)
 
     if (!cst?.rootNode) throw new Error(`Unable to parse file`)

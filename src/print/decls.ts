@@ -553,7 +553,24 @@ export function printAnnotationList(node: Node, ctx: Ctx): Doc | undefined {
     const parts = annotations.map(annotation => printNode(annotation, ctx) ?? empty())
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return concat([...parts.map(part => concat([part, hardLine()])), ...trailing])
+    if (trailing.length > 0 && parts.length === 1) {
+        // @foo // comment
+        // fun foo() {}
+        return concat([parts[0], ...trailing, hardLine()])
+    }
+
+    const docs: Doc[] = []
+    for (const [index, part] of parts.entries()) {
+        docs.push(part)
+
+        if (index === parts.length - 1) {
+            docs.push(...trailing, hardLine())
+        } else {
+            docs.push(hardLine())
+        }
+    }
+
+    return concat(docs)
 }
 
 export function printAnnotation(node: Node, ctx: Ctx): Doc | undefined {
@@ -563,7 +580,7 @@ export function printAnnotation(node: Node, ctx: Ctx): Doc | undefined {
     const name = nameN ? (printNode(nameN, ctx) ?? empty()) : empty()
     const args = argumentsN ? (printNode(argumentsN, ctx) ?? empty()) : empty()
 
-    const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
+    const trailing = takeTrailing(node, ctx.comments).flatMap(c => [text(" "), text(c.text)])
 
     return concat([text("@"), name, args, ...trailing])
 }

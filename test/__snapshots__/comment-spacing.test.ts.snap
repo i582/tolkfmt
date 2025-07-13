@@ -36,7 +36,6 @@ exports[`Comment spacing should handle multiple comments between statements 1`] 
 exports[`Comment spacing should handle trailing comment after statement 1`] = `
 "fun test() {
     foo(); // trailing comment
-
     bar();
 }
 "

@@ -72,9 +72,12 @@ export function printBinaryExpression(node: Node, ctx: Ctx): Doc | undefined {
     const trailingForLeft = takeTrailing(leftN, ctx.comments).map(c =>
         concat([text(" "), lineSuffix(text(c.text)), breakParent()]),
     )
-    const trailing = takeTrailing(node, ctx.comments).map(c =>
-        concat([text(" "), lineSuffix(text(c.text))]),
-    )
+    const trailing =
+        node.parent?.type === "binary_operator"
+            ? []
+            : takeTrailing(node, ctx.comments).map(c =>
+                  concat([text(" "), lineSuffix(text(c.text))]),
+              )
 
     return group([
         ...leadingDoc,
