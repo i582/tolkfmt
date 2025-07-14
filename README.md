@@ -1,7 +1,7 @@
 # tolkfmt
 
 > [!NOTE]
-> Development version!
+> Moved to https://github.com/ton-blockchain/tolkfmt
 
 A code formatter for the Tolk programming language.
 
