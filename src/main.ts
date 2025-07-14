@@ -11,7 +11,8 @@ const main = async (): Promise<void> => {
 
     const cst = parser.parse(`
 fun main() {
-    return 2;
+     notifyMinterMsg.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE |
+            SEND_MODE_BOUNCE_ON_ACTION_FAIL);
 }
 `)
     // bar(/* init: */ true, /* other: */ true /* other after */)
@@ -22,7 +23,7 @@ fun main() {
     const doc = printNode(cst.rootNode, ctx)
 
     if (doc) {
-        console.log(render(doc, 100) + "---")
+        console.log(render(doc, 50) + "---")
     }
 }
 

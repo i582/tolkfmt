@@ -114,6 +114,29 @@ fun foo() {
                 maxWidth: 30,
             }),
         ).toMatchSnapshot()
+        // TODO
+        expect(
+            await format(
+                `fun test() { a = loooooooooooooooooooooooooooooooooooooooooooooong + 10; }`,
+                {
+                    maxWidth: 30,
+                },
+            ),
+        ).toMatchSnapshot()
+        expect(
+            await format(
+                `fun test() { a = {
+                a: 1,
+                a: 1,
+                a: 1,
+                a: 1,
+                a: 1,
+            }; }`,
+                {
+                    maxWidth: 30,
+                },
+            ),
+        ).toMatchSnapshot()
 
         // Unary operators
         expect(await format(`fun test() { !true; }`)).toMatchSnapshot()
@@ -199,6 +222,12 @@ fun foo() {
         expect(await format(`fun test() { foo(42); }`)).toMatchSnapshot()
         expect(await format(`fun test() { foo(1, 2); }`)).toMatchSnapshot()
         expect(await format(`fun test() { foo(1, 2, 3); }`)).toMatchSnapshot()
+
+        // TODO
+        expect(
+            await format(`fun test() { notifyMinterMsg.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE |
+            SEND_MODE_BOUNCE_ON_ACTION_FAIL); }`),
+        ).toMatchSnapshot()
 
         // Function calls with long arguments
         expect(
@@ -752,13 +781,15 @@ fun foo() {
         expect(await format(`fun test() asm "PUSH 42"`)).toMatchSnapshot()
         expect(await format(`fun test() asm "PUSH 42" "ADD"`)).toMatchSnapshot()
         expect(await format(`fun test() asm (x -> 1) "PUSH 42"`)).toMatchSnapshot()
-        expect(await format(`fun test()
+        expect(
+            await format(`fun test()
             asm """
         FOO
         BAR
         BAZ
     """
-        `)).toMatchSnapshot()
+        `),
+        ).toMatchSnapshot()
 
         // Builtin functions
         expect(await format(`fun test() builtin`)).toMatchSnapshot()

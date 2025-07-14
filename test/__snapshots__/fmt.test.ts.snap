@@ -828,6 +828,14 @@ exports[`Formatter should format function calls 5`] = `
 
 exports[`Formatter should format function calls 6`] = `
 "fun test() {
+    notifyMinterMsg.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE |
+    SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+}
+"
+`;
+
+exports[`Formatter should format function calls 7`] = `
+"fun test() {
     foo(
         veryLongArgument,
         anotherVeryLongArgument,
@@ -837,28 +845,28 @@ exports[`Formatter should format function calls 6`] = `
 "
 `;
 
-exports[`Formatter should format function calls 7`] = `
+exports[`Formatter should format function calls 8`] = `
 "fun test() {
     foo(mutate x);
 }
 "
 `;
 
-exports[`Formatter should format function calls 8`] = `
+exports[`Formatter should format function calls 9`] = `
 "fun test() {
     foo(x, mutate y);
 }
 "
 `;
 
-exports[`Formatter should format function calls 9`] = `
+exports[`Formatter should format function calls 10`] = `
 "fun test() {
     foo().bar();
 }
 "
 `;
 
-exports[`Formatter should format function calls 10`] = `
+exports[`Formatter should format function calls 11`] = `
 "fun test() {
     foo(x).bar(y);
 }
@@ -1269,7 +1277,11 @@ exports[`Formatter should format object literals 3`] = `
 
 exports[`Formatter should format object literals 4`] = `
 "fun test() {
-    { foo: 1, bar: 2, baz: 3 };
+    {
+        foo: 1,
+        bar: 2,
+        baz: 3,
+    };
 }
 "
 `;
@@ -1317,7 +1329,11 @@ exports[`Formatter should format object literals 9`] = `
 
 exports[`Formatter should format object literals 10`] = `
 "fun test() {
-    { foo: 1, bar:, baz };
+    {
+        foo: 1,
+        bar:,
+        baz,
+    };
 }
 "
 `;
@@ -1549,68 +1565,89 @@ exports[`Formatter should format simple expressions 2`] = `
 
 exports[`Formatter should format simple expressions 3`] = `
 "fun test() {
-    !true;
+    a = loooooooooooooooooooooooooooooooooooooooooooooong +
+    10;
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 4`] = `
 "fun test() {
-    ~42;
+    a = {
+        a: 1,
+        a: 1,
+        a: 1,
+        a: 1,
+        a: 1,
+    };
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 5`] = `
 "fun test() {
-    -42;
+    !true;
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 6`] = `
 "fun test() {
-    +42;
+    ~42;
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 7`] = `
 "fun test() {
-    (42);
+    -42;
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 8`] = `
 "fun test() {
-    (veryLongExpression);
+    +42;
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 9`] = `
 "fun test() {
-    ();
+    (42);
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 10`] = `
 "fun test() {
-    (42);
+    (veryLongExpression);
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 11`] = `
 "fun test() {
-    (1, 2);
+    ();
 }
 "
 `;
 
 exports[`Formatter should format simple expressions 12`] = `
+"fun test() {
+    (42);
+}
+"
+`;
+
+exports[`Formatter should format simple expressions 13`] = `
+"fun test() {
+    (1, 2);
+}
+"
+`;
+
+exports[`Formatter should format simple expressions 14`] = `
 "fun test() {
     (
         veryLongExpression, anotherVeryLongExpression, thirdLongExpression
@@ -1619,28 +1656,28 @@ exports[`Formatter should format simple expressions 12`] = `
 "
 `;
 
-exports[`Formatter should format simple expressions 13`] = `
+exports[`Formatter should format simple expressions 15`] = `
 "fun test() {
     [];
 }
 "
 `;
 
-exports[`Formatter should format simple expressions 14`] = `
+exports[`Formatter should format simple expressions 16`] = `
 "fun test() {
     [42];
 }
 "
 `;
 
-exports[`Formatter should format simple expressions 15`] = `
+exports[`Formatter should format simple expressions 17`] = `
 "fun test() {
     [1, 2];
 }
 "
 `;
 
-exports[`Formatter should format simple expressions 16`] = `
+exports[`Formatter should format simple expressions 18`] = `
 "fun test() {
     [
         veryLongExpression, anotherVeryLongExpression, thirdLongExpression

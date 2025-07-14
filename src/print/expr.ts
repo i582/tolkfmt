@@ -369,7 +369,7 @@ export function printObjectLiteralBody(node: Node, ctx: Ctx): Doc | undefined {
 
     const [first, ...rest] = parts
 
-    if (parts.length <= 3) {
+    if (parts.length <= 2) {
         const tailDocs = rest.flatMap(part => [line(), part])
         return group([
             text("{"),

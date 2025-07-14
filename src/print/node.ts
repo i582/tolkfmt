@@ -254,12 +254,10 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
         return stmts.printEmptyStatement(node, ctx)
     }
 
-    // Advanced expressions
     if (node.type === "set_assignment") {
         return stmts.printSetAssignment(node, ctx)
     }
 
-    // Generics
     if (node.type === "type_parameters") {
         return decls.printTypeParameters(node, ctx)
     }
@@ -280,7 +278,6 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
         return expr.printInstantiationTList(node, ctx)
     }
 
-    // Advanced functions
     if (node.type === "asm_body") {
         return decls.printAsmBody(node, ctx)
     }
@@ -293,7 +290,6 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
         return decls.printMethodReceiver(node, ctx)
     }
 
-    // Annotations
     if (node.type === "annotation_list") {
         return decls.printAnnotationList(node, ctx)
     }
@@ -306,12 +302,10 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
         return decls.printAnnotationArguments(node, ctx)
     }
 
-    // Advanced types
     if (node.type === "fun_callable_type") {
         return types.printFunCallableType(node, ctx)
     }
 
-    // Error handling
     if (node.type === "assert_statement") {
         return stmts.printAssertStatement(node, ctx)
     }
@@ -324,7 +318,6 @@ export const printNode = (node: Node, ctx: Ctx): Doc | undefined => {
         return stmts.printCatchClause(node, ctx)
     }
 
-    // Pattern matching
     if (node.type === "match_statement") {
         return stmts.printMatchStatement(node, ctx)
     }
