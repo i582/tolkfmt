@@ -603,6 +603,7 @@ fun foo() {
         // Generic instantiation
         expect(await format(`fun test() { val x: List<int>; }`)).toMatchSnapshot()
         expect(await format(`fun test() { val x: Map<string, int>; }`)).toMatchSnapshot()
+        expect(await format(`fun test() { val x = Foo<int32, int32>.new(); }`)).toMatchSnapshot()
         expect(
             await format(`fun test() { val x: VeryLongType<VeryLongGenericParameter>; }`, {
                 maxWidth: 30,

@@ -263,7 +263,7 @@ exports[`Formatter should format assembly and builtin methods 3`] = `
 `;
 
 exports[`Formatter should format assembly and builtin methods 4`] = `
-"fun [Baz<int>].test()
+"fun [Baz<int, int>].test()
     builtin
 "
 `;
@@ -1043,26 +1043,33 @@ exports[`Formatter should format generics 6`] = `
 
 exports[`Formatter should format generics 7`] = `
 "fun test() {
-    val x: Map<string>;
+    val x: Map<string, int>;
 }
 "
 `;
 
 exports[`Formatter should format generics 8`] = `
 "fun test() {
-    val x: VeryLongType<VeryLongGenericParameter>;
+    val x = Foo<int32, int32>.new();
 }
 "
 `;
 
 exports[`Formatter should format generics 9`] = `
+"fun test() {
+    val x: VeryLongType<VeryLongGenericParameter>;
+}
+"
+`;
+
+exports[`Formatter should format generics 10`] = `
 "struct MyStruct<T> {
     value: T
 }
 "
 `;
 
-exports[`Formatter should format generics 10`] = `
+exports[`Formatter should format generics 11`] = `
 "struct MyStruct<T, U> {
     first: T
     second: U

@@ -455,43 +455,28 @@ export function printGenericInstantiation(node: Node, ctx: Ctx): Doc | undefined
 }
 
 export function printInstantiationTList(node: Node, ctx: Ctx): Doc | undefined {
-    const typesN = node.childForFieldName("types")
+    const typesN = node
+        .childrenForFieldName("types")
+        .filter(it => it !== null)
+        .filter(child => child.type !== "," && child.type !== "<" && child.type !== ">")
 
-    if (!typesN) {
-        // Handle case where types are direct children
-        const types = node.namedChildren
-            .filter(child => child?.type !== "," && child?.type !== "<" && child?.type !== ">")
-            .filter(child => child !== null)
-
-        if (types.length === 0) {
-            return text("<>")
-        }
-
-        const parts = types.map(type => printNode(type, ctx) ?? empty())
-        const trailing = takeTrailing(node, ctx.comments).map(c =>
-            concat([text(" "), text(c.text)]),
-        )
-
-        if (parts.length === 1) {
-            return concat([text("<"), parts[0], text(">"), ...trailing])
-        }
-
-        const [first, ...rest] = parts
-        const tailDocs = rest.map(part => concat([text(", "), part]))
-
-        return concat([
-            text("<"),
-            indent(concat([softLine(), first, ...tailDocs])),
-            softLine(),
-            text(">"),
-            ...trailing,
-        ])
-    }
-
-    const types = printNode(typesN, ctx) ?? empty()
+    const parts = typesN.map(type => printNode(type, ctx) ?? empty())
     const trailing = takeTrailing(node, ctx.comments).map(c => concat([text(" "), text(c.text)]))
 
-    return concat([text("<"), types, text(">"), ...trailing])
+    if (parts.length === 1) {
+        return concat([text("<"), parts[0], text(">"), ...trailing])
+    }
+
+    const [first, ...rest] = parts
+    const tailDocs = rest.map(part => concat([text(", "), part]))
+
+    return group([
+        text("<"),
+        indent(concat([softLine(), first, ...tailDocs])),
+        softLine(),
+        text(">"),
+        ...trailing,
+    ])
 }
 
 export function printMatchExpression(node: Node, ctx: Ctx): Doc | undefined {

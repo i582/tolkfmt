@@ -11,8 +11,7 @@ const main = async (): Promise<void> => {
 
     const cst = parser.parse(`
 fun main() {
-     notifyMinterMsg.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE |
-            SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+     Foo<int32, int32>.new();
 }
 `)
     // bar(/* init: */ true, /* other: */ true /* other after */)

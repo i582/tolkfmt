@@ -95,7 +95,7 @@ exports[`tolkfmt foo.tolk Help flag 1`] = `
   "code": 0,
   "kind": "exited",
   "stderr": "",
-  "stdout": "tolkfmt/0.0.12
+  "stdout": "tolkfmt/0.0.13
 
 Usage:
   $ tolkfmt [options] <files or directories>
@@ -251,4 +251,4 @@ exports[`tolkfmt foo.tolk Run on directory 3`] = `
 "
 `;
 
-exports[`tolkfmt foo.tolk Version flag 1`] = `"tolkfmt/0.0.12"`;
+exports[`tolkfmt foo.tolk Version flag 1`] = `"tolkfmt/0.0.13"`;
